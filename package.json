@@ -4,7 +4,7 @@
   "description": "the real nusantara food and taste",
   "main": "index.js",
   "scripts": {
-    "test": "node app.js"
+    "start": "node app.js"
   },
   "author": "Philip Purwoko",
   "license": "MIT",
