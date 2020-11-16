@@ -1,22 +1,4 @@
-.header, nav, ul, li {
-    margin: 0;
-    padding: 0;
-}
-
-.header {
-    width: 100%;
-    background-color: #e0a58e;
+.active {
+    background-color: black;
     color: white;
-}
-
-.header nav ul li{
-    list-style: none;
-}
-
-.header nav ul li a {
-    text-decoration: none;
-}
-
-li {
-    display: flex;
 }
