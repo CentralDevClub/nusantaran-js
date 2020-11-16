@@ -1,0 +1,10 @@
+<%- include ('includes/header.ejs') %>
+
+<h1>Add Product</h1>
+<form method="POST" action="/admin/add-product">
+    <label for="product">Product Name</label>
+    <input type="text" name="product">
+    <button type="submit">Submit</button>
+</form>
+
+<%- include ('includes/footer.ejs') %>
