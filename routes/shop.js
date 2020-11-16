@@ -1,13 +1,7 @@
 const express = require('express');
 const router = express.Router();
-const products = require('./admin').products;
+const productController = require('../controllers/products')
 
-router.get('/',(req,res,next)=>{
-    res.render('shop',{
-        'title':'Nusantaran JS | Original Taste of Nusantara',
-        'path':'/',
-        'products':products
-    });
-});
+router.get('/',productController.getProduct);
 
 module.exports = router;
