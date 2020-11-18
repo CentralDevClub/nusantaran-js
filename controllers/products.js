@@ -1,4 +1,4 @@
-const products = [];
+const Product = require('../models/products')
 
 exports.getAddProduct = (req,res,next)=>{
     res.render('add-product',{
@@ -8,16 +8,20 @@ exports.getAddProduct = (req,res,next)=>{
 };
 
 exports.postAddProduct = (req,res,next)=>{
-    let product = req.body.product;
+    const product = new Product(req.body.name);
+    product.save();
     console.log(`Product added : ${product}`);
-    products.push(product)
     res.redirect('/');
 };
 
 exports.getProduct = (req,res,next)=>{
+    const products = Product.fetchAll();
+    const hasProduct = products.length > 0 ? true : false;
+    
     res.render('shop',{
         'title':'Nusantaran JS | Original Taste of Nusantara',
         'path':'/',
+        'hasProduct': hasProduct,
         'products':products
     });
 };
