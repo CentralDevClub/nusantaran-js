@@ -15,13 +15,13 @@ exports.postAddProduct = (req,res,next)=>{
 };
 
 exports.getProduct = (req,res,next)=>{
-    const products = Product.fetchAll();
-    const hasProduct = products.length > 0 ? true : false;
-    
-    res.render('shop',{
-        'title':'Nusantaran JS | Original Taste of Nusantara',
-        'path':'/',
-        'hasProduct': hasProduct,
-        'products':products
+    Product.fetchAll(products => {
+        const hasProduct = products.length > 0 ? true : false;
+        res.render('shop',{
+            'title':'Nusantaran JS | Original Taste of Nusantara',
+            'path':'/',
+            'hasProduct': hasProduct,
+            'products':products
+        });
     });
 };
