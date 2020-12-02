@@ -8,11 +8,13 @@
 </head>
 <body>
     <header class="header">
-        <h1>Nusantaran JS</h1>
+        <h1><a href="/">Nusantaran JS</a></h1>
         <nav>
             <ul>
+                <li><a href="/products-list" class="<%= path === '/products-list' ? 'active' : '' %>">Shop</a></li>
+                <li><a href="/cart" class="<%= path === '/cart' ? 'active' : '' %>">Cart</a></li>
                 <li><a href="/admin/add-product" class="<%= path === '/add-product' ? 'active' : '' %>">Add product</a></li>
-                <li><a href="/" class="<%= path === '/' ? 'active' : '' %>">Shop</a></li>
+                <li><a href="/admin/product" class="<%= path === '/product' ? 'active' : '' %>">Admin product</a></li>
             </ul>
         </nav>
     </header>

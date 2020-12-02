@@ -1,5 +1,6 @@
 const fs = require('fs');
 const path = require('path');
+const p = path.join(path.dirname(process.mainModule.filename),'data','products.json');
 
 module.exports = class Products {
     constructor(name){
@@ -7,7 +8,6 @@ module.exports = class Products {
     };
     
     save(){
-        const p = path.join(path.dirname(process.mainModule.filename),'data','products.json');
         fs.readFile(p, (err,fileContent) => {
             // Inisalisasi array kosong jika tidak ada products.json
             let products = [];
@@ -24,7 +24,6 @@ module.exports = class Products {
     };
 
     static fetchAll(callBack){
-        const p = path.join(path.dirname(process.mainModule.filename),'data','products.json');
         fs.readFile(p, (err,fileContent) => {
             if (!err){
                 callBack(JSON.parse(fileContent));
