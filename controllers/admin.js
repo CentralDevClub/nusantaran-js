@@ -8,10 +8,10 @@ exports.getAddProduct = (req,res,next)=>{
 };
 
 exports.postAddProduct = (req,res,next)=>{
-    const product = new Product(req.body.name);
+    const product = new Product(req.body.name,req.body.description,req.body.price);
     product.save();
     console.log(`Product added : ${product}`);
-    res.redirect('/products-list');
+    res.redirect('/products');
 };
 
 exports.getProduct = (req,res,next)=>{
