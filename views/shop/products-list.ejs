@@ -4,7 +4,7 @@
 <% if (hasProduct){ %>
     <ul>
         <% for (let product of products){ %>
-            <li><span><%= product.name %></span> - <span><a href="">Add to Cart</a></span></li>
+            <li><span><%= product.name %></span> - <span>Rp.<%= product.price %></span> - <span><a href="products/<%= product.id %>">Details</a></span> - <span><a href="">Add to Cart</a></span></li>
         <% } %>
     </ul>
 <% } else { %>

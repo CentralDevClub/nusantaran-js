@@ -5,9 +5,19 @@ exports.getProductList = (req,res,next)=>{
         const hasProduct = products.length > 0 ? true : false;
         res.render('shop/products-list',{
             'title':'Nusantaran JS | Original Taste of Nusantara',
-            'path':'/products-list',
+            'path':'/products',
             'hasProduct': hasProduct,
             'products':products
+        });
+    });
+};
+
+exports.getProductDetail = (req,res,next) => {
+    Product.findById(req.params.id,product=>{
+        res.render('shop/products-detail',{
+            'title':`Nusantaran JS | ${product.name}`,
+            'path':'/product/detail',
+            'product':product
         });
     });
 };
