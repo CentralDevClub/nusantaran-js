@@ -18,8 +18,6 @@ app.use(express.static(path.join(__dirname,'public')));
 // Page Routing
 app.use(shopRoute);
 app.use('/admin',adminRoute);
-
-// Handling Error
 app.use(errorController.get404);
 
 // Running Server
