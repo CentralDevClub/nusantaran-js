@@ -27,4 +27,14 @@ module.exports = class Cart {
             });
         });
     }
+
+    static fetchAll(callBack){
+        fs.readFile(p, (err,fileContent)=>{
+            if (err){
+                callBack([]);
+            } else {
+                callBack(JSON.parse(fileContent));
+            }
+        });
+    }
 };

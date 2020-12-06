@@ -31,9 +31,14 @@ exports.getIndex = (req,res,next)=>{
 };
 
 exports.getCart = (req,res,next)=>{
-    res.render('shop/cart',{
-        'title':'Nusantaran JS | Cart',
-        'path':'/cart'
+    Cart.fetchAll(cart => {
+        res.render('shop/cart',{
+            'title':'Nusantaran JS | Cart',
+            'path':'/cart',
+            'hasProduct':true,
+            'products': cart.products,
+            'totalPrice':cart.totalPrice
+        });
     });
 };
 
