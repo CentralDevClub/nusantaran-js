@@ -4,7 +4,16 @@
 <% if (hasProduct){ %>
     <ul>
         <% for (let product of products){ %>
-            <li><span><%= product.name %></span> - <span>Rp.<%= product.price %></span> - <span><a href="products/<%= product.id %>">Details</a></span> - <span><a href="">Add to Cart</a></span></li>
+            <li>
+                <span><%= product.name %></span> - <span>Rp.<%= product.price %></span>
+                <br>
+                <span><a href="products/<%= product.id %>">Details</a></span>
+                <form method="POST" action="/cart">
+                    <input type="hidden" name="productID" value="<%= product.id %>">
+                    <input type="hidden" name="productPrice" value="<%= product.price %>">
+                    <button type="submit">Add to Cart</button>
+                </form>
+            </li>
         <% } %>
     </ul>
 <% } else { %>
