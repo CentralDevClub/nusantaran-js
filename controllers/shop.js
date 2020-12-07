@@ -32,12 +32,21 @@ exports.getIndex = (req,res,next)=>{
 
 exports.getCart = (req,res,next)=>{
     Cart.fetchAll(cart => {
-        res.render('shop/cart',{
-            'title':'Nusantaran JS | Cart',
-            'path':'/cart',
-            'hasProduct':true,
-            'products': cart.products,
-            'totalPrice':cart.totalPrice
+        Product.fetchAll(product => {
+            let products = [];
+            for (prod of product) {
+                const cartProduct = cart.products.find(p => p.id === prod.id);
+                if (cartProduct){
+                    products.push({name:prod.name,price:prod.price,qty:cartProduct.qty})
+                }
+            }
+            res.render('shop/cart',{
+                'title':'Nusantaran JS | Cart',
+                'path':'/cart',
+                'hasProduct':true,
+                'products': products,
+                'totalPrice':cart.totalPrice
+            });
         });
     });
 };
