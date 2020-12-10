@@ -3,6 +3,8 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const path = require('path');
 
+require('dotenv').config();
+
 // Import Routing & Controller
 const shopRoute = require('./routes/shop');
 const adminRoute = require('./routes/admin');
@@ -21,5 +23,7 @@ app.use('/admin',adminRoute);
 app.use(errorController.get404);
 
 // Running Server
-console.log(`Server running at http://127.0.0.1:3000`);
-app.listen(3000);
+const port = process.env.PORT || 3000;
+app.listen(3000, ()=>{
+    console.log(`Server running at http://127.0.0.1:${port}`);
+});
