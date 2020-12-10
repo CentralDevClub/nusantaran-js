@@ -30,6 +30,7 @@ exports.getIndex = (req,res,next)=>{
     });
 };
 
+// Cart
 exports.getCart = (req,res,next)=>{
     Cart.fetchAll(cart => {
         Product.fetchAll(product => {
