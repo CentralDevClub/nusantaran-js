@@ -4,7 +4,25 @@
 <% if (hasProduct){ %>
     <ul>
         <% for (let product of products){ %>
-            <li><span><%= product.name %></span> - <span><a href="">Edit</a></span> - <span><a href="">Delete</a></span></li>
+            <li>
+                <span><%= product.name %></span>
+                <form method="POST" action="/admin/update-product">
+                    <input type="hidden" name="id" value="<%= product.id %>">
+                    <label for="name">Product Name</label>
+                    <input type="text" name="name" value="<%= product.name %>">
+                    <label for="category">Product Category</label>
+                    <input type="text" name="category" value="<%= product.category %>">
+                    <label for="description">Description</label>
+                    <input type="text" name="description" value="<%= product.description %>">
+                    <label for="price">Price</label>
+                    <input type="number" name="price" value="<%= product.price %>">
+                    <button type="submit">Edit</button>
+                </form>
+                <form action="/admin/delete-product" method="POST">
+                    <input type="hidden" name="id" value="<%= product.id %>">
+                    <button type="submit">Delete</button>
+                </form>
+            </li>
         <% } %>
     </ul>
 <% } else { %>
