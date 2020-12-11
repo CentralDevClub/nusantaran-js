@@ -4,6 +4,7 @@
 ![GitHub repo size](https://img.shields.io/github/repo-size/CentralDevClub/nusantaran-js)
 ![GitHub commit activity](https://img.shields.io/github/commit-activity/m/CentralDevClub/nusantaran-js)
 ![GitHub](https://img.shields.io/github/license/CentralDevClub/nusantaran-js)
+[![DeepSource](https://deepsource.io/gh/PhilipPurwoko/nusantaran-js.svg/?label=active+issues&show_trend=true)](https://deepsource.io/gh/PhilipPurwoko/nusantaran-js/?ref=repository-badge)
 
 _Scallable website development using javascript_
 
