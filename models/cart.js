@@ -1,40 +1,33 @@
-const fs = require('fs')
-const path = require('path')
+const knex = require('knex');
+const db_config = require('./db-config').config;
+const db = knex(db_config);
+const Product = require('./products');
 
-const p = path.join(path.dirname(process.mainModule.filename),'data','cart.json');
 
 module.exports = class Cart {
     static addProduct(productID, productPrice){
-        fs.readFile(p,(err,fileContent)=>{
-            let cart;
-            if (err){
-                cart = {products:[],totalPrice:0};
-                cart.products.push({id:productID,qty:1})
-                cart.totalPrice += parseInt(productPrice)
-            } else {
-                cart = JSON.parse(fileContent);
-                const existingProduct = cart.products.find(product => product.id === productID);
-                if (existingProduct){
-                    existingProduct.qty++
-                    cart.totalPrice += parseInt(productPrice)
-                } else {
-                    cart.products.push({id:productID,qty:1})
-                    cart.totalPrice += parseInt(productPrice)
-                }
-            };
-            fs.writeFile(p,JSON.stringify(cart),err => {
-                console.log(err);
-            });
+        db('cart').returning('*').insert({
+            id:productID,
+            qty:1,
+            price:productPrice
+        }).catch(error=>{
+            if (error.code === '23505'){
+                db('cart').where('id',productID).select('qty').then(cartQty=>{
+                    db('cart').where('id',productID).update({
+                        'qty':cartQty[0].qty+1
+                    }).then(cart=>{
+                        console.log('Product Qty updated')
+                    })
+                })
+            }
+        }).then(products=>{
+            console.log('Product added to cart')
         });
     }
 
     static fetchAll(callBack){
-        fs.readFile(p, (err,fileContent)=>{
-            if (err){
-                callBack([]);
-            } else {
-                callBack(JSON.parse(fileContent));
-            }
+        db('cart').select('*').then(products=>{
+            callBack(products)
         });
     }
 };

@@ -5,10 +5,10 @@
     <ul>
         <% for (let product of products){ %>
             <!-- <li><%= product.name %> - <%= product.price %></li> -->
-            <li><%= product.name %> (<%= product.price %>) x<%= product.qty %> = Rp.<%= product.price * product.qty %></li>
+            <li><%= product.name %> | Rp.<%= product.price %> x<%= product.qty %> = Rp.<%= product.price * product.qty %></li>
         <% } %>
     </ul>
-    <p>Total Price : <%= totalPrice %></p>
+    <p>Total Price : Rp.<%= totalPrice %></p>
     <button><a href="/checkout">Checkout</a></button>
 <% } else { %>
     <p>Cart is empty</p>
