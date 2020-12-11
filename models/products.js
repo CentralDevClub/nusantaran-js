@@ -17,7 +17,7 @@ module.exports = class Products {
         this.category = category;
         this.description = description;
         this.price = price;
-    };
+    }
     
     save(){
         db('products').returning('*').insert({
@@ -29,20 +29,20 @@ module.exports = class Products {
         }).then(product=>{
             console.log(`Product added : ${product.name}`);
         });
-    };
+    }
 
     static fetchAll(callBack){
         getProducts(products=>{
             callBack(products)
         });
-    };
+    }
 
     static findById(id,callBack){
         getProducts(products => {
             const product = products.find(p => p.id === id);
             callBack(product);
         });
-    };
+    }
 
     static updateProduct(new_product, callBack){
         db('products').where('id',new_product.id).update({
@@ -53,7 +53,7 @@ module.exports = class Products {
         }).then(products=>{
             callBack(products);
         });
-    };
+    }
 
     static deleteProduct(id, callBack){
         db('products').where('id',id).del().then(products=>{
