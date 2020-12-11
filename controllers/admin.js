@@ -1,16 +1,10 @@
 const Product = require('../models/products');
 
-exports.getAddProduct = (req,res,next)=>{
-    res.render('admin/add-product',{
-        'title':'Nusantaran JS | Add Products',
-        'path':'/add-product'
-    });
-};
 
 exports.postAddProduct = (req,res,next)=>{
     const product = new Product(req.body.name,req.body.category,req.body.description,req.body.price);
     product.save();
-    res.redirect('/products');
+    res.redirect('/admin/product');
 };
 
 exports.getProduct = (req,res,next)=>{

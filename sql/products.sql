@@ -1,4 +1,4 @@
--- SQL Queries to create products table from your database
+-- SQL Queries to create products table for your database
 CREATE TABLE products(
     index serial PRIMARY KEY,
     id VARCHAR(100) UNIQUE NOT NULL,

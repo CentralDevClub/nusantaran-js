@@ -1,6 +1,17 @@
 <%- include ('../includes/header.ejs') %>
 
 <h1>Admin Product</h1>
+<form method="POST" action="/admin/add-product">
+    <label for="name">Product Name</label>
+    <input type="text" name="name">
+    <label for="category">Product Category</label>
+    <input type="text" name="category">
+    <label for="description">Description</label>
+    <input type="text" name="description">
+    <label for="price">Price</label>
+    <input type="number" name="price">
+    <button type="submit">Add New Product</button>
+</form>
 <% if (hasProduct){ %>
     <ul>
         <% for (let product of products){ %>
