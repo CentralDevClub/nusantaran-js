@@ -1,7 +1,6 @@
 const knex = require('knex');
 const db_config = require('./db-config').config;
 const db = knex(db_config);
-const Product = require('./products');
 
 
 module.exports = class Cart {
@@ -15,12 +14,12 @@ module.exports = class Cart {
                 db('cart').where('id',productID).select('qty').then(cartQty=>{
                     db('cart').where('id',productID).update({
                         'qty':cartQty[0].qty+1
-                    }).then(cart=>{
+                    }).then(()=>{
                         console.log('Product Qty updated')
                     })
                 })
             }
-        }).then(products=>{
+        }).then(()=>{
             console.log('Product added to cart')
         });
     }
