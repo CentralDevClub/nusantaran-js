@@ -3,7 +3,7 @@ const Cart = require('../models/cart')
 
 
 // Product controllers
-exports.getProductList = (req,res,next)=>{
+exports.getProductList = (req,res)=>{
     Product.fetchAll(products => {
         const hasProduct = products.length > 0 ? true : false;
         res.render('shop/products-list',{
@@ -15,7 +15,7 @@ exports.getProductList = (req,res,next)=>{
     });
 };
 
-exports.getProductDetail = (req,res,next) => {
+exports.getProductDetail = (req,res) => {
     Product.findById(req.params.id,product=>{
         res.render('shop/products-detail',{
             'title':`Nusantaran JS | ${product.name}`,
@@ -25,7 +25,7 @@ exports.getProductDetail = (req,res,next) => {
     });
 };
 
-exports.getIndex = (req,res,next)=>{
+exports.getIndex = (req,res)=>{
     res.render('shop/index',{
         'title':'Nusantaran JS | Welcome',
         'path':'/'
@@ -34,7 +34,7 @@ exports.getIndex = (req,res,next)=>{
 
 
 // Cart controllers
-exports.getCart = (req,res,next)=>{
+exports.getCart = (req,res)=>{
     Cart.fetchAll(cartProducts=>{
         Product.fetchAll(shopProducts=>{
             let products = []
@@ -58,14 +58,14 @@ exports.getCart = (req,res,next)=>{
     });
 };
 
-exports.postCart = (req,res,next)=>{
+exports.postCart = (req,res)=>{
     Cart.addProduct(req.body.productID,req.body.productPrice)
     res.redirect(req.body.path);
 };
 
 
 // Checkout controller
-exports.getCheckout = (req,res,next)=>{
+exports.getCheckout = (req,res)=>{
     res.render('shop/checkout',{
         'title':'Nusantaran JS | Checkout',
         'path':'/checkout'
