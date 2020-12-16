@@ -38,7 +38,7 @@ exports.getCart = (req,res)=>{
     Cart.fetchAll(cartProducts=>{
         Product.fetchAll(shopProducts=>{
             let products = []
-            for (prod of shopProducts){
+            for (let prod of shopProducts){
                 const inCart = cartProducts.find(p=>p.id === prod.id);
                 if (inCart){
                     products.push({name:prod.name,price:prod.price,qty:inCart.qty})
