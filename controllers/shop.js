@@ -41,16 +41,17 @@ exports.getCart = (req,res)=>{
             for (prod of shopProducts){
                 const inCart = cartProducts.find(p=>p.id === prod.id);
                 if (inCart){
-                    products.push({name:prod.name,price:prod.price,qty:inCart.qty})
+                    products.push({name:prod.name,id:prod.id,price:prod.price,qty:inCart.qty})
                 }
             }
             let totalPrice = 0
             products.map(p=>totalPrice += (p.price*p.qty))
 
+            const hasProduct = products.length > 0 ? true : false;
             res.render('shop/cart',{
                 'title':'Nusantaran JS | Cart',
                 'path':'/cart',
-                'hasProduct':true,
+                'hasProduct':hasProduct,
                 'products': products,
                 'totalPrice':totalPrice
             });
@@ -62,6 +63,24 @@ exports.postCart = (req,res)=>{
     Cart.addProduct(req.body.productID,req.body.productPrice)
     res.redirect(req.body.path);
 };
+
+exports.postDeleteCart = (req,res)=>{
+    Cart.deleteProduct(req.body.id, ()=>{
+        res.redirect('/cart');
+    });
+};
+
+exports.postUpdateQty = (req, res)=>{
+    Cart.updateQty(req.body.id, req.body.qty, (product)=>{
+        if (product[0].qty <= 0){
+            Cart.deleteProduct(req.body.id, ()=>{
+                res.redirect('/cart')
+            });
+        } else {
+            res.redirect('/cart');
+        }
+    });
+}
 
 
 // Checkout controller
