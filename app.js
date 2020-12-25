@@ -8,6 +8,7 @@ require('dotenv').config();
 // Import Routing & Controller
 const shopRoute = require('./routes/shop');
 const adminRoute = require('./routes/admin');
+const authRoute = require('./routes/auth');
 const errorController = require('./controllers/error');
 
 // View Engine
@@ -19,6 +20,7 @@ app.use(express.static(path.join(__dirname,'public')));
 
 // Page Routing
 app.use(shopRoute);
+app.use(authRoute);
 app.use('/admin',adminRoute);
 app.use(errorController.get404);
 
