@@ -29,4 +29,20 @@ module.exports = class Cart {
             callBack(products)
         });
     }
+
+    static deleteProduct(id, callBack){
+        db('cart').where('id',id).del().then(products=>{
+            callBack(products);
+        })
+    }
+
+    static updateQty(id, qty, callBack){
+        db('cart').where('id',id).update({
+            'qty': qty
+        }).then(()=>{
+            db('cart').where('id',id).then(product=>{
+                callBack(product);
+            });
+        });
+    }
 };
