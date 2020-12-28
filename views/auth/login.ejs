@@ -1,0 +1,19 @@
+<%- include ('../includes/header.ejs') %>
+
+<h1>Login</h1>
+<form action="/login" method="POST">
+    <div>
+        <label for="email">Email</label>
+        <input type="email" name="email">
+    </div>
+    <div>
+        <label for="password">Password</label>
+        <input type="password" name="password">
+    </div>
+    <div>
+        <button type="submit">Login</button>
+        <p>Didn't have account yet ? <a href="/register">Register</a></p>
+    </div>
+</form>
+
+<%- include ('../includes/footer.ejs') %>

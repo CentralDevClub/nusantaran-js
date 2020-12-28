@@ -1,13 +1,17 @@
 // Import Libraries
+require('dotenv').config();
 const express = require('express');
+const Pool = require('pg').Pool;
+const pool = new Pool(require('./models/connection'));
+const session = require('express-session');
+const store = new (require('connect-pg-simple')(session))({pool:pool});
 const bodyParser = require('body-parser');
 const path = require('path');
-
-require('dotenv').config();
 
 // Import Routing & Controller
 const shopRoute = require('./routes/shop');
 const adminRoute = require('./routes/admin');
+const authRoute = require('./routes/auth');
 const errorController = require('./controllers/error');
 
 // View Engine
@@ -16,14 +20,22 @@ app.set('view engine','ejs');
 app.set('views','views');
 app.use(bodyParser.urlencoded({extended:false}));
 app.use(express.static(path.join(__dirname,'public')));
+app.use(session({
+    secret: process.env.SESSION_SECRET,
+    resave: false,
+    saveUninitialized: false,
+    cookie: {maxAge: 30 * 24 * 60 * 60 * 1000},
+    store: store
+}));
 
 // Page Routing
 app.use(shopRoute);
+app.use(authRoute);
 app.use('/admin',adminRoute);
 app.use(errorController.get404);
 
 // Running Server
-const port = process.env.PORT || 3000;
-app.listen(3000, ()=>{
-    console.log(`Server running at http://127.0.0.1:${port}`);
+const port = process.env.WEB_PORT || 3000;
+app.listen(port, ()=>{
+    console.log(`Server running at http://${process.env.HOST}:${port}`);
 });
