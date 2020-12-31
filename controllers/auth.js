@@ -41,6 +41,12 @@ exports.postLogin = (req, res)=>{
     });
 }
 
-// exports.postLogout = (req, res) =>{
-
-// }
+exports.postLogout = (req, res) =>{
+    console.log("User logged out");
+    req.session.destroy(err => {
+        if (err){
+            console.log(err);
+        }
+        res.redirect('/');
+    });
+}
