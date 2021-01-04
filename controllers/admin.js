@@ -11,6 +11,7 @@ exports.getProduct = (req,res)=>{
     Product.fetchAll(products => {
         const hasProduct = products.length > 0 ? true : false;
         res.render('admin/product',{
+            'isAuthenticated': req.session.isAuthenticated,
             'title':'Nusantaran JS | Admin Products',
             'path':'/product',
             'hasProduct': hasProduct,

@@ -8,12 +8,16 @@
                 <span><%= product.name %></span> - <span>Rp.<%= product.price %></span>
                 <br>
                 <span><a href="products/<%= product.id %>">Details</a></span>
-                <form method="POST" action="/cart">
-                    <input type="hidden" name="productID" value="<%= product.id %>">
-                    <input type="hidden" name="productPrice" value="<%= product.price %>">
-                    <input type="hidden" name="path" value="<%= path %>">
-                    <button type="submit">Add to Cart</button>
-                </form>
+                <% if (isAuthenticated) { %>
+                    <form method="POST" action="/cart">
+                        <input type="hidden" name="productID" value="<%= product.id %>">
+                        <input type="hidden" name="productPrice" value="<%= product.price %>">
+                        <input type="hidden" name="path" value="<%= path %>">
+                        <button type="submit">Add to Cart</button>
+                    </form>
+                <% } else { %>
+                    <p>You must have account to adding product to cart</p>
+                <% } %>
             </li>
         <% } %>
     </ul>

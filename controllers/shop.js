@@ -7,6 +7,7 @@ exports.getProductList = (req,res)=>{
     Product.fetchAll(products => {
         const hasProduct = products.length > 0 ? true : false;
         res.render('shop/products-list',{
+            'isAuthenticated': req.session.isAuthenticated,
             'title':'Nusantaran JS | Original Taste of Nusantara',
             'path':'/products',
             'hasProduct': hasProduct,
@@ -18,6 +19,7 @@ exports.getProductList = (req,res)=>{
 exports.getProductDetail = (req,res) => {
     Product.findById(req.params.id,product=>{
         res.render('shop/products-detail',{
+            'isAuthenticated': req.session.isAuthenticated,
             'title':`Nusantaran JS | ${product.name}`,
             'path':`/products/${req.params.id}`,
             'product':product
@@ -27,6 +29,7 @@ exports.getProductDetail = (req,res) => {
 
 exports.getIndex = (req,res)=>{
     res.render('shop/index',{
+        'isAuthenticated': req.session.isAuthenticated,
         'title':'Nusantaran JS | Welcome',
         'path':'/'
     });
@@ -35,7 +38,8 @@ exports.getIndex = (req,res)=>{
 
 // Cart controllers
 exports.getCart = (req,res)=>{
-    Cart.fetchAll(cartProducts=>{
+    const owner = req.session.user.email;
+    Cart.fetchAll(owner, cartProducts=>{
         Product.fetchAll(shopProducts=>{
             let products = []
             for (let prod of shopProducts){
@@ -49,6 +53,7 @@ exports.getCart = (req,res)=>{
 
             const hasProduct = products.length > 0 ? true : false;
             res.render('shop/cart',{
+                'isAuthenticated': req.session.isAuthenticated,
                 'title':'Nusantaran JS | Cart',
                 'path':'/cart',
                 'hasProduct':hasProduct,
@@ -60,18 +65,18 @@ exports.getCart = (req,res)=>{
 };
 
 exports.postCart = (req,res)=>{
-    Cart.addProduct(req.body.productID,req.body.productPrice)
+    Cart.addProduct(req.body.productID, req.session.user.email, req.body.productPrice);
     res.redirect(req.body.path);
 };
 
 exports.postDeleteCart = (req,res)=>{
-    Cart.deleteProduct(req.body.id, ()=>{
+    Cart.deleteProduct(req.body.id, req.session.user.email, ()=>{
         res.redirect('/cart');
     });
 };
 
 exports.postUpdateQty = (req, res)=>{
-    Cart.updateQty(req.body.id, req.body.qty, (product)=>{
+    Cart.updateQty(req.body.id, req.body.qty, req.session.user.email, (product)=>{
         if (product[0].qty <= 0){
             Cart.deleteProduct(req.body.id, ()=>{
                 res.redirect('/cart')
@@ -86,6 +91,7 @@ exports.postUpdateQty = (req, res)=>{
 // Checkout controller
 exports.getCheckout = (req,res)=>{
     res.render('shop/checkout',{
+        'isAuthenticated': req.session.isAuthenticated,
         'title':'Nusantaran JS | Checkout',
         'path':'/checkout'
     });
