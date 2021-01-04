@@ -38,7 +38,8 @@ exports.getIndex = (req,res)=>{
 
 // Cart controllers
 exports.getCart = (req,res)=>{
-    Cart.fetchAll(cartProducts=>{
+    const owner = req.session.user.email;
+    Cart.fetchAll(owner, cartProducts=>{
         Product.fetchAll(shopProducts=>{
             let products = []
             for (let prod of shopProducts){
@@ -64,18 +65,18 @@ exports.getCart = (req,res)=>{
 };
 
 exports.postCart = (req,res)=>{
-    Cart.addProduct(req.body.productID,req.body.productPrice)
+    Cart.addProduct(req.body.productID, req.session.user.email, req.body.productPrice);
     res.redirect(req.body.path);
 };
 
 exports.postDeleteCart = (req,res)=>{
-    Cart.deleteProduct(req.body.id, ()=>{
+    Cart.deleteProduct(req.body.id, req.session.user.email, ()=>{
         res.redirect('/cart');
     });
 };
 
 exports.postUpdateQty = (req, res)=>{
-    Cart.updateQty(req.body.id, req.body.qty, (product)=>{
+    Cart.updateQty(req.body.id, req.body.qty, req.session.user.email, (product)=>{
         if (product[0].qty <= 0){
             Cart.deleteProduct(req.body.id, ()=>{
                 res.redirect('/cart')

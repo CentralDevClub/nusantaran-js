@@ -4,11 +4,12 @@ const db = knex(db_config);
 
 
 module.exports = class Cart {
-    static addProduct(productID, productPrice){
+    static addProduct(productID, owner, productPrice){
         db('cart').returning('*').insert({
             id:productID,
             qty:1,
-            price:productPrice
+            price:productPrice,
+            owner:owner
         }).catch(error=>{
             if (error.code === '23505'){
                 db('cart').where('id',productID).select('qty').then(cartQty=>{
@@ -24,20 +25,26 @@ module.exports = class Cart {
         });
     }
 
-    static fetchAll(callBack){
-        db('cart').select('*').then(products=>{
-            callBack(products)
+    static fetchAll(owner, callBack){
+        db('cart').select('*').where('owner', owner).then(products=>{
+            callBack(products);
         });
     }
 
-    static deleteProduct(id, callBack){
-        db('cart').where('id',id).del().then(products=>{
+    static deleteProduct(id, owner, callBack){
+        db('cart').where({
+            'id':id,
+            'owner':owner
+        }).del().then(products=>{
             callBack(products);
-        })
+        });
     }
 
-    static updateQty(id, qty, callBack){
-        db('cart').where('id',id).update({
+    static updateQty(id, qty, owner, callBack){
+        db('cart').where({
+            'id':id,
+            'owner':owner
+        }).update({
             'qty': qty
         }).then(()=>{
             db('cart').where('id',id).then(product=>{

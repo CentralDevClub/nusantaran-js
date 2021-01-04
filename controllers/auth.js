@@ -29,6 +29,7 @@ exports.postLogin = (req, res)=>{
             if (user.password == req.body.password){
                 console.log(`Successfully logged in - ${req.body.email}`);
                 req.session.isAuthenticated = true;
+                req.session.user = user
                 res.redirect('/');
             } else {
                 console.log(`Wrong password for "${user.email}"`);

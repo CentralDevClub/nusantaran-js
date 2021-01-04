@@ -2,9 +2,9 @@
 require('dotenv').config();
 const express = require('express');
 const Pool = require('pg').Pool;
-const pool = new Pool(require('./models/connection'));
+const connection = new Pool(require('./models/connection'));
 const session = require('express-session');
-const store = new (require('connect-pg-simple')(session))({pool:pool});
+const store = new (require('connect-pg-simple')(session))({pool:connection});
 const bodyParser = require('body-parser');
 const path = require('path');
 
@@ -20,6 +20,8 @@ app.set('view engine','ejs');
 app.set('views','views');
 app.use(bodyParser.urlencoded({extended:false}));
 app.use(express.static(path.join(__dirname,'public')));
+
+// Session
 app.use(session({
     secret: process.env.SESSION_SECRET,
     resave: false,
