@@ -19,6 +19,8 @@ module.exports = class Users{
             password: password
         }).then(()=>{
             console.log('User successfully registered');
+        }).catch(err=>{
+            console.log(err);
         });
     }
 
