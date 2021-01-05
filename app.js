@@ -37,7 +37,7 @@ app.use('/admin',adminRoute);
 app.use(errorController.get404);
 
 // Running Server
-const port = process.env.WEB_PORT || 3000;
+const port = process.env.PORT || 3000;
 app.listen(port, ()=>{
     console.log(`Server running at http://${process.env.HOST}:${port}`);
 });
