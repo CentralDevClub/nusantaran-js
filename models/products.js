@@ -2,6 +2,7 @@ const knex = require('knex');
 const unique_id = require('uuid').v4;
 const db_config = require('./db-config').config;
 const db = knex(db_config);
+const chalk = require('chalk');
 
 
 const getProducts = (cb)=>{
@@ -27,13 +28,13 @@ module.exports = class Products {
             description: this.description,
             price: this.price
         }).then(product=>{
-            console.log(`Product added : ${product.name}`);
+            console.log(chalk.underline.blue(`Product added : ${product.name}`));
         });
     }
 
     static fetchAll(callBack){
         getProducts(products=>{
-            callBack(products)
+            callBack(products);
         });
     }
 

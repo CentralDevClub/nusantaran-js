@@ -1,5 +1,6 @@
 // Import Libraries
 require('dotenv').config();
+const chalk = require('chalk');
 const express = require('express');
 const Pool = require('pg').Pool;
 const connection = new Pool(require('./models/connection'));
@@ -7,6 +8,8 @@ const session = require('express-session');
 const store = new (require('connect-pg-simple')(session))({pool:connection});
 const bodyParser = require('body-parser');
 const path = require('path');
+const csrf = require('./middleware/csrf');
+const generalData = require('./middleware/generalData');
 
 // Import Routing & Controller
 const shopRoute = require('./routes/shop');
@@ -30,6 +33,12 @@ app.use(session({
     store: store
 }));
 
+// CSRF Protection
+app.use(csrf.protection);
+
+// General Data Used in Middleware
+app.use(generalData);
+
 // Page Routing
 app.use(shopRoute);
 app.use(authRoute);
@@ -39,5 +48,5 @@ app.use(errorController.get404);
 // Running Server
 const port = process.env.PORT || 3000;
 app.listen(port, ()=>{
-    console.log(`Server running at http://${process.env.HOST}:${port}`);
+    console.log(chalk.underline.green(`Server is deployed on port ${port}`));
 });

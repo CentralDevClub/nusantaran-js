@@ -1,4 +1,5 @@
 const Users = require('../models/users');
+const chalk = require('chalk');
 
 
 exports.getRegister = (req, res) => {
@@ -25,27 +26,28 @@ exports.postRegister = (req, res)=>{
 exports.postLogin = (req, res)=>{
     Users.findUserByEmail(req.body.email, user => {
         if (user){
-            console.log(user);
+            console.log(chalk.underline.blue(`User found ${user.email}`));
             if (user.password == req.body.password){
-                console.log(`Successfully logged in - ${req.body.email}`);
+                console.log(chalk.underline.green(`Successfully logged in - ${req.body.email}`));
                 req.session.isAuthenticated = true;
                 req.session.user = user
                 res.redirect('/');
             } else {
-                console.log(`Wrong password for "${user.email}"`);
+                console.log(chalk.underline.red(`Wrong password for "${user.email}"`));
                 res.redirect('/login');
             }
         } else {
-            console.log('User not found');
+            console.log(chalk.underline.red('User not found'));
             res.redirect('/login');
         }
     });
 }
 
 exports.postLogout = (req, res) =>{
-    console.log("User logged out");
+    console.log(chalk.underline.yellow('User logged out'));
     req.session.destroy(err => {
         if (err){
+            console.log(chalk.underline.red('Error Found'));
             console.log(err);
         }
         res.redirect('/');

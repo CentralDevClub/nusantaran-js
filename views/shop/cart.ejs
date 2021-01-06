@@ -7,21 +7,25 @@
             <li><%= product.name %> | Rp.<%= product.price %> x<%= product.qty %> = Rp.<%= product.price * product.qty %></li>
             <form method="POST" action="/cart-delete">
                 <input type="hidden" name="id" value="<%= product.id %>">
+                <input type="hidden" name="_csrf" value="<%= csrfToken %>">
                 <button type="submit">Remove from cart</button>
             </form>
             <form method="POST" action="cart-update">
                 <input type="hidden" name="id" value="<%= product.id %>">
                 <input type="hidden" name="qty" value="<%= product.qty - 1 %>">
+                <input type="hidden" name="_csrf" value="<%= csrfToken %>">
                 <button type="submit">-1 qty</button>
             </form>
             <form method="POST" action="cart-update">
                 <input type="hidden" name="id" value="<%= product.id %>">
                 <input type="hidden" name="qty" value="<%= product.qty + 1 %>">
+                <input type="hidden" name="_csrf" value="<%= csrfToken %>">
                 <button type="submit">+1 qty</button>
             </form>
             <form method="POST" action="cart-update">
                 <input type="hidden" name="id" value="<%= product.id %>">
                 <input type="number" name="qty" min="1" value="<%= product.qty %>">
+                <input type="hidden" name="_csrf" value="<%= csrfToken %>">
                 <button type="submit">Set qty</button>
             </form>
         <% } %>

@@ -1,28 +1,28 @@
 const knex = require('knex');
 const db_config = require('./db-config').config;
 const db = knex(db_config);
+const chalk = require('chalk');
 
 
 module.exports = class Cart {
     static addProduct(productID, owner, productPrice){
-        db('cart').returning('*').insert({
-            id:productID,
-            qty:1,
-            price:productPrice,
-            owner:owner
-        }).catch(error=>{
-            if (error.code === '23505'){
-                db('cart').where('id',productID).select('qty').then(cartQty=>{
-                    db('cart').where('id',productID).update({
-                        'qty':cartQty[0].qty+1
-                    }).then(()=>{
-                        console.log('Product Qty updated')
-                    })
-                })
+        db('cart').where({
+            'id':productID,
+            'owner':owner
+        }).then(products=>{
+            if (products.length > 0){
+                this.updateQty(productID, products[0].qty + 1, owner, ()=>{});
+            } else {
+                db('cart').returning('*').insert({
+                    id:productID,
+                    qty:1,
+                    price:productPrice,
+                    owner:owner
+                }).then(()=>{
+                    console.log(chalk.underline.blue(`${owner}: Product added to cart`));
+                });
             }
-        }).then(()=>{
-            console.log('Product added to cart')
-        });
+        })
     }
 
     static fetchAll(owner, callBack){
@@ -48,6 +48,7 @@ module.exports = class Cart {
             'qty': qty
         }).then(()=>{
             db('cart').where('id',id).then(product=>{
+                console.log(chalk.underline.blue(`${owner}: Product Qty updated --> ${qty}`));
                 callBack(product);
             });
         });
