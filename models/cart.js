@@ -6,14 +6,12 @@ const chalk = require('chalk');
 
 module.exports = class Cart {
     static addProduct(productID, owner, productPrice){
-        db('cart').where('id',productID).then(products=>{
+        db('cart').where({
+            'id':productID,
+            'owner':owner
+        }).then(products=>{
             if (products.length > 0){
-                const qty = products[0].qty
-                db('cart').where('id',productID).update({
-                    'qty': qty + 1
-                }).then(()=>{
-                    console.log(chalk.underline.blue(`Product Qty updated ${qty} --> ${qty + 1}`));
-                })
+                this.updateQty(productID, products[0].qty + 1, owner, ()=>{});
             } else {
                 db('cart').returning('*').insert({
                     id:productID,
@@ -21,7 +19,7 @@ module.exports = class Cart {
                     price:productPrice,
                     owner:owner
                 }).then(()=>{
-                    console.log(chalk.underline.blue('Product added to cart'));
+                    console.log(chalk.underline.blue(`${owner}: Product added to cart`));
                 });
             }
         })
@@ -50,6 +48,7 @@ module.exports = class Cart {
             'qty': qty
         }).then(()=>{
             db('cart').where('id',id).then(product=>{
+                console.log(chalk.underline.blue(`${owner}: Product Qty updated --> ${qty}`));
                 callBack(product);
             });
         });
