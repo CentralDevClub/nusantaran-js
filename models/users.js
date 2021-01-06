@@ -1,6 +1,7 @@
 const knex = require('knex');
 const db_config = require('./db-config').config;
 const db = knex(db_config);
+const chalk = require('chalk');
 
 
 const allUser = (cb)=>{
@@ -8,7 +9,6 @@ const allUser = (cb)=>{
         cb(user);
     });
 };
-
 
 module.exports = class Users{
     static addUser(name, address, email, password){
@@ -18,7 +18,7 @@ module.exports = class Users{
             email: email,
             password: password
         }).then(()=>{
-            console.log('User successfully registered');
+            console.log(chalk.underline.green('User successfully registered'));
         });
     }
 
