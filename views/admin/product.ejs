@@ -2,6 +2,7 @@
 
 <h1>Add Product</h1>
 <form method="POST" action="/admin/add-product">
+    <input type="hidden" name="_csrf" value="<%= csrfToken %>">
     <label for="name">Product Name</label>
     <input type="text" name="name">
     <label for="category">Product Category</label>
@@ -19,6 +20,7 @@
             <li>
                 <span><%= product.name %></span>
                 <form method="POST" action="/admin/update-product">
+                    <input type="hidden" name="_csrf" value="<%= csrfToken %>">
                     <input type="hidden" name="id" value="<%= product.id %>">
                     <label for="name">Product Name</label>
                     <input type="text" name="name" value="<%= product.name %>">
@@ -28,9 +30,10 @@
                     <input type="text" name="description" value="<%= product.description %>">
                     <label for="price">Price</label>
                     <input type="number" name="price" value="<%= product.price %>">
-                    <button type="submit">Edit</button>
+                    <button type="submit">Commit</button>
                 </form>
                 <form action="/admin/delete-product" method="POST">
+                    <input type="hidden" name="_csrf" value="<%= csrfToken %>">
                     <input type="hidden" name="id" value="<%= product.id %>">
                     <button type="submit">Delete</button>
                 </form>

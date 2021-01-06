@@ -8,6 +8,8 @@ const session = require('express-session');
 const store = new (require('connect-pg-simple')(session))({pool:connection});
 const bodyParser = require('body-parser');
 const path = require('path');
+const csrf = require('./middleware/csrf');
+const generalData = require('./middleware/generalData');
 
 // Import Routing & Controller
 const shopRoute = require('./routes/shop');
@@ -30,6 +32,12 @@ app.use(session({
     cookie: {maxAge: 30 * 24 * 60 * 60 * 1000},
     store: store
 }));
+
+// CSRF Protection
+app.use(csrf.protection);
+
+// General Data Used in Middleware
+app.use(generalData);
 
 // Page Routing
 app.use(shopRoute);
