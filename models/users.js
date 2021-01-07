@@ -2,6 +2,8 @@ const knex = require('knex');
 const db_config = require('./db-config').config;
 const db = knex(db_config);
 const chalk = require('chalk');
+const bcrypt = require('bcrypt');
+const bcryptSaltRounds = parseInt(process.env.SALT_ROUNDS);
 
 
 const allUser = (cb)=>{
@@ -11,14 +13,18 @@ const allUser = (cb)=>{
 };
 
 module.exports = class Users{
-    static addUser(name, address, email, password){
-        db('users').returning('*').insert({
-            name: name,
-            address: address,
-            email: email,
-            password: password
-        }).then(()=>{
-            console.log(chalk.underline.green('User successfully registered'));
+    static addUser(name, address, email, password){                
+        bcrypt.genSalt(bcryptSaltRounds, (err, salt)=>{
+            bcrypt.hash(password, salt, (err, hash)=>{
+                db('users').returning('*').insert({
+                    name: name,
+                    address: address,
+                    email: email,
+                    password: hash
+                }).then(()=>{
+                    console.log(chalk.underline.green('User successfully registered'));
+                });
+            });
         });
     }
 
