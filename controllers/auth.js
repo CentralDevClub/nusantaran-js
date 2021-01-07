@@ -1,5 +1,6 @@
 const Users = require('../models/users');
 const chalk = require('chalk');
+const bcrypt = require('bcrypt');
 
 
 exports.getRegister = (req, res) => {
@@ -27,15 +28,17 @@ exports.postLogin = (req, res)=>{
     Users.findUserByEmail(req.body.email, user => {
         if (user){
             console.log(chalk.underline.blue(`User found ${user.email}`));
-            if (user.password == req.body.password){
-                console.log(chalk.underline.green(`Successfully logged in - ${req.body.email}`));
-                req.session.isAuthenticated = true;
-                req.session.user = user
-                res.redirect('/');
-            } else {
-                console.log(chalk.underline.red(`Wrong password for "${user.email}"`));
-                res.redirect('/login');
-            }
+            bcrypt.compare(req.body.password, user.password, (err, success)=>{
+                if (success){
+                    console.log(chalk.underline.green(`Successfully logged in - ${req.body.email}`));
+                    req.session.isAuthenticated = true;
+                    req.session.user = user
+                    res.redirect('/');
+                } else {
+                    console.log(chalk.underline.red(`Wrong password for "${user.email}"`));
+                    res.redirect('/login');
+                } 
+            });
         } else {
             console.log(chalk.underline.red('User not found'));
             res.redirect('/login');
