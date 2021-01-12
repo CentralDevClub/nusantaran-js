@@ -19,7 +19,7 @@ module.exports = class Cart {
                     price:productPrice,
                     owner:owner
                 }).then(()=>{
-                    console.log(chalk.underline.blue(`${owner}: Product added to cart`));
+                    console.log(chalk.blue(`${owner}: Product added to cart`));
                 });
             }
         })
@@ -36,6 +36,7 @@ module.exports = class Cart {
             'id':id,
             'owner':owner
         }).del().then(products=>{
+            console.log(chalk.yellow(`${owner}: Product removed from cart`));
             callBack(products);
         });
     }
@@ -48,7 +49,7 @@ module.exports = class Cart {
             'qty': qty
         }).then(()=>{
             db('cart').where('id',id).then(product=>{
-                console.log(chalk.underline.blue(`${owner}: Product Qty updated --> ${qty}`));
+                console.log(chalk.blue(`${owner}: Product Qty updated --> ${qty}`));
                 callBack(product);
             });
         });
