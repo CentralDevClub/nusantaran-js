@@ -28,7 +28,7 @@ module.exports = class Products {
             description: this.description,
             price: this.price
         }).then(product=>{
-            console.log(chalk.underline.blue(`Product added : ${product.name}`));
+            console.log(chalk.blue(`Product added : ${product.name}`));
         });
     }
 

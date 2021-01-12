@@ -22,7 +22,7 @@ module.exports = class Users{
                     email: email,
                     password: hash
                 }).then(()=>{
-                    console.log(chalk.underline.green('User successfully registered'));
+                    console.log(chalk.green('User successfully registered'));
                 });
             });
         });
