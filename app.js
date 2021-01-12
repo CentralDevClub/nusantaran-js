@@ -10,6 +10,7 @@ const bodyParser = require('body-parser');
 const path = require('path');
 const csrf = require('./middleware/csrf');
 const generalData = require('./middleware/generalData');
+const flash = require('connect-flash');
 
 // Import Routing & Controller
 const shopRoute = require('./routes/shop');
@@ -35,6 +36,9 @@ app.use(session({
 
 // CSRF Protection
 app.use(csrf.protection);
+
+// Flash message
+app.use(flash());
 
 // General Data Used in Middleware
 app.use(generalData);

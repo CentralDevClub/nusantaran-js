@@ -13,7 +13,8 @@ exports.getRegister = (req, res) => {
 exports.getLogin = (req, res)=>{
     res.render('auth/login', {
         'title': 'Nusantaran JS | Login',
-        'path': '/login'
+        'path': '/login',
+        'errorMessage': req.flash('error')
     })
 }
 
@@ -34,11 +35,13 @@ exports.postLogin = (req, res)=>{
                     res.redirect('/');
                 } else {
                     console.log(chalk.red(`Wrong password for "${user.email}"`));
+                    req.flash('error', 'Wrong password for this user');
                     res.redirect('/login');
                 } 
             });
         } else {
             console.log(chalk.red('User not found'));
+            req.flash('error', 'User not found. Please register');
             res.redirect('/login');
         }
     });

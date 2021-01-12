@@ -2,3 +2,8 @@
     background-color: black;
     color: white;
 }
+
+.error-message {
+    color: white;
+    background-color: rgb(223, 80, 80);
+}
