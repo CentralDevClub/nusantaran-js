@@ -1,19 +1,36 @@
 <%- include ('../includes/header.ejs') %>
 
 <h1>Product Detail</h1>
-<p><strong><%= product.name %></strong></p>
-<p>Rp.<%= product.price %></p>
-<p><%= product.description %></p>
-<% if (isAuthenticated) { %>
-    <form method="POST" action="/cart">
-        <input type="hidden" name="productID" value="<%= product.id %>">
-        <input type="hidden" name="productPrice" value="<%= product.price %>">
-        <input type="hidden" name="path" value="<%= path %>">
-        <input type="hidden" name="_csrf" value="<%= csrfToken %>">
-        <button type="submit">Add to Cart</button>
-    </form>
-<% } else { %>
-    <p>You must have account to adding product to cart</p>
-<% } %>
+<div class="article-clean">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-10 col-xl-8 offset-lg-1 offset-xl-2">
+                <div class="intro">
+                    <h1 class="text-center"><%= product.name %></h1>
+                    <p class="text-center">
+                        <span class="by">by</span><a href="#">Author Name</a>
+                        <span class="date">Rp.<%= product.price %></span>
+                    </p>
+                    <img class="img-fluid" src="assets/img/desk.jpg"></div>
+                <div class="text">
+                    <p><%= product.description %></p>
+                    <h2>Aliquam In Arcu </h2>
+                    <p>Suspendisse vel placerat ligula. Vivamus ac sem lac. Ut vehicula rhoncus elementum. Etiam quis tristique lectus. Aliquam in arcu eget velit pulvinar dictum vel in justo. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae.</p>
+                    <% if (isAuthenticated) { %>
+                        <form method="POST" action="/cart">
+                            <input type="hidden" name="productID" value="<%= product.id %>">
+                            <input type="hidden" name="productPrice" value="<%= product.price %>">
+                            <input type="hidden" name="path" value="<%= path %>">
+                            <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                            <button class="btn btn-primary" type="submit">Tambah ke Keranjang</button>
+                        </form>
+                    <% } else { %>
+                        <p>You must have account to adding product to cart</p>
+                    <% } %>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 
 <%- include ('../includes/footer.ejs') %>

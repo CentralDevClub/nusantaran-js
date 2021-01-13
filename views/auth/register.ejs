@@ -1,28 +1,41 @@
 <%- include ('../includes/header.ejs') %>
 
-<h1>Register</h1>
-<form action="/register" method="POST">
-    <input type="hidden" name="_csrf" value="<%= csrfToken %>">
-    <div>
-        <label for="name">Name</label>
-        <input type="text" name="name">
+<div class="register-photo">
+    <div class="form-container">
+        <% if (errorMessage){ %>
+            <div class="error-message">
+                <p><%= errorMessage %></p>
+            </div>
+        <% } %>
+        <div class="image-holder"></div>
+        <form action="/register" method="post">
+            <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+            <h2 class="text-center"><strong>Create</strong> an account.</h2>
+            <div class="form-group">
+                <input class="form-control" type="text" name="name" placeholder="Nama" required>
+            </div>
+            <div class="form-group">
+                <input class="form-control" type="email" name="email" placeholder="Email" required>
+            </div>
+            <div class="form-group">
+                <input class="form-control" type="password" name="password" placeholder="Password" required>
+            </div>
+            <div class="form-group">
+                <input class="form-control" type="password" name="password-repeat" placeholder="Password (repeat)" required>
+            </div>
+            <div class="form-group">
+                <input class="form-control" type="text" name="address" placeholder="Alamat" required>
+            </div>
+            <div class="form-group">
+                <div class="form-check">
+                    <label class="form-check-label"><input class="form-check-input" type="checkbox" required>I agree to the license terms.</label>
+                </div>
+            </div>
+            <div class="form-group">
+                <button class="btn btn-primary btn-block" type="submit">Sign Up</button>
+            </div>
+            <a class="already" href="/login">You already have an account? Login here.</a>
+        </form>
     </div>
-    <div>
-        <label for="address">Address</label>
-        <input type="text" name="address">
-    </div>
-    <div>
-        <label for="email">Email</label>
-        <input type="email" name="email">
-    </div>
-    <div>
-        <label for="password">Password</label>
-        <input type="password" name="password">
-    </div>
-    <div>
-        <button type="submit">Register</button>
-        <p>Already have account ? <a href="/login">Login</a></p>
-    </div>
-</form>
-
+</div>
 <%- include ('../includes/footer.ejs') %>

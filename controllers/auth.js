@@ -6,7 +6,8 @@ const bcrypt = require('bcrypt');
 exports.getRegister = (req, res) => {
     res.render('auth/register', {
         'title':'Nusantaran JS | Register',
-        'path':'/register'
+        'path':'/register',
+        'errorMessage': req.flash('error')
     });
 }
 
@@ -19,8 +20,14 @@ exports.getLogin = (req, res)=>{
 }
 
 exports.postRegister = (req, res)=>{
-    Users.addUser(req.body.name, req.body.address, req.body.email, req.body.password);
-    res.redirect('/login');
+    Users.addUser(req.body.name, req.body.address, req.body.email, req.body.password, result => {
+        if (result == 'success'){
+            res.redirect('/login');
+        } else {
+            req.flash('error', 'Email already used');
+            res.redirect('/register');
+        }
+    });
 }
 
 exports.postLogin = (req, res)=>{
