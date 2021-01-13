@@ -1,27 +1,35 @@
 <%- include ('../includes/header.ejs') %>
 
-<h1>Shop</h1>
+<h4>Available Products</h4>
 <% if (hasProduct){ %>
-    <ul>
-        <% for (let product of products){ %>
-            <li>
-                <span><%= product.name %></span> - <span>Rp.<%= product.price %></span>
-                <br>
-                <span><a href="products/<%= product.id %>">Details</a></span>
-                <% if (isAuthenticated) { %>
-                    <form method="POST" action="/cart">
-                        <input type="hidden" name="productID" value="<%= product.id %>">
-                        <input type="hidden" name="productPrice" value="<%= product.price %>">
-                        <input type="hidden" name="path" value="<%= path %>">
-                        <input type="hidden" name="_csrf" value="<%= csrfToken %>">
-                        <button type="submit">Add to Cart</button>
-                    </form>
-                <% } else { %>
+    <% for (let product of products){ %>
+        <div class="card">
+            <div class="card-body">
+                <h4 class="card-title"><%= product.name %></h4>
+                <h6 class="text-muted card-subtitle mb-2">Rp.<%= product.price %></h6>
+                <p class="card-text"><%= product.category %></p>
+                <div class="row">
+                    <div class="col">
+                        <a class="card-link" href="products/<%= product.id %>">Lihat Detail</a>
+                    </div>
+                    <div class="col">
+                        <% if (isAuthenticated) { %>
+                            <form method="POST" action="/cart">
+                                <input type="hidden" name="productID" value="<%= product.id %>">
+                                <input type="hidden" name="productPrice" value="<%= product.price %>">
+                                <input type="hidden" name="path" value="<%= path %>">
+                                <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                                <button type="submit" class="btn btn-link">Tambah ke Keranjang</button>
+                            </form>
+                        <% } %>
+                    </div>
+                </div>
+                <% if (!isAuthenticated) { %>
                     <p>You must have account to adding product to cart</p>
                 <% } %>
-            </li>
-        <% } %>
-    </ul>
+            </div>
+        </div>
+    <% } %>
 <% } else { %>
     <p>There is no products</p>
 <% } %>

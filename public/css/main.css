@@ -1,4 +1,11 @@
-.active {
-    background-color: black;
-    color: white;
+.img-register-holder {
+    overflow: hidden;
+    position: relative;
+    border: 1px solid #eee4e4;
+}
+
+.img-register {
+    position: absolute;
+    width: 100%;
+    height: 100%;
 }
