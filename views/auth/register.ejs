@@ -1,5 +1,4 @@
 <%- include ('../includes/header.ejs') %>
-
 <div class="register-photo">
     <div class="form-container">
         <% if (errorMessage){ %>
@@ -7,7 +6,9 @@
                 <p><%= errorMessage %></p>
             </div>
         <% } %>
-        <div class="image-holder"></div>
+        <div class="image-holder img-register-holder">
+            <img class="img-register" src="/img/meeting.jpg">
+        </div>
         <form action="/register" method="post">
             <input type="hidden" name="_csrf" value="<%= csrfToken %>">
             <h2 class="text-center"><strong>Create</strong> an account.</h2>
