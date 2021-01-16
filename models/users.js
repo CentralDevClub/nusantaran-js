@@ -14,8 +14,8 @@ const allUser = (cb)=>{
 
 module.exports = class Users{
     static addUser(name, address, email, password, callBack){                
-        bcrypt.genSalt(bcryptSaltRounds, (err, salt)=>{
-            bcrypt.hash(password, salt, (err, hash)=>{
+        bcrypt.genSalt(bcryptSaltRounds, (_err, salt)=>{
+            bcrypt.hash(password, salt, (_err, hash)=>{
                 db('users').returning('*').insert({
                     name: name,
                     address: address,
@@ -24,7 +24,7 @@ module.exports = class Users{
                 }).then(()=>{
                     console.log(chalk.green('User successfully registered'));
                     callBack('success')
-                }).catch(err => {
+                }).catch(() => {
                     console.log(chalk.red('Email already used'));
                     callBack('error')
                 });

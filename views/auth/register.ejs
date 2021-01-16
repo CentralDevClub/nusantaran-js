@@ -1,11 +1,11 @@
 <%- include ('../includes/header.ejs') %>
+<% if (errorMessage){ %>
+    <div class="error-message alert alert-danger">
+        <p><%= errorMessage %></p>
+    </div>
+<% } %>
 <div class="register-photo">
     <div class="form-container">
-        <% if (errorMessage){ %>
-            <div class="error-message">
-                <p><%= errorMessage %></p>
-            </div>
-        <% } %>
         <div class="image-holder img-register-holder">
             <img class="img-register" src="/img/meeting.jpg">
         </div>

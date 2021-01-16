@@ -3,11 +3,10 @@ const Cart = require('../models/cart')
 
 
 // Product controllers
-exports.getProductList = (req,res)=>{
+exports.getProductList = (_req,res)=>{
     Product.fetchAll(products => {
         const hasProduct = products.length > 0 ? true : false;
         res.render('shop/products-list',{
-            'csrfToken': req.csrfToken(),
             'title':'Nusantaran JS | Original Taste of Nusantara',
             'path':'/products',
             'hasProduct': hasProduct,
@@ -26,7 +25,7 @@ exports.getProductDetail = (req,res) => {
     });
 };
 
-exports.getIndex = (req,res)=>{
+exports.getIndex = (_req,res)=>{
     res.render('shop/index',{
         'title':'Nusantaran JS | Welcome',
         'path':'/'
@@ -86,7 +85,7 @@ exports.postUpdateQty = (req, res)=>{
 
 
 // Checkout controller
-exports.getCheckout = (req,res)=>{
+exports.getCheckout = (_req,res)=>{
     res.render('shop/checkout',{
         'title':'Nusantaran JS | Checkout',
         'path':'/checkout'
