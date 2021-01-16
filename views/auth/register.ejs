@@ -13,10 +13,10 @@
             <input type="hidden" name="_csrf" value="<%= csrfToken %>">
             <h2 class="text-center"><strong>Create</strong> an account.</h2>
             <div class="form-group">
-                <input class="form-control" type="text" name="name" placeholder="Nama" required>
+                <input class="form-control" type="text" name="name" placeholder="Nama" value="<%= placeholder.name %>" required>
             </div>
             <div class="form-group">
-                <input class="form-control" type="email" name="email" placeholder="Email" required>
+                <input class="form-control" type="email" name="email" placeholder="Email" value="<%= placeholder.email %>" required>
             </div>
             <div class="form-group">
                 <input class="form-control" type="password" name="password" placeholder="Password" required>
@@ -25,7 +25,7 @@
                 <input class="form-control" type="password" name="password-repeat" placeholder="Password (repeat)" required>
             </div>
             <div class="form-group">
-                <input class="form-control" type="text" name="address" placeholder="Alamat" required>
+                <input class="form-control" type="text" name="address" placeholder="Alamat" value="<%= placeholder.address %>" required>
             </div>
             <div class="form-group">
                 <div class="form-check">

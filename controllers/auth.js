@@ -13,28 +13,38 @@ exports.getRegister = (req, res) => {
     res.render('auth/register', {
         'title':'Nusantaran JS | Register',
         'path':'/register',
-        'errorMessage': message
+        'errorMessage': message,
+        'placeholder':{
+            'name': null,
+            'email':null,
+            'address':null
+        }
     });
 }
 
 exports.getLogin = (req, res)=>{
-    const error = req.flash('error')
+    const error = req.flash('error');
     const message = error.length > 0 ? error[0] : null
     res.render('auth/login', {
         'title': 'Nusantaran JS | Login',
         'path': '/login',
-        'errorMessage': message
+        'errorMessage': message,
+        'placeholder': req.flash('placeholder')[0]
     })
 }
 
 exports.postRegister = (req, res)=>{
     const validationError = validationResult(req);
-    console.log(validationError);
     if (!validationError.isEmpty()){
         return res.status(422).render('auth/register', {
             'title':'Nusantaran JS | Register',
             'path':'/register',
-            'errorMessage': validationError.array()[0].msg
+            'errorMessage': validationError.array()[0].msg,
+            'placeholder':{
+                'name': req.body.name,
+                'email': req.body.email,
+                'address':req.body.address
+            }
         });
     }
     Users.addUser(req.body.name, req.body.address, req.body.email, req.body.password, result => {
@@ -52,12 +62,20 @@ exports.postRegister = (req, res)=>{
             }).catch(err=>{
                 if(err){
                     console.log(chalk.red(err));
-                    res.redirect('/login');
+                    res.redirect('/register');
                 }
             });
         } else {
-            req.flash('error', 'Email already used');
-            res.redirect('/register');
+            return res.status(422).render('auth/register', {
+                'title':'Nusantaran JS | Register',
+                'path':'/register',
+                'errorMessage': 'Email already used, try another one',
+                'placeholder':{
+                    'name': req.body.name,
+                    'email': req.body.email,
+                    'address':req.body.address
+                }
+            });
         }
     });
 }
@@ -75,12 +93,14 @@ exports.postLogin = (req, res)=>{
                 } else {
                     console.log(chalk.red(`Wrong password for "${user.email}"`));
                     req.flash('error', 'Wrong password for this user');
+                    req.flash('placeholder', req.body.email);
                     res.redirect('/login');
                 } 
             });
         } else {
             console.log(chalk.red('User not found'));
             req.flash('error', 'User not found. Please register');
+            req.flash('placeholder', req.body.email);
             res.redirect('/login');
         }
     });
