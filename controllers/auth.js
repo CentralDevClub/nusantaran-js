@@ -2,27 +2,41 @@ require('dotenv').config;
 const Users = require('../models/users');
 const chalk = require('chalk');
 const bcrypt = require('bcrypt');
+const { validationResult } = require('express-validator');
 const sgMail = require('@sendgrid/mail')
 sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
 
 exports.getRegister = (req, res) => {
+    const error = req.flash('error')
+    const message = error.length > 0 ? error[0] : null
     res.render('auth/register', {
         'title':'Nusantaran JS | Register',
         'path':'/register',
-        'errorMessage': req.flash('error')
+        'errorMessage': message
     });
 }
 
 exports.getLogin = (req, res)=>{
+    const error = req.flash('error')
+    const message = error.length > 0 ? error[0] : null
     res.render('auth/login', {
         'title': 'Nusantaran JS | Login',
         'path': '/login',
-        'errorMessage': req.flash('error')
+        'errorMessage': message
     })
 }
 
 exports.postRegister = (req, res)=>{
+    const validationError = validationResult(req);
+    console.log(validationError);
+    if (!validationError.isEmpty()){
+        return res.status(422).render('auth/register', {
+            'title':'Nusantaran JS | Register',
+            'path':'/register',
+            'errorMessage': validationError.array()[0].msg
+        });
+    }
     Users.addUser(req.body.name, req.body.address, req.body.email, req.body.password, result => {
         if (result == 'success'){
             const email = {
