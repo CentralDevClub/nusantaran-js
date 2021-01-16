@@ -1,6 +1,9 @@
+require('dotenv').config;
 const Users = require('../models/users');
 const chalk = require('chalk');
 const bcrypt = require('bcrypt');
+const sgMail = require('@sendgrid/mail')
+sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
 
 exports.getRegister = (req, res) => {
@@ -22,7 +25,22 @@ exports.getLogin = (req, res)=>{
 exports.postRegister = (req, res)=>{
     Users.addUser(req.body.name, req.body.address, req.body.email, req.body.password, result => {
         if (result == 'success'){
-            res.redirect('/login');
+            const email = {
+                to: req.body.email,
+                from: process.env.MAIL_SENDER,
+                subject: 'Nusantaran User Successfully Registered',
+                text: 'and easy to do anywhere, even with Node.js',
+                html: `<h2>Yoohoo</h2><p>Dear ${req.body.name}, your account on Nusantaran was successfully registered</p>`
+            };
+            sgMail.send(email).then(()=>{
+                console.log(chalk.green(`Email Sent to ${req.body.email}`));
+                res.redirect('/login');
+            }).catch(err=>{
+                if(err){
+                    console.log(chalk.red(err));
+                    res.redirect('/login');
+                }
+            });
         } else {
             req.flash('error', 'Email already used');
             res.redirect('/register');
@@ -37,8 +55,8 @@ exports.postLogin = (req, res)=>{
             bcrypt.compare(req.body.password, user.password, (err, success)=>{
                 if (success){
                     console.log(chalk.green(`Successfully logged in - ${req.body.email}`));
+                    req.session.user = user;
                     req.session.isAuthenticated = true;
-                    req.session.user = user
                     res.redirect('/');
                 } else {
                     console.log(chalk.red(`Wrong password for "${user.email}"`));

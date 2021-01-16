@@ -7,7 +7,6 @@ exports.getProductList = (req,res)=>{
     Product.fetchAll(products => {
         const hasProduct = products.length > 0 ? true : false;
         res.render('shop/products-list',{
-            'csrfToken': req.csrfToken(),
             'title':'Nusantaran JS | Original Taste of Nusantara',
             'path':'/products',
             'hasProduct': hasProduct,
