@@ -1,18 +1,25 @@
 <%- include ('../includes/header.ejs') %>
 
+<% if (errorMessage){ %>
+    <div class="alert alert-danger">
+        <p><%= errorMessage %></p>
+    </div>
+<% } %>
+
 <h1>Add Product</h1>
 <form method="POST" action="/admin/add-product">
-    <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+    <input type="hidden" name="_csrf" value="<%= csrfToken %>" required>
     <label for="name">Product Name</label>
-    <input type="text" name="name">
+    <input type="text" name="name" value="<%= placeholder.name %>" required>
     <label for="category">Product Category</label>
-    <input type="text" name="category">
+    <input type="text" name="category" value="<%= placeholder.category%>" required>
     <label for="description">Description</label>
-    <input type="text" name="description">
+    <input class="<%= errors.find(e => e.param === 'description') ? 'invalid' : '' %>" type="text" name="description" value="<%= placeholder.description %>" required>
     <label for="price">Price</label>
-    <input type="number" name="price">
+    <input type="number" name="price" value="<%= placeholder.price %>" required>
     <button type="submit">Add New Product</button>
 </form>
+
 <h1>Edit Product</h1>
 <% if (hasProduct){ %>
     <ul>
@@ -20,21 +27,21 @@
             <li>
                 <span><%= product.name %></span>
                 <form method="POST" action="/admin/update-product">
-                    <input type="hidden" name="_csrf" value="<%= csrfToken %>">
-                    <input type="hidden" name="id" value="<%= product.id %>">
+                    <input type="hidden" name="_csrf" value="<%= csrfToken %>" required>
+                    <input type="hidden" name="id" value="<%= product.id %>" required>
                     <label for="name">Product Name</label>
-                    <input type="text" name="name" value="<%= product.name %>">
+                    <input type="text" name="name" value="<%= product.name %>" required>
                     <label for="category">Product Category</label>
-                    <input type="text" name="category" value="<%= product.category %>">
+                    <input type="text" name="category" value="<%= product.category %>" required>
                     <label for="description">Description</label>
-                    <input type="text" name="description" value="<%= product.description %>">
+                    <input type="text" name="description" value="<%= product.description %>" required>
                     <label for="price">Price</label>
-                    <input type="number" name="price" value="<%= product.price %>">
+                    <input type="number" name="price" value="<%= product.price %>" required>
                     <button type="submit">Commit</button>
                 </form>
                 <form action="/admin/delete-product" method="POST">
-                    <input type="hidden" name="_csrf" value="<%= csrfToken %>">
-                    <input type="hidden" name="id" value="<%= product.id %>">
+                    <input type="hidden" name="_csrf" value="<%= csrfToken %>" required>
+                    <input type="hidden" name="id" value="<%= product.id %>" required>
                     <button type="submit">Delete</button>
                 </form>
             </li>

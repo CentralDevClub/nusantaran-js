@@ -8,12 +8,13 @@ sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
 
 exports.getRegister = (req, res) => {
-    const error = req.flash('error')
+    const error = req.flash('errorMessage')
     const message = error.length > 0 ? error[0] : null
     res.render('auth/register', {
         'title':'Nusantaran JS | Register',
         'path':'/register',
         'errorMessage': message,
+        'errors':[],
         'placeholder':{
             'name': null,
             'email':null,
@@ -23,23 +24,26 @@ exports.getRegister = (req, res) => {
 }
 
 exports.getLogin = (req, res)=>{
-    const error = req.flash('error');
+    const error = req.flash('errorMessage');
     const message = error.length > 0 ? error[0] : null
     res.render('auth/login', {
         'title': 'Nusantaran JS | Login',
         'path': '/login',
         'errorMessage': message,
+        'errors': req.flash('errors'),
         'placeholder': req.flash('placeholder')[0]
     })
 }
 
 exports.postRegister = (req, res)=>{
     const validationError = validationResult(req);
+    // If error found
     if (!validationError.isEmpty()){
         return res.status(422).render('auth/register', {
             'title':'Nusantaran JS | Register',
             'path':'/register',
             'errorMessage': validationError.array()[0].msg,
+            'errors': validationError.array(),
             'placeholder':{
                 'name': req.body.name,
                 'email': req.body.email,
@@ -62,7 +66,7 @@ exports.postRegister = (req, res)=>{
             }).catch(err=>{
                 if(err){
                     console.log(chalk.red(err));
-                    res.redirect('/register');
+                    res.redirect('/login');
                 }
             });
         } else {
@@ -70,6 +74,7 @@ exports.postRegister = (req, res)=>{
                 'title':'Nusantaran JS | Register',
                 'path':'/register',
                 'errorMessage': 'Email already used, try another one',
+                'errors': [{'param':'email'}],
                 'placeholder':{
                     'name': req.body.name,
                     'email': req.body.email,
@@ -92,15 +97,17 @@ exports.postLogin = (req, res)=>{
                     res.redirect('/');
                 } else {
                     console.log(chalk.red(`Wrong password for "${user.email}"`));
-                    req.flash('error', 'Wrong password for this user');
+                    req.flash('errorMessage', 'Wrong password for this user');
                     req.flash('placeholder', req.body.email);
+                    req.flash('errors', {'param':'password'});
                     res.redirect('/login');
                 } 
             });
         } else {
             console.log(chalk.red('User not found'));
-            req.flash('error', 'User not found. Please register');
+            req.flash('errorMessage', 'User not found. Please register');
             req.flash('placeholder', req.body.email);
+            req.flash('errors', {'param':'email'});
             res.redirect('/login');
         }
     });
