@@ -1,3 +1,4 @@
+const chalk = require('chalk');
 const Product = require('../models/products');
 const { validationResult } = require('express-validator');
 
@@ -6,8 +7,13 @@ exports.postAddProduct = (req, res)=>{
     const validationError = validationResult(req);
     if (validationError.isEmpty()){
         const product = new Product(req.body.name,req.body.category,req.body.description,req.body.price);
-        product.save();
-        res.redirect('/admin/product');
+        product.save().then((product) => {
+            console.log(chalk.blue(`Product added : ${product[0].name}`));
+            res.redirect('/admin/product');
+        }).catch(()=>{
+            console.log(chalk.red('Insert Product Failed!'))
+            res.redirect('/500');
+        });
     } else {
         req.flash('errorMessage', validationError.array()[0].msg);
         req.flash('errors', validationError.array());

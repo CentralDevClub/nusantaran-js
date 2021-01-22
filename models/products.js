@@ -21,14 +21,16 @@ module.exports = class Products {
     }
     
     save(){
-        db('products').returning('*').insert({
+        return db('products').insert({
             id: this.id,
             name: this.name,
             category: this.category,
             description: this.description,
             price: this.price
-        }).then(product=>{
-            console.log(chalk.blue(`Product added : ${product[0].name}`));
+        }).then(product =>{
+            return product
+        }).catch(error => {
+            throw new Error(error);
         });
     }
 
