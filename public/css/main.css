@@ -9,3 +9,19 @@
     width: 100%;
     height: 100%;
 }
+
+.invalid {
+    border: 1px solid red !important;
+}
+
+.dimmed-bg {
+    background-color: #eef4f7;
+}
+
+.cart {
+    list-style: none;
+}
+
+.cart-button {
+    display: inline;
+}

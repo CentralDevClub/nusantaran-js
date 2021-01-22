@@ -47,6 +47,7 @@ app.use(generalData);
 app.use(shopRoute);
 app.use(authRoute);
 app.use('/admin',adminRoute);
+app.get('/500', errorController.get500);
 app.use(errorController.get404);
 
 // Running Server

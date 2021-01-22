@@ -2,7 +2,6 @@ const knex = require('knex');
 const unique_id = require('uuid').v4;
 const db_config = require('./db-config').config;
 const db = knex(db_config);
-const chalk = require('chalk');
 
 
 const getProducts = (cb)=>{
@@ -21,14 +20,16 @@ module.exports = class Products {
     }
     
     save(){
-        db('products').returning('*').insert({
+        return db('products').insert({
             id: this.id,
             name: this.name,
             category: this.category,
             description: this.description,
             price: this.price
-        }).then(product=>{
-            console.log(chalk.blue(`Product added : ${product.name}`));
+        }).then(product =>{
+            return product
+        }).catch(error => {
+            throw new Error(error);
         });
     }
 
