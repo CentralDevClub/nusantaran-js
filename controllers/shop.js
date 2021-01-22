@@ -47,7 +47,9 @@ exports.getCart = (req,res)=>{
             }
 
             let totalPrice = 0
-            products.map(p=>totalPrice += (p.price*p.qty))
+            products.forEach((p) => {
+                totalPrice += (p.price * p.qty);
+            });
 
             const hasProduct = products.length > 0 ? true : false;
             res.status(200).render('shop/cart',{
