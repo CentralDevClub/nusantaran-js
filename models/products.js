@@ -20,16 +20,12 @@ module.exports = class Products {
     }
     
     save(){
-        return db('products').insert({
+        return db('products').returning('*').insert({
             id: this.id,
             name: this.name,
             category: this.category,
             description: this.description,
             price: this.price
-        }).then(product =>{
-            return product
-        }).catch(error => {
-            throw new Error(error);
         });
     }
 
