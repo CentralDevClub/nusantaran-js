@@ -11,6 +11,7 @@ exports.postAddProduct = (req, res)=>{
             console.log(chalk.blue(`Product added : ${product[0].name}`));
             res.redirect('/admin/product');
         }).catch(()=>{
+            console.log('Passing catch')
             console.log(chalk.red('Insert Product Failed!'))
             res.redirect('/500');
         });
