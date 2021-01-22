@@ -1,45 +1,47 @@
 <%- include ('../includes/header.ejs') %>
 
-<div class="container dimmed-bg">
-    <div class="row">
-        <div class="col">
-            <h4>Available Products</h4>
+<div class="container-fluid dimmed-bg">
+    <div class="container pt-4">
+        <div class="row">
+            <div class="col">
+                <h2>Available Products</h2>
+            </div>
         </div>
     </div>
-</div>
-<div class="container dimmed-bg">
-    <% if (hasProduct){ %>
-        <% for (let product of products){ %>
-            <div class="card mt-4 mb-4">
-                <div class="card-body">
-                    <h4 class="card-title"><%= product.name %></h4>
-                    <h6 class="text-muted card-subtitle mb-2">Rp.<%= product.price %></h6>
-                    <p class="card-text"><%= product.category %></p>
-                    <div class="row">
-                        <div class="col">
-                            <a class="card-link" href="products/<%= product.id %>">Lihat Detail</a>
+    <div class="container pb-4">
+        <% if (hasProduct){ %>
+            <% for (let product of products){ %>
+                <div class="card mt-4 mb-4">
+                    <div class="card-body">
+                        <h4 class="card-title"><%= product.name %></h4>
+                        <h6 class="text-muted card-subtitle mb-2">Rp.<%= product.price %></h6>
+                        <p class="card-text"><%= product.category %></p>
+                        <div class="row">
+                            <div class="col">
+                                <a class="card-link" href="products/<%= product.id %>">Lihat Detail</a>
+                            </div>
+                            <div class="col">
+                                <% if (isAuthenticated) { %>
+                                    <form method="POST" action="/cart">
+                                        <input type="hidden" name="productID" value="<%= product.id %>">
+                                        <input type="hidden" name="productPrice" value="<%= product.price %>">
+                                        <input type="hidden" name="path" value="<%= path %>">
+                                        <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                                        <button type="submit" class="btn btn-primary">Tambah ke Keranjang</button>
+                                    </form>
+                                <% } %>
+                            </div>
                         </div>
-                        <div class="col">
-                            <% if (isAuthenticated) { %>
-                                <form method="POST" action="/cart">
-                                    <input type="hidden" name="productID" value="<%= product.id %>">
-                                    <input type="hidden" name="productPrice" value="<%= product.price %>">
-                                    <input type="hidden" name="path" value="<%= path %>">
-                                    <input type="hidden" name="_csrf" value="<%= csrfToken %>">
-                                    <button type="submit" class="btn btn-link">Tambah ke Keranjang</button>
-                                </form>
-                            <% } %>
-                        </div>
+                        <% if (!isAuthenticated) { %>
+                            <p class="mt-4 alert alert-warning">You must have account to adding product to cart</p>
+                        <% } %>
                     </div>
-                    <% if (!isAuthenticated) { %>
-                        <p>You must have account to adding product to cart</p>
-                    <% } %>
                 </div>
-            </div>
+            <% } %>
+        <% } else { %>
+            <p>There is no products</p>
         <% } %>
-    <% } else { %>
-        <p>There is no products</p>
-    <% } %>
+    </div>
 </div>
 
 <%- include ('../includes/footer.ejs') %>

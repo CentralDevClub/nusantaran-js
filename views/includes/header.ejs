@@ -30,13 +30,13 @@
                             <a class="btn btn-primary action-button" role="button" href="/register">Sign Up</a>
                         </span>
                     <% } else { %>
-                        <span class="navbar-text actions">
+                        <div class="navbar-text actions">
                             <% if (username){ %> 
-                                <p><%= username %></p>
+                                <p style="display: inline;" class="mr-2"><%= username %></p>
                             <% } %>
-                            <form action="/logout" method="POST">
+                            <form style="display: inline;" action="/logout" method="POST">
                                 <input type="hidden" name="_csrf" value="<%= csrfToken %>">
-                                <button type="submit" class="btn btn-primary">Logout</button>
+                                <button type="submit" class="btn btn-info">Logout</button>
                             </form>
                         </span>
                     <% } %>

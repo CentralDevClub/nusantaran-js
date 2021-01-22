@@ -1,54 +1,88 @@
 <%- include ('../includes/header.ejs') %>
 
-<% if (errorMessage){ %>
-    <div class="alert alert-danger">
-        <p><%= errorMessage %></p>
+<div class="container-fluid dimmed-bg">
+    <div class="container pt-4">
+        <div class="row">
+            <% if (errorMessage){ %>
+                <div class="col alert alert-danger">
+                    <p><%= errorMessage %></p>
+                </div>
+            <% } %>
+        </div>
     </div>
-<% } %>
-
-<h1>Add Product</h1>
-<form method="POST" action="/admin/add-product">
-    <input type="hidden" name="_csrf" value="<%= csrfToken %>" required>
-    <label for="name">Product Name</label>
-    <input type="text" name="name" value="<%= placeholder.name %>" required>
-    <label for="category">Product Category</label>
-    <input type="text" name="category" value="<%= placeholder.category%>" required>
-    <label for="description">Description</label>
-    <input class="<%= errors.find(e => e.param === 'description') ? 'invalid' : '' %>" type="text" name="description" value="<%= placeholder.description %>" required>
-    <label for="price">Price</label>
-    <input type="number" name="price" value="<%= placeholder.price %>" required>
-    <button type="submit">Add New Product</button>
-</form>
-
-<h1>Edit Product</h1>
-<% if (hasProduct){ %>
-    <ul>
-        <% for (let product of products){ %>
-            <li>
-                <span><%= product.name %></span>
-                <form method="POST" action="/admin/update-product">
+    <div class="container pb-4 pt-4">
+        <div class="row">
+            <div class="col">
+                <h2>Add Product</h2>
+                <form class="form-container" method="POST" action="/admin/add-product">
                     <input type="hidden" name="_csrf" value="<%= csrfToken %>" required>
-                    <input type="hidden" name="id" value="<%= product.id %>" required>
-                    <label for="name">Product Name</label>
-                    <input type="text" name="name" value="<%= product.name %>" required>
-                    <label for="category">Product Category</label>
-                    <input type="text" name="category" value="<%= product.category %>" required>
-                    <label for="description">Description</label>
-                    <input type="text" name="description" value="<%= product.description %>" required>
-                    <label for="price">Price</label>
-                    <input type="number" name="price" value="<%= product.price %>" required>
-                    <button type="submit">Commit</button>
+                    <div class="form-group">
+                        <label for="name">Product Name</label>
+                        <input class="form-control" type="text" name="name" value="<%= placeholder.name %>" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="category">Product Category</label>
+                        <input class="form-control" type="text" name="category" value="<%= placeholder.category%>" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="description">Description</label>
+                        <input class="form-control" class="<%= errors.find(e => e.param === 'description') ? 'invalid' : '' %>" type="text" name="description" value="<%= placeholder.description %>" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="price">Price</label>
+                        <input class="form-control" type="number" name="price" value="<%= placeholder.price %>" required>
+                    </div>
+                    <button class="btn btn-primary" type="submit">Add New Product</button>
                 </form>
-                <form action="/admin/delete-product" method="POST">
-                    <input type="hidden" name="_csrf" value="<%= csrfToken %>" required>
-                    <input type="hidden" name="id" value="<%= product.id %>" required>
-                    <button type="submit">Delete</button>
-                </form>
-            </li>
-        <% } %>
-    </ul>
-<% } else { %>
-    <p>There is no products</p>
-<% } %>
+            </div>
+        </div>
+    </div>
+    <div class="container pb-4">
+        <div class="row">
+            <div class="col">
+                <h2>Edit Product</h2>
+                <% if (hasProduct){ %>
+                    <ul class="cart">
+                        <% for (let product of products){ %>
+                            <li class="card mt-4">
+                                <div class="card-body">
+                                    <h4 class="cart-title"><%= product.name %></h4>
+                                    <form class="form-container" method="POST" action="/admin/update-product">
+                                        <input type="hidden" name="_csrf" value="<%= csrfToken %>" required>
+                                        <input type="hidden" name="id" value="<%= product.id %>" required>
+                                        <div class="form-group">
+                                            <label for="name">Product Name</label>
+                                            <input class="form-control" type="text" name="name" value="<%= product.name %>" required>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="category">Product Category</label>
+                                            <input class="form-control" type="text" name="category" value="<%= product.category %>" required>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="description">Description</label>
+                                            <input class="form-control" type="text" name="description" value="<%= product.description %>" required>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="price">Price</label>
+                                            <input class="form-control" type="number" name="price" value="<%= product.price %>" required>
+                                        </div>
+                                        <button class="btn btn-primary" type="submit">Commit Changes</button>
+                                    </form>
+                                    <form style="float: right;" action="/admin/delete-product" method="POST">
+                                        <input type="hidden" name="_csrf" value="<%= csrfToken %>" required>
+                                        <input type="hidden" name="id" value="<%= product.id %>" required>
+                                        <button class="btn btn-danger" type="submit">Delete</button>
+                                    </form>
+                                </div>
+                            </li>
+                        <% } %>
+                    </ul>
+                <% } else { %>
+                    <p>There is no products</p>
+                <% } %>
+            </div>
+        </div>
+    </div>
+</div>
 
 <%- include ('../includes/footer.ejs') %>

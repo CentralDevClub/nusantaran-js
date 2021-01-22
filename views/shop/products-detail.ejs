@@ -1,10 +1,10 @@
 <%- include ('../includes/header.ejs') %>
 
-<h1>Product Detail</h1>
-<div class="article-clean">
+<div class="article-clean dimmed-bg pt-4 pb-4">
     <div class="container">
         <div class="row">
             <div class="col-lg-10 col-xl-8 offset-lg-1 offset-xl-2">
+                <h2>Product Detail</h2>
                 <div class="intro">
                     <h1 class="text-center"><%= product.name %></h1>
                     <p class="text-center">
@@ -25,7 +25,7 @@
                             <button class="btn btn-primary" type="submit">Tambah ke Keranjang</button>
                         </form>
                     <% } else { %>
-                        <p>You must have account to adding product to cart</p>
+                        <p class="alert alert-warning">You must have account to adding product to cart</p>
                     <% } %>
                 </div>
             </div>

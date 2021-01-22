@@ -19,7 +19,7 @@ exports.getProductDetail = (req,res) => {
     Product.findById(req.params.id,product=>{
         res.render('shop/products-detail',{
             'title':`Nusantaran JS | ${product.name}`,
-            'path':`/products/${req.params.id}`,
+            'path':`/${req.params.id}`,
             'product':product
         });
     });
@@ -45,11 +45,12 @@ exports.getCart = (req,res)=>{
                     products.push({name:prod.name,id:prod.id,price:prod.price,qty:inCart.qty})
                 }
             }
+
             let totalPrice = 0
             products.map(p=>totalPrice += (p.price*p.qty))
 
             const hasProduct = products.length > 0 ? true : false;
-            res.render('shop/cart',{
+            res.status(200).render('shop/cart',{
                 'title':'Nusantaran JS | Cart',
                 'path':'/cart',
                 'hasProduct':hasProduct,
