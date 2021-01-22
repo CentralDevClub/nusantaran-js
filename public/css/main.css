@@ -13,3 +13,7 @@
 .invalid{
     border: 1px solid red !important;
 }
+
+.dimmed-bg {
+    background-color: #eef4f7;
+}
