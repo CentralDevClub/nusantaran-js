@@ -25,11 +25,14 @@ exports.getRegister = (req, res) => {
 
 exports.getLogin = (req, res)=>{
     const error = req.flash('errorMessage');
-    const message = error.length > 0 ? error[0] : null
+    const success = req.flash('successMessage');
+    const successMessage = success.length > 0 ? success[0] : null;
+    const message = error.length > 0 ? error[0] : null;
     res.render('auth/login', {
         'title': 'Nusantaran JS | Login',
         'path': '/login',
         'errorMessage': message,
+        'successMessage': successMessage,
         'errors': req.flash('errors'),
         'placeholder': req.flash('placeholder')[0]
     })
@@ -37,7 +40,6 @@ exports.getLogin = (req, res)=>{
 
 exports.postRegister = (req, res)=>{
     const validationError = validationResult(req);
-    // If error found
     if (!validationError.isEmpty()){
         return res.status(422).render('auth/register', {
             'title':'Nusantaran JS | Register',
@@ -51,65 +53,68 @@ exports.postRegister = (req, res)=>{
             }
         });
     }
-    Users.addUser(req.body.name, req.body.address, req.body.email, req.body.password, result => {
-        if (result == 'success'){
-            const email = {
-                to: req.body.email,
-                from: process.env.MAIL_SENDER,
-                subject: 'Nusantaran User Successfully Registered',
-                text: 'and easy to do anywhere, even with Node.js',
-                html: `<h2>Yoohoo</h2><p>Dear ${req.body.name}, your account on Nusantaran was successfully registered</p>`
-            };
-            sgMail.send(email).then(()=>{
-                console.log(chalk.green(`Email Sent to ${req.body.email}`));
-                res.redirect('/login');
-            }).catch(err=>{
-                if(err){
-                    console.log(chalk.red(err));
-                    res.redirect('/login');
-                }
-            });
-        } else {
-            return res.status(422).render('auth/register', {
-                'title':'Nusantaran JS | Register',
-                'path':'/register',
-                'errorMessage': 'Email already used, try another one',
-                'errors': [{'param':'email'}],
-                'placeholder':{
-                    'name': req.body.name,
-                    'email': req.body.email,
-                    'address':req.body.address
-                }
-            });
-        }
+    Users.addUser(req.body.name, req.body.address, req.body.email, req.body.password).then(() => {
+        const email = {
+            to: req.body.email,
+            from: process.env.MAIL_SENDER,
+            subject: 'Nusantaran User Successfully Registered',
+            text: `Dear ${req.body.name}. Successfuly signed up on Nusantaran. You can go login`,
+            html: `<h2>Yoohoo</h2><p>Dear ${req.body.name}, your account on Nusantaran was successfully registered. You can go login now</p>`
+        };
+        sgMail.send(email).then(()=>{
+            console.log(chalk.green(`Email Sent to ${req.body.email}`));
+            req.flash('successMessage', 'Successfully signed up. Please check your email. Check spam folder too');
+            res.redirect('/login');
+        }).catch(err=>{
+            console.log(chalk.red(err));
+            req.flash('successMessage', 'Successfully signed up. You can go login')
+            res.redirect('/login');
+        });
+    }).catch(()=>{
+        return res.status(422).render('auth/register', {
+            'title':'Nusantaran JS | Register',
+            'path':'/register',
+            'errorMessage': 'Email already used, try another one',
+            'errors': [{'param':'email'}],
+            'placeholder':{
+                'name': req.body.name,
+                'email': req.body.email,
+                'address':req.body.address
+            }
+        });
     });
 }
 
 exports.postLogin = (req, res)=>{
-    Users.findUserByEmail(req.body.email, user => {
-        if (user){
-            console.log(chalk.blue(`User found ${user.email}`));
-            bcrypt.compare(req.body.password, user.password, (err, success)=>{
+    Users.findUserByEmail(req.body.email).then((user)=>{
+        console.log(chalk.blue(`User found ${user.email}`));
+        try {
+            bcrypt.compare(req.body.password, user.password).then((success)=>{
                 if (success){
                     console.log(chalk.green(`Successfully logged in - ${req.body.email}`));
                     req.session.user = user;
                     req.session.isAuthenticated = true;
                     res.redirect('/');
                 } else {
-                    console.log(chalk.red(`Wrong password for "${user.email}"`));
-                    req.flash('errorMessage', 'Wrong password for this user');
-                    req.flash('placeholder', req.body.email);
-                    req.flash('errors', {'param':'password'});
-                    res.redirect('/login');
-                } 
-            });
-        } else {
-            console.log(chalk.red('User not found'));
-            req.flash('errorMessage', 'User not found. Please register');
-            req.flash('placeholder', req.body.email);
-            req.flash('errors', {'param':'email'});
-            res.redirect('/login');
+                    throw new Error(`Wrong password for "${user.email}"`);
+                }
+            }).catch((error)=>{
+                console.log(chalk.red(error));
+                req.flash('errorMessage', 'Wrong password for this user');
+                req.flash('placeholder', req.body.email);
+                req.flash('errors', {'param':'password'});
+                res.redirect('/login');
+            })
+        } catch (error) {
+            console.log(error);
+            res.redirect('/500');
         }
+    }).catch(()=>{
+        console.log(chalk.red('User not found'));
+        req.flash('errorMessage', 'User not found. Please register');
+        req.flash('placeholder', req.body.email);
+        req.flash('errors', {'param':'email'});
+        res.redirect('/login');
     });
 }
 

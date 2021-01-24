@@ -5,6 +5,11 @@
         <p><%= errorMessage %></p>
     </div>
 <% } %>
+<% if (successMessage){ %> 
+    <div class="alert alert-success">
+        <p><%= successMessage %></p>
+    </div>
+<% } %> 
 <div class="login-clean">
     <form action="/login" method="POST">
         <input type="hidden" name="_csrf" value="<%= csrfToken %>">

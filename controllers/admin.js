@@ -29,7 +29,7 @@ exports.postAddProduct = (req, res)=>{
 };
 
 exports.getProduct = (req,res)=>{
-    Product.fetchAll(products => {
+    Product.fetchAll().then((products) => {
         const placeholder = req.flash('placeholder');
         const placeholderData = placeholder.length > 0 ? placeholder[0] : {}
         const error = req.flash('errorMessage');
@@ -44,17 +44,26 @@ exports.getProduct = (req,res)=>{
             'errors': req.flash('errors'),
             'placeholder': placeholderData
         });
+    }).catch((error)=>{
+        console.log(error);
+        res.redirect('/500');
     });
 };
 
 exports.postUpdateProduct = (req,res)=>{
-    Product.updateProduct(req.body, ()=> {
+    Product.updateProduct(req.body).then(()=> {
         res.redirect('/admin/product');
+    }).catch((error)=>{
+        console.log(error);
+        res.redirect('/500');
     });
 };
 
 exports.postDeleteProduct = (req,res)=>{
-    Product.deleteProduct(req.body.id, ()=>{
+    Product.deleteProduct(req.body.id).then(()=>{
         res.redirect('/admin/product');
+    }).catch((error)=>{
+        console.log(error);
+        res.redirect('/500');
     });
 };

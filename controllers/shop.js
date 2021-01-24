@@ -4,7 +4,7 @@ const Cart = require('../models/cart')
 
 // Product controllers
 exports.getProductList = (_req,res)=>{
-    Product.fetchAll(products => {
+    Product.fetchAll().then((products)=>{
         const hasProduct = products.length > 0 ? true : false;
         res.render('shop/products-list',{
             'title':'Nusantaran JS | Original Taste of Nusantara',
@@ -12,16 +12,22 @@ exports.getProductList = (_req,res)=>{
             'hasProduct': hasProduct,
             'products':products
         });
+    }).catch((error)=>{
+        console.log(error);
+        res.redirect('/500');
     });
 };
 
 exports.getProductDetail = (req,res) => {
-    Product.findById(req.params.id,product=>{
+    Product.findById(req.params.id).then((product) =>{
         res.render('shop/products-detail',{
             'title':`Nusantaran JS | ${product.name}`,
-            'path':`/${req.params.id}`,
+            'path':`products/${req.params.id}`,
             'product':product
         });
+    }).catch((error)=>{
+        console.log(error);
+        res.redirect('/500');
     });
 };
 
@@ -36,8 +42,9 @@ exports.getIndex = (_req,res)=>{
 // Cart controllers
 exports.getCart = (req,res)=>{
     const owner = req.session.user.email;
-    Cart.fetchAll(owner, cartProducts=>{
-        Product.fetchAll(shopProducts=>{
+    Cart.fetchAll(owner).then((cartProducts)=>{
+        Product.fetchAll().then((shopProducts)=>{
+            // Filter product contain in cart
             let products = []
             for (let prod of shopProducts){
                 const inCart = cartProducts.find(p=>p.id === prod.id);
@@ -46,6 +53,7 @@ exports.getCart = (req,res)=>{
                 }
             }
 
+            // Calculating total price
             let totalPrice = 0
             products.forEach((p) => {
                 totalPrice += (p.price * p.qty);
@@ -59,30 +67,46 @@ exports.getCart = (req,res)=>{
                 'products': products,
                 'totalPrice':totalPrice
             });
+        }).catch((error)=>{
+            console.log(error);
+            res.redirect('/500');
         });
+    }).catch((error)=>{
+        console.log(error);
+        res.redirect('/500');
     });
 };
 
 exports.postCart = (req,res)=>{
-    Cart.addProduct(req.body.productID, req.session.user.email, req.body.productPrice);
-    res.redirect(req.body.path);
+    Cart.addProduct(req.body.productID, req.session.user.email, req.body.productPrice).then(()=>{
+        res.redirect(req.body.path);
+    }).catch((error)=>{
+        console.log(error);
+        res.redirect('/500');
+    });
 };
 
 exports.postDeleteCart = (req,res)=>{
-    Cart.deleteProduct(req.body.id, req.session.user.email, ()=>{
+    Cart.deleteProduct(req.body.id, req.session.user.email).then(()=>{
         res.redirect('/cart');
+    }).catch((error)=>{
+        console.log(error);
+        res.redirect('/500');
     });
 };
 
 exports.postUpdateQty = (req, res)=>{
-    Cart.updateQty(req.body.id, req.body.qty, req.session.user.email, (product)=>{
+    Cart.updateQty(req.body.id, req.body.qty, req.session.user.email).then((product)=>{
         if (product[0].qty <= 0){
-            Cart.deleteProduct(req.body.id, req.session.user.email, ()=>{
+            Cart.deleteProduct(req.body.id, req.session.user.email).then(()=>{
                 res.redirect('/cart')
             });
         } else {
             res.redirect('/cart');
         }
+    }).catch((error)=>{
+        console.log(error);
+        res.redirect('/500');
     });
 }
 
