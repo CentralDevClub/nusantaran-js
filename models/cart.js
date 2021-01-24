@@ -5,53 +5,72 @@ const chalk = require('chalk');
 
 
 module.exports = class Cart {
-    static addProduct(productID, owner, productPrice){
-        db('cart').where({
-            'id':productID,
-            'owner':owner
-        }).then(products=>{
-            if (products.length > 0){
-                this.updateQty(productID, products[0].qty + 1, owner, ()=>{});
-            } else {
-                db('cart').returning('*').insert({
-                    id:productID,
-                    qty:1,
-                    price:productPrice,
-                    owner:owner
-                }).then(()=>{
+    static async addProduct(productID, owner, productPrice){
+        try {
+            const products = await db('cart').where({
+                'id': productID,
+                'owner': owner
+            });
+            if (products.length > 0) {
+                this.updateQty(productID, products[0].qty + 1, owner, () => { });
+            }
+            else {
+                return db('cart').returning('*').insert({
+                    id: productID,
+                    qty: 1,
+                    price: productPrice,
+                    owner: owner
+                }).then((cart) => {
                     console.log(chalk.blue(`${owner}: Product added to cart`));
+                    return cart;
+                }).catch((error) => {
+                    throw new Error(error);
                 });
             }
-        })
+        }
+        catch (error_1) {
+            throw new Error(error_1);
+        }
     }
 
-    static fetchAll(owner, callBack){
-        db('cart').select('*').where('owner', owner).then(products=>{
-            callBack(products);
-        });
+    static async fetchAll(owner){
+        const products = await db('cart').select('*').where('owner', owner);
+        return products;
     }
 
-    static deleteProduct(id, owner, callBack){
-        db('cart').where({
-            'id':id,
-            'owner':owner
-        }).del().then(products=>{
+    static async deleteProduct(id, owner){
+        try {
+            const products = await db('cart').where({
+                'id': id,
+                'owner': owner
+            }).del();
             console.log(chalk.yellow(`${owner}: Product removed from cart`));
-            callBack(products);
-        });
+            return products;
+        }
+        catch (error) {
+            throw new Error(error);
+        }
     }
 
-    static updateQty(id, qty, owner, callBack){
-        db('cart').where({
-            'id':id,
-            'owner':owner
-        }).update({
-            'qty': qty
-        }).then(()=>{
-            db('cart').where('id',id).then(product=>{
-                console.log(chalk.blue(`${owner}: Product Qty updated --> ${qty}`));
-                callBack(product);
+    static async updateQty(id, qty, owner){
+        try {
+            await db('cart').where({
+                'id': id,
+                'owner': owner
+            }).update({
+                'qty': qty
             });
-        });
+            try {
+                const product = await db('cart').where('id', id);
+                console.log(chalk.blue(`${owner}: Product Qty updated --> ${qty}`));
+                return product;
+            }
+            catch (error) {
+                throw new Error(error);
+            }
+        }
+        catch (error_1) {
+            throw new Error(error_1);
+        }
     }
 };
