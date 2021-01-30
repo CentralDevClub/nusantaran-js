@@ -1,5 +1,8 @@
 require('dotenv').config;
 const Users = require('../models/users');
+const knex = require('knex');
+const db_config = require('../models/db-config').config;
+const db = knex(db_config);
 const chalk = require('chalk');
 const bcrypt = require('bcrypt');
 const { validationResult } = require('express-validator');
@@ -94,7 +97,19 @@ exports.postLogin = (req, res)=>{
                     console.log(chalk.green(`Successfully logged in - ${req.body.email}`));
                     req.session.user = user;
                     req.session.isAuthenticated = true;
-                    res.redirect('/');
+                    db('administrator').select('*').then((admins)=>{
+                        if (admins){
+                            admins.forEach((admin)=>{
+                                if (req.body.email === admin.email){
+                                    req.session.isAdmin = true;
+                                }
+                            });
+                        }
+                        res.redirect('/')
+                    }).catch(()=>{
+                        console.log('Catch at : models/auth.js:110');
+                        res.redirect('/500');
+                    });
                 } else {
                     throw new Error(`Wrong password for "${user.email}"`);
                 }

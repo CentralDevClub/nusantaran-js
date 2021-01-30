@@ -3,6 +3,7 @@ module.exports = (req, res, next)=>{
     if (req.session.user){
         res.locals.username = req.session.user.name;
     }
+    res.locals.isAdmin = req.session.isAdmin;
     res.locals.csrfToken = req.csrfToken();
     next();
 }
