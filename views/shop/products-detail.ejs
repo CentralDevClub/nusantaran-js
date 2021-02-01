@@ -8,14 +8,12 @@
                 <div class="intro">
                     <h1 class="text-center"><%= product.name %></h1>
                     <p class="text-center">
-                        <span class="by">by</span><a href="#">Author Name</a>
+                        <span class="by">by</span><a href="#"><%= product.owner %></a>
                         <span class="date">Rp.<%= product.price %></span>
                     </p>
-                    <img class="img-fluid" src="/img/desk.jpg"></div>
+                    <img class="img-fluid" src="/<%= product.image %>"></div>
                 <div class="text">
                     <p><%= product.description %></p>
-                    <h2>Aliquam In Arcu </h2>
-                    <p>Suspendisse vel placerat ligula. Vivamus ac sem lac. Ut vehicula rhoncus elementum. Etiam quis tristique lectus. Aliquam in arcu eget velit pulvinar dictum vel in justo. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae.</p>
                     <% if (isAuthenticated) { %>
                         <form method="POST" action="/cart">
                             <input type="hidden" name="productID" value="<%= product.id %>">

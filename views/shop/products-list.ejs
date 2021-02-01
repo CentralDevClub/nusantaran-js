@@ -11,14 +11,15 @@
     <div class="container pb-4">
         <% if (hasProduct){ %>
             <% for (let product of products){ %>
-                <div class="card mt-4 mb-4">
-                    <div class="card-body">
-                        <h4 class="card-title"><%= product.name %></h4>
-                        <h6 class="text-muted card-subtitle mb-2">Rp.<%= product.price %></h6>
-                        <p class="card-text"><%= product.category %></p>
-                        <div class="row">
+                <div class="card mt-4 mb-4" style="width: 18rem;">
+                    <img class="card-img-top" src="/<%= product.image %>">
+                    <div class="card-body text-center">
+                        <h4 class="card-title text-center"><%= product.name %></h4>
+                        <strong class="text-muted card-subtitle mb-2 text-center">Rp.<%= product.price %></strong>
+                        <span class="card-text text-center"><%= product.category %></span>
+                        <div class="row mt-2">
                             <div class="col">
-                                <a class="card-link" href="products/<%= product.id %>">Lihat Detail</a>
+                                <a class="btn btn-link" href="products/<%= product.id %>">Lihat Detail</a>
                             </div>
                             <div class="col">
                                 <% if (isAuthenticated) { %>
@@ -26,7 +27,7 @@
                                         <input type="hidden" name="productID" value="<%= product.id %>">
                                         <input type="hidden" name="productPrice" value="<%= product.price %>">
                                         <input type="hidden" name="_csrf" value="<%= csrfToken %>">
-                                        <button type="submit" class="btn btn-primary">Tambah ke Keranjang</button>
+                                        <button type="submit" class="btn btn-primary">Add to Cart</button>
                                     </form>
                                 <% } %>
                             </div>

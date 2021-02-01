@@ -6,13 +6,20 @@ const { validationResult } = require('express-validator');
 exports.postAddProduct = (req, res)=>{
     const validationError = validationResult(req);
     if (validationError.isEmpty()){
-        const product = new Product(req.body.name,req.body.category,req.body.description,req.body.price);
+        const product = new Product(
+            req.body.name,
+            req.body.category,
+            req.body.description,
+            req.body.price,
+            req.file.path,
+            req.session.user.name
+        );
         product.save().then((product) => {
             console.log(chalk.blue(`Product added : ${product[0].name}`));
             res.redirect('/admin/product');
         }).catch(()=>{
-            console.log('Passing catch')
             console.log(chalk.red('Insert Product Failed!'))
+            console.log('Caught at controllers/admin.js:21')
             res.redirect('/500');
         });
     } else {

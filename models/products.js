@@ -4,12 +4,14 @@ const db_config = require('./db-config').config;
 const db = knex(db_config);
 
 module.exports = class Products {
-    constructor(name, category, description, price){
+    constructor(name, category, description, price, image, owner){
         this.id = unique_id();
         this.name = name;
         this.category = category;
         this.description = description;
         this.price = price;
+        this.image = image;
+        this.owner = owner;
     }
     
     async save(){
@@ -19,7 +21,9 @@ module.exports = class Products {
                 name: this.name,
                 category: this.category,
                 description: this.description,
-                price: this.price
+                price: this.price,
+                image: this.image,
+                owner: this.owner
             });
         }
         catch (error) {

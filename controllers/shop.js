@@ -47,9 +47,15 @@ exports.getCart = (req,res)=>{
             // Filter product contain in cart
             let products = []
             for (let prod of shopProducts){
-                const inCart = cartProducts.find(p=>p.id === prod.id);
+                const inCart = cartProducts.find(p => p.id === prod.id);
                 if (inCart){
-                    products.push({name:prod.name,id:prod.id,price:prod.price,qty:inCart.qty})
+                    products.push({
+                        name:prod.name,
+                        id:prod.id,
+                        price:prod.price,
+                        qty:inCart.qty,
+                        image: prod.image
+                    })
                 }
             }
 

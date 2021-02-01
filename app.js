@@ -7,6 +7,8 @@ const connection = new Pool(require('./models/connection'));
 const session = require('express-session');
 const store = new (require('connect-pg-simple')(session))({pool:connection});
 const bodyParser = require('body-parser');
+const multer = require('multer');
+const multerConfig = require('./util/multer-config');
 const path = require('path');
 const csrf = require('./middleware/csrf');
 const generalData = require('./middleware/generalData');
@@ -23,7 +25,14 @@ const app = express();
 app.set('view engine','ejs');
 app.set('views','views');
 app.use(bodyParser.urlencoded({extended:false}));
-app.use(express.static(path.join(__dirname,'public')));
+
+app.use(multer({
+    storage: multerConfig.fileStorage,
+    fileFilter: multerConfig.fileFilter
+}).single('image'));
+
+app.use(express.static(path.join(__dirname, 'public')));
+app.use('/images', express.static(path.join(__dirname, 'images')));
 
 // Session
 app.use(session({
