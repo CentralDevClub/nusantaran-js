@@ -6,18 +6,18 @@ const bcrypt = require('bcrypt');
 const bcryptSaltRounds = parseInt(process.env.SALT_ROUNDS);
 
 
-const allUser = async ()=>{
-    try {
-        const user = await db('users').select('*');
-        return user;
-    }
-    catch (error) {
-        console.log(error);
-        throw new Error(error);
-    }
-};
-
 module.exports = class Users{
+    static async allUser(){
+        try {
+            const user = await db('users').select('*');
+            return user;
+        }
+        catch (error) {
+            console.log(error);
+            throw new Error(error);
+        }
+    }
+
     static async addUser(name, address, email, password){             
         const salt = await bcrypt.genSalt(bcryptSaltRounds);
         const hash = await bcrypt.hash(password, salt);
@@ -39,7 +39,7 @@ module.exports = class Users{
 
     static async findUserByEmail(email){
         try {
-            const users = await allUser();
+            const users = await this.allUser();
             const user = users.find(u => u.email === email);
             if (user){
                 return user;

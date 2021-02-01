@@ -5,7 +5,7 @@ const forbidAuth = require('../middleware/forbidAuth');
 const { check, body } = require('express-validator');
 
 router.get('/register', forbidAuth, authRouter.getRegister);
-router.post('/register',forbidAuth,[
+router.post('/register', forbidAuth, [
     check('email')
         .isEmail()
         .withMessage('Please enter a valid email')
