@@ -79,9 +79,9 @@ exports.getCart = (req,res)=>{
 
 exports.postCart = (req,res)=>{
     Cart.addProduct(req.body.productID, req.session.user.email, req.body.productPrice).then(()=>{
-        res.redirect(req.body.path);
-    }).catch((error)=>{
-        console.log(error);
+        res.redirect('/cart');
+    }).catch(()=>{
+        console.log('Catch at controllers/shop.js:84');
         res.redirect('/500');
     });
 };
@@ -90,7 +90,7 @@ exports.postDeleteCart = (req,res)=>{
     Cart.deleteProduct(req.body.id, req.session.user.email).then(()=>{
         res.redirect('/cart');
     }).catch((error)=>{
-        console.log(error);
+        console.log('Catch at controllers/shop.js:93');
         res.redirect('/500');
     });
 };
@@ -105,7 +105,7 @@ exports.postUpdateQty = (req, res)=>{
             res.redirect('/cart');
         }
     }).catch((error)=>{
-        console.log(error);
+        console.log('Catch at controllers/shop.js:108');
         res.redirect('/500');
     });
 }

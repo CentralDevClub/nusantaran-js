@@ -25,7 +25,6 @@
                                     <form method="POST" action="/cart">
                                         <input type="hidden" name="productID" value="<%= product.id %>">
                                         <input type="hidden" name="productPrice" value="<%= product.price %>">
-                                        <input type="hidden" name="path" value="<%= path %>">
                                         <input type="hidden" name="_csrf" value="<%= csrfToken %>">
                                         <button type="submit" class="btn btn-primary">Tambah ke Keranjang</button>
                                     </form>
