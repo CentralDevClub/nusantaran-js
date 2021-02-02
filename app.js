@@ -10,7 +10,7 @@ const bodyParser = require('body-parser');
 const multer = require('multer');
 const multerConfig = require('./util/multer-config');
 const path = require('path');
-const csrf = require('./middleware/csrf');
+const csrf = require('csurf');
 const generalData = require('./middleware/generalData');
 const flash = require('connect-flash');
 
@@ -45,7 +45,7 @@ app.use(session({
 }));
 
 // CSRF Protection
-app.use(csrf.protection);
+app.use(csrf());
 
 // Flash message
 app.use(flash());
