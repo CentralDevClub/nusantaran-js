@@ -14,17 +14,15 @@
     <form action="/login" method="POST">
         <input type="hidden" name="_csrf" value="<%= csrfToken %>">
         <h2 class="sr-only">Login Form</h2>
-        <div class="illustration">
-            <i class="icon ion-ios-navigate"></i>
-        </div>
-        <div class="form-group">
+        <img src="/img/login.svg" alt="" style="display: block; margin: auto; width: 100%;">
+        <div class="form-group mt-4">
             <input class="form-control <%= errors.find(e => e.param === 'email') ? 'invalid' : '' %>" type="email" name="email" placeholder="Email" value="<%= placeholder %>" value="<%= placeholder %>" required>
         </div>
         <div class="form-group">
             <input class="form-control <%= errors.find(e => e.param === 'password') ? 'invalid' : '' %>" type="password" name="password" placeholder="Password" required>
         </div>
         <div class="form-group">
-            <button class="btn btn-primary btn-block" type="submit">Log In</button>
+            <button class="btn btn-info btn-block" type="submit">Log In</button>
         </div>
         <p>Didn't have account yet ? <a href="/register">Register</a></p>
         <a class="forgot" href="#">Forgot your email or password?</a>
