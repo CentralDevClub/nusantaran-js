@@ -10,6 +10,13 @@
     height: 100%;
 }
 
+.img-card {
+    margin: auto;
+    width: 250px;
+    height: 250px;
+    overflow: hidden;
+}
+
 .invalid {
     border: 1px solid red !important;
 }
