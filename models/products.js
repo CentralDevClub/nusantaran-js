@@ -41,6 +41,17 @@ module.exports = class Products {
         }
     }
 
+    static async fetchByOwner(owner){
+        try {
+            const products = await this.fetchAll();
+            return products.filter((p)=>{
+                return p.owner === owner;
+            });
+        } catch (error) {
+            throw new Error(error);
+        }
+    }
+
     static async findById(id){
         try {
             const products = await this.fetchAll();

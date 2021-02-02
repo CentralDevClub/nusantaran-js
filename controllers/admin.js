@@ -12,7 +12,7 @@ exports.postAddProduct = (req, res)=>{
             req.body.description,
             req.body.price,
             req.file.path,
-            req.session.user.name
+            req.session.user.email
         );
         product.save().then((product) => {
             console.log(chalk.blue(`Product added : ${product[0].name}`));
@@ -36,17 +36,24 @@ exports.postAddProduct = (req, res)=>{
 };
 
 exports.getProduct = (req,res)=>{
-    Product.fetchAll().then((products) => {
+    let products;
+    if (req.session.isAdmin){
+        products = Product.fetchAll()
+    } else {
+        products = Product.fetchByOwner(req.session.user.email);
+    };
+
+    products.then((prods) => {
         const placeholder = req.flash('placeholder');
         const placeholderData = placeholder.length > 0 ? placeholder[0] : {}
         const error = req.flash('errorMessage');
         const errorMessage = error.length > 0 ? error[0] : null
-        const hasProduct = products.length > 0 ? true : false;
+        const hasProduct = prods.length > 0 ? true : false;
         res.render('admin/product',{
             'title':'Nusantaran JS | Admin Products',
             'path':'/product',
             'hasProduct': hasProduct,
-            'products':products,
+            'products':prods,
             'errorMessage': errorMessage,
             'errors': req.flash('errors'),
             'placeholder': placeholderData

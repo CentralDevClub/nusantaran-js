@@ -70,6 +70,6 @@ app.use((_error, _req, res, _next)=>{
 
 // Running Server
 const port = process.env.PORT || 3000;
-app.listen(port, ()=>{
-    console.log(chalk.underline.green(`Server is deployed on port ${port}`));
-});
+const deploy = process.env.IP_DEPLOY || '127.0.0.1';
+app.listen(port, deploy);
+console.log(chalk.underline.green(`Server is deployed on http://${deploy}:${port}`));

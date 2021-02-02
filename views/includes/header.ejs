@@ -21,9 +21,7 @@
                         <% if (isAuthenticated){ %>
                             <li class="nav-item mr-2"><a href="/cart" class="<%= path === '/cart' ? 'active' : '' %>">Cart</a></li>
                             <li class="nav-item mr-2"><a href="/checkout" class="<%= path === '/checkout' ? 'active' : '' %>">Checkout</a></li>
-                            <% if (isAdmin){ %> 
-                                <li class="nav-item mr-2"><a href="/admin/product" class="<%= path === '/product' ? 'active' : '' %>">Admin</a></li>
-                            <% } %>
+                            <li class="nav-item mr-2"><a href="/admin/product" class="<%= path === '/product' ? 'active' : '' %>">My Products</a></li>
                         <% } %>
                     </ul>
                     <% if (!isAuthenticated) { %>
