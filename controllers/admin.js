@@ -64,7 +64,7 @@ exports.getProduct = (req,res)=>{
     });
 };
 
-exports.postUpdateProduct = (req,res)=>{
+exports.postUpdateProduct = (req, res)=>{
     Product.updateProduct(req.body).then(()=> {
         res.redirect('/admin/product');
     }).catch((error)=>{

@@ -118,9 +118,44 @@ exports.postUpdateQty = (req, res)=>{
 
 
 // Checkout controller
-exports.getCheckout = (_req,res)=>{
-    res.render('shop/checkout',{
-        'title':'Nusantaran JS | Checkout',
-        'path':'/checkout'
+exports.getCheckout = (req,res)=>{
+    const owner = req.session.user.email;
+    Cart.fetchAll(owner).then((cartProducts)=>{
+        Product.fetchAll().then((shopProducts)=>{
+            let products = []
+            for (let prod of shopProducts){
+                const inCart = cartProducts.find(p => p.id === prod.id);
+                if (inCart){
+                    products.push({
+                        name:prod.name,
+                        id:prod.id,
+                        price:prod.price,
+                        qty:inCart.qty,
+                        image: prod.image
+                    })
+                }
+            }
+
+            // Calculating total price
+            let totalPrice = 0
+            products.forEach((p) => {
+                totalPrice += (p.price * p.qty);
+            });
+
+            const hasProduct = products.length > 0 ? true : false;
+            res.status(200).render('shop/checkout',{
+                'title':'Nusantaran JS | Checkout',
+                'path':'/checkout',
+                'hasProduct':hasProduct,
+                'products': products,
+                'totalPrice':totalPrice
+            });
+        }).catch((error)=>{
+            console.log(error);
+            res.redirect('/500');
+        });
+    }).catch((error)=>{
+        console.log(error);
+        res.redirect('/500');
     });
 };
