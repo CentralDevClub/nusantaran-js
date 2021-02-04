@@ -19,5 +19,5 @@ Gunakan `npm install` untuk mendownload semua package
 * Gunakan `npm start` untuk menjalankan server development
 * Gunakan `npm run deploy` untuk menjalankan server untuk deployment
 
-## :computer: Virtual Environment
-Ubah `placeholder.env` menjadi `.env` dan edit file tersebut, isikan sesuai dengan perangkat Anda
+### :computer: Virtual Environment
+Ubah `placeholder.env` menjadi `.env` dan edit file tersebut, isikan sesuai dengan perangkat Anda. Gunakan `source .env` untuk server produksi di linux cloud

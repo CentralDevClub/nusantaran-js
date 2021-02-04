@@ -5,6 +5,36 @@
         <div class="row">
             <div class="col">
                 <h2>Checkout</h2>
+                <% if (hasProduct){ %>
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>Product ID</th>
+                                <th>Product Name</th>
+                                <th>Product Quantity</th>
+                                <th>Product Price</th>
+                                <th>Subtotal Price</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <% for (let product of products){ %>
+                                <tr>
+                                    <td><%= product.id %></td>
+                                    <td><%= product.name %></td>
+                                    <td><%= product.qty %></td>
+                                    <td>Rp. <%= product.price %></td>
+                                    <td>Rp. <%= product.qty * product.price %></td>
+                                </tr>
+                            <% } %>
+                            <tr>
+                                <th colspan="4">Total Price</th>
+                                <th>Rp. <%= totalPrice %></th>
+                            </tr>
+                        </tbody>
+                    </table>
+                <% } else { %>
+                    <p>There is no product in your cart</p>
+                <% } %> 
             </div>
         </div>
     </div>
