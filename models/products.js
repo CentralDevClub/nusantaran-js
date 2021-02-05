@@ -41,6 +41,23 @@ module.exports = class Products {
         }
     }
 
+    static async fetchChunk(page, limit){
+        try {
+            // const products = await db('products').select('*').limit(limit).offset(page * limit);
+            const products = await db('products').count('id').then(async (size)=>{
+                const length = size[0].count;
+                const prods = await db('products').select('*').limit(limit).offset(page * limit);
+                return {
+                    chunkData: prods,
+                    tableRowsCount: length
+                };
+            });
+            return products;
+        } catch (error) {
+            throw new Error(error);
+        }
+    }
+
     static async fetchByOwner(owner){
         try {
             const products = await this.fetchAll();

@@ -41,6 +41,19 @@
                     </div>
                 </div>
             <% } %>
+            <% if (displayPage) { %>
+                <div class="container">
+                    <div class="row">
+                        <div class="col">
+                            <a class="btn btn-outline-info" href="/products?page=<%= limit.firstPage %>">First Page</a>
+                            <% for( let i = 1; i <= totalPage; i++ ) { %>
+                                <a class="btn btn-outline-info <%= page === i ? 'active' : '' %>" href="/products?page=<%= i %>"><%= i %></a>
+                            <% } %>
+                            <a class="btn btn-outline-info" href="/products?page=<%= limit.lastPage %>">Last Page</a>
+                        </div>
+                    </div>
+                </div>
+            <% } %>
         <% } else { %>
             <p>There is no products</p>
         <% } %>

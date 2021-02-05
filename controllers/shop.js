@@ -1,16 +1,31 @@
 const Product = require('../models/products')
 const Cart = require('../models/cart')
+const itemPerPage = 10;
 
 
 // Product controllers
-exports.getProductList = (_req,res)=>{
-    Product.fetchAll().then((products)=>{
+exports.getProductList = (req, res)=>{
+    const page = req.query.page ? req.query.page -1 : 0;
+    Product.fetchChunk(page, itemPerPage).then((productAndLength)=>{
+        const products = productAndLength.chunkData;
+        const length = productAndLength.tableRowsCount;
+        const totalPage = Math.ceil(length / itemPerPage);
         const hasProduct = products.length > 0 ? true : false;
+        
+        const displayPage = totalPage >= itemPerPage ? true : false;
+        const limit = {
+            firstPage: 1,
+            lastPage: totalPage
+        }
         res.render('shop/products-list',{
             'title':'Nusantaran JS | Original Taste of Nusantara',
             'path':'/products',
             'hasProduct': hasProduct,
-            'products':products
+            'products':products,
+            'page': page + 1,
+            'displayPage': displayPage,
+            'totalPage': totalPage,
+            'limit': limit
         });
     }).catch((error)=>{
         console.log(error);
@@ -18,7 +33,7 @@ exports.getProductList = (_req,res)=>{
     });
 };
 
-exports.getProductDetail = (req,res) => {
+exports.getProductDetail = (req, res) => {
     Product.findById(req.params.id).then((product) =>{
         res.render('shop/products-detail',{
             'title':`Nusantaran JS | ${product.name}`,
@@ -31,7 +46,7 @@ exports.getProductDetail = (req,res) => {
     });
 };
 
-exports.getIndex = (_req,res)=>{
+exports.getIndex = (_req, res)=>{
     res.render('shop/index',{
         'title':'Nusantaran JS | Welcome',
         'path':'/'
@@ -40,7 +55,7 @@ exports.getIndex = (_req,res)=>{
 
 
 // Cart controllers
-exports.getCart = (req,res)=>{
+exports.getCart = (req, res)=>{
     const owner = req.session.user.email;
     Cart.fetchAll(owner).then((cartProducts)=>{
         Product.fetchAll().then((shopProducts)=>{
@@ -83,7 +98,7 @@ exports.getCart = (req,res)=>{
     });
 };
 
-exports.postCart = (req,res)=>{
+exports.postCart = (req, res)=>{
     Cart.addProduct(req.body.productID, req.session.user.email, req.body.productPrice).then(()=>{
         res.redirect('/cart');
     }).catch(()=>{
@@ -92,7 +107,7 @@ exports.postCart = (req,res)=>{
     });
 };
 
-exports.postDeleteCart = (req,res)=>{
+exports.postDeleteCart = (req, res)=>{
     Cart.deleteProduct(req.body.id, req.session.user.email).then(()=>{
         res.redirect('/cart');
     }).catch((error)=>{
@@ -118,7 +133,7 @@ exports.postUpdateQty = (req, res)=>{
 
 
 // Checkout controller
-exports.getCheckout = (req,res)=>{
+exports.getCheckout = (req, res)=>{
     const owner = req.session.user.email;
     Cart.fetchAll(owner).then((cartProducts)=>{
         Product.fetchAll().then((shopProducts)=>{
