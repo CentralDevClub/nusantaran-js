@@ -10,7 +10,7 @@
                         <% for (let product of products){ %>
                             <li class="mt-4 card">
                                 <div class="card-body">
-                                    <img style="width: 5em; float: left; margin-right: 20px;" src="/<%= product.image %>">
+                                    <img width="80" height="80" style="float: left; margin-right: 20px;" src="/<%= product.image %>">
                                     <p class="card-title"><%= product.name %> | Rp.<%= product.price %> x<%= product.qty %> = Rp.<%= product.price * product.qty %></p>
                                     <form class="cart-button" method="POST" action="/cart-delete">
                                         <input type="hidden" name="id" value="<%= product.id %>">
