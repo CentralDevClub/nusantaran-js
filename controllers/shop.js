@@ -110,7 +110,7 @@ exports.postCart = (req, res)=>{
 exports.postDeleteCart = (req, res)=>{
     Cart.deleteProduct(req.body.id, req.session.user.email).then(()=>{
         res.redirect('/cart');
-    }).catch((error)=>{
+    }).catch(()=>{
         console.log('Catch at controllers/shop.js:93');
         res.redirect('/500');
     });
@@ -125,7 +125,7 @@ exports.postUpdateQty = (req, res)=>{
         } else {
             res.redirect('/cart');
         }
-    }).catch((error)=>{
+    }).catch(()=>{
         console.log('Catch at controllers/shop.js:108');
         res.redirect('/500');
     });

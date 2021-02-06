@@ -19,7 +19,10 @@
                             <input type="hidden" name="productID" value="<%= product.id %>">
                             <input type="hidden" name="productPrice" value="<%= product.price %>">
                             <input type="hidden" name="_csrf" value="<%= csrfToken %>">
-                            <button class="btn btn-primary" type="submit">Tambah ke Keranjang</button>
+                            <div class="text-center">
+                                <button class="btn btn-primary" type="submit">Tambah ke Keranjang</button>
+
+                            </div>
                         </form>
                     <% } else { %>
                         <p class="alert alert-warning">You must have account to adding product to cart</p>

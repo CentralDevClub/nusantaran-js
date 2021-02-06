@@ -33,5 +33,8 @@ router.post('/login', [
     body('password').trim()
 ], forbidAuth, authRouter.postLogin);
 router.post('/logout', authRouter.postLogout);
+router.get('/reset', authRouter.getReset);
+router.get('/reset/:token', authRouter.getNewPassword);
+router.post('/reset', authRouter.postReset);
 
 module.exports = router;
