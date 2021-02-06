@@ -18,7 +18,7 @@ exports.getProductList = (req, res)=>{
             lastPage: totalPage
         }
         res.render('shop/products-list',{
-            'title':'Nusantaran JS | Original Taste of Nusantara',
+            'title':'Nusantaran JS | Shop',
             'path':'/products',
             'hasProduct': hasProduct,
             'products':products,
@@ -48,7 +48,7 @@ exports.getProductDetail = (req, res) => {
 
 exports.getIndex = (_req, res)=>{
     res.render('shop/index',{
-        'title':'Nusantaran JS | Welcome',
+        'title':'Nusantaran JS | Welcome! Enjoy The Original Taste of Nusantara',
         'path':'/'
     });
 };
