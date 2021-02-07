@@ -13,8 +13,11 @@
     <div class="container pb-4 pt-4">
         <div class="row">
             <div class="col">
-                <h2>Add Product</h2>
-                <form class="form-container" method="POST" action="/admin/add-product" enctype="multipart/form-data">
+                <div class="d-flex justify-content-start">
+                    <h2>Sell Product</h2>
+                    <button onclick="toogleForm(this)" class="btn btn-info ml-4">></button>
+                </div>
+                <form id="product_form" class="form-container" method="POST" action="/admin/add-product" enctype="multipart/form-data" style="display: none;">
                     <input type="hidden" name="_csrf" value="<%= csrfToken %>" required>
                     <div class="form-group">
                         <label for="name">Product Name</label>
@@ -49,17 +52,19 @@
                     <ul class="cart d-flex flex-wrap justify-content-start">
                         <% for (let product of products){ %>
                             <li class="card m-2" style="width: 18rem;">
-                                <div class="img-card">
+                                <div class="img-card mt-3">
                                     <img width="250" height="250" class="card-img-top" src="/<%= product.image %>">
                                 </div>
-                                <hr>
                                 <div class="card-body">
                                     <h4 class="cart-title"><%= product.name %></h4>
+                                    <% if (isAdmin){ %>
+                                        <p>Owner: <a href="mailto:<%= product.owner %>"><%= product.owner %></a></p>
+                                    <% } %>
                                     <form class="form-container mb-2" method="POST" action="/admin/update-product">
                                         <input type="hidden" name="_csrf" value="<%= csrfToken %>" required>
                                         <div class="form-group">
                                             <label for="image">Change Image</label>
-                                            <input class="form-control-file" type="file" name="image" required>
+                                            <input class="form-control-file" type="file" name="image">
                                         </div>
                                         <input type="hidden" name="id" value="<%= product.id %>" required>
                                         <div class="form-group">
@@ -97,4 +102,5 @@
     </div>
 </div>
 
+<script src="/js/product.js"></script>
 <%- include ('../includes/footer.ejs') %>

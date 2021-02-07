@@ -18,7 +18,7 @@ exports.getProductList = (req, res)=>{
             lastPage: totalPage
         }
         res.render('shop/products-list',{
-            'title':'Nusantaran JS | Original Taste of Nusantara',
+            'title':'Nusantaran JS | Shop',
             'path':'/products',
             'hasProduct': hasProduct,
             'products':products,
@@ -48,7 +48,7 @@ exports.getProductDetail = (req, res) => {
 
 exports.getIndex = (_req, res)=>{
     res.render('shop/index',{
-        'title':'Nusantaran JS | Welcome',
+        'title':'Nusantaran JS | Welcome! Enjoy The Original Taste of Nusantara',
         'path':'/'
     });
 };
@@ -110,7 +110,7 @@ exports.postCart = (req, res)=>{
 exports.postDeleteCart = (req, res)=>{
     Cart.deleteProduct(req.body.id, req.session.user.email).then(()=>{
         res.redirect('/cart');
-    }).catch((error)=>{
+    }).catch(()=>{
         console.log('Catch at controllers/shop.js:93');
         res.redirect('/500');
     });
@@ -125,7 +125,7 @@ exports.postUpdateQty = (req, res)=>{
         } else {
             res.redirect('/cart');
         }
-    }).catch((error)=>{
+    }).catch(()=>{
         console.log('Catch at controllers/shop.js:108');
         res.redirect('/500');
     });

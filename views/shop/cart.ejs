@@ -8,32 +8,32 @@
                 <% if (hasProduct){ %>
                     <ul class="cart">
                         <% for (let product of products){ %>
-                            <li class="mt-4 card">
+                            <li class="mt-2 card">
                                 <div class="card-body">
                                     <img width="80" height="80" style="float: left; margin-right: 20px;" src="/<%= product.image %>">
                                     <p class="card-title"><%= product.name %> | Rp.<%= product.price %> x<%= product.qty %> = Rp.<%= product.price * product.qty %></p>
                                     <form class="cart-button" method="POST" action="/cart-delete">
                                         <input type="hidden" name="id" value="<%= product.id %>">
                                         <input type="hidden" name="_csrf" value="<%= csrfToken %>">
-                                        <button class="btn btn-danger" type="submit">Remove from cart</button>
+                                        <button class="btn btn-danger" type="submit">Remove</button>
                                     </form>
                                     <form class="cart-button" method="POST" action="cart-update">
                                         <input type="hidden" name="id" value="<%= product.id %>">
                                         <input type="hidden" name="qty" value="<%= product.qty - 1 %>">
                                         <input type="hidden" name="_csrf" value="<%= csrfToken %>">
-                                        <button class="btn btn-outline-secondary" type="submit">-1 qty</button>
+                                        <button class="btn btn-outline-secondary" type="submit">-1</button>
                                     </form>
                                     <form class="cart-button" method="POST" action="cart-update">
                                         <input type="hidden" name="id" value="<%= product.id %>">
                                         <input type="hidden" name="qty" value="<%= product.qty + 1 %>">
                                         <input type="hidden" name="_csrf" value="<%= csrfToken %>">
-                                        <button class="btn btn-outline-secondary" type="submit">+1 qty</button>
+                                        <button class="btn btn-outline-secondary" type="submit">+1</button>
                                     </form>
                                     <form class="cart-button" method="POST" action="cart-update">
                                         <input type="hidden" name="id" value="<%= product.id %>">
-                                        <input type="number" name="qty" min="1" value="<%= product.qty %>">
                                         <input type="hidden" name="_csrf" value="<%= csrfToken %>">
-                                        <button class="btn btn-primary" type="submit">Set qty</button>
+                                        <input type="number" name="qty" min="1" value="<%= product.qty %>">
+                                        <button class="btn btn-primary" type="submit">Set QTY</button>
                                     </form>
                                 </div>
                             </li>

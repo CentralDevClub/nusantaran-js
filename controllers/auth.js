@@ -89,9 +89,10 @@ exports.postRegister = (req, res)=>{
 }
 
 exports.postLogin = (req, res)=>{
-    Users.findUserByEmail(req.body.email).then((user)=>{
-        console.log(chalk.blue(`User found ${user.email}`));
+    Users.findUserByEmail(req.body.email).then((users)=>{
         try {
+            const user = users[0]
+            console.log(chalk.blue(`User found ${user.email}`));
             bcrypt.compare(req.body.password, user.password).then((success)=>{
                 if (success){
                     console.log(chalk.green(`Successfully logged in - ${req.body.email}`));
@@ -130,16 +131,5 @@ exports.postLogin = (req, res)=>{
         req.flash('placeholder', req.body.email);
         req.flash('errors', {'param':'email'});
         res.redirect('/login');
-    });
-}
-
-exports.postLogout = (req, res) =>{
-    console.log(chalk.yellow(`${req.session.user.email}: logged out`));
-    req.session.destroy(err => {
-        if (err){
-            console.log(chalk.red('Error Found'));
-            console.log(err);
-        }
-        res.redirect('/');
     });
 }

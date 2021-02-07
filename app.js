@@ -60,7 +60,8 @@ app.use(userRoute);
 app.use('/admin', adminRoute);
 app.get('/500', errorController.get500);
 app.use(errorController.get404);
-app.use((_error, _req, res, _next)=>{
+app.use((error, _req, res, _next)=>{
+    console.log(error);
     res.status(500).render('500',{
         'title':'Nusantaran JS | Server Error',
         'path':'/500',

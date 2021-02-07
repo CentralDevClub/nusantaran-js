@@ -1,4 +1,4 @@
-<%- include ('includes/header.ejs') %>
+<%- include ('../includes/header.ejs') %>
 
 <div class="container-fluid dimmed-bg">
     <div class="container pt-4 pb-4">
@@ -6,6 +6,11 @@
             <div class="col">
                 <h2>My Account</h2>
                 <strong><%= user.name %></strong>
+                <a href="/reset">Reset Pasword</a>
+                <form action="/logout" method="POST">
+                    <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                    <button type="submit" class="btn btn-info">Logout</button>
+                </form>
                 <p>Account id : <%= user.index %></p>
                 <p><%= user.email %></p>
                 <p><%= user.address %></p>
@@ -14,4 +19,4 @@
     </div>
 </div>
 
-<%- include ('includes/footer.ejs') %>
+<%- include ('../includes/footer.ejs') %>
