@@ -19,9 +19,9 @@ module.exports = class Users{
     }
 
     static async addUser(name, address, email, password){             
-        const salt = await bcrypt.genSalt(bcryptSaltRounds);
-        const hash = await bcrypt.hash(password, salt);
         try {
+            const salt = await bcrypt.genSalt(bcryptSaltRounds);
+            const hash = await bcrypt.hash(password, salt);
             await db('users').returning('*').insert({
                 name: name,
                 address: address,
@@ -39,15 +39,26 @@ module.exports = class Users{
 
     static async findUserByEmail(email){
         try {
-            const users = await this.allUser();
-            const user = users.find(u => u.email === email);
-            if (user){
-                return user;
-            } else {
-                throw new Error('User not found');
-            }
+            const user = await db('users').where('email', email)
+            return user;
         }
         catch (error) {
+            console.log(error);
+            throw new Error(error);
+        }
+    }
+
+    static async updatePassword(email, password){
+        try {
+            const salt = await bcrypt.genSalt(bcryptSaltRounds);
+            const hash = await bcrypt.hash(password, salt);
+            const user = await db('users').where('email', email).update({
+                'password': hash
+            }).returning('*').then((user)=>{
+                return user;
+            })
+            return user;
+        } catch (error) {
             console.log(error);
             throw new Error(error);
         }

@@ -1,8 +1,13 @@
 const express = require('express');
 const router = express.Router();
-const userController = require('../controllers/user');
+const userRouter = require('../controllers/user');
 const needAuth = require('../middleware/needAuth');
 
-router.get('/profile', needAuth, userController.getUser);
+router.get('/profile', needAuth, userRouter.getUser);
+router.post('/logout', needAuth, userRouter.postLogout);
+router.get('/reset', userRouter.getReset);
+router.post('/reset', userRouter.postReset);
+router.get('/newpassword', userRouter.getNewPassword);
+router.post('/newpassword', userRouter.postNewPassword);
 
 module.exports = router;

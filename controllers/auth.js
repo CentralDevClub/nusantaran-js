@@ -7,7 +7,6 @@ const chalk = require('chalk');
 const bcrypt = require('bcrypt');
 const { validationResult } = require('express-validator');
 const sgMail = require('@sendgrid/mail')
-const crypto = require('crypto');
 sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
 
@@ -90,9 +89,10 @@ exports.postRegister = (req, res)=>{
 }
 
 exports.postLogin = (req, res)=>{
-    Users.findUserByEmail(req.body.email).then((user)=>{
-        console.log(chalk.blue(`User found ${user.email}`));
+    Users.findUserByEmail(req.body.email).then((users)=>{
         try {
+            const user = users[0]
+            console.log(chalk.blue(`User found ${user.email}`));
             bcrypt.compare(req.body.password, user.password).then((success)=>{
                 if (success){
                     console.log(chalk.green(`Successfully logged in - ${req.body.email}`));
@@ -131,71 +131,5 @@ exports.postLogin = (req, res)=>{
         req.flash('placeholder', req.body.email);
         req.flash('errors', {'param':'email'});
         res.redirect('/login');
-    });
-}
-
-exports.postLogout = (req, res) =>{
-    console.log(chalk.yellow(`${req.session.user.email}: logged out`));
-    req.session.destroy(err => {
-        if (err){
-            console.log(chalk.red('Error Found'));
-            console.log(err);
-        }
-        res.redirect('/');
-    });
-}
-
-exports.getReset = (req, res)=>{
-    const successFlash = req.flash('success');
-    const error = req.flash('error');
-    const errorMessage = error.length > 0 ? error[0] : null;
-    const success = successFlash.length > 0 ? successFlash[0] : null;
-    res.render('auth/reset', {
-        'title':'Nusantaran JS | Reset Password',
-        'path':'/reset',
-        'success': success,
-        'errorMessage': errorMessage
-    });
-}
-
-exports.getNewPassword = (req, res)=>{
-    const token = req.params.token;
-    res.render('auth/new-password', {
-        'title':'Nusantaran JS | Set New Password',
-        'path':'/newpassword',
-        'token': token
-    });
-}
-
-exports.postReset = (req, res)=>{
-    crypto.randomBytes(32, (error, buffer)=>{
-        if (error){
-            res.status(500).redirect('/500');
-        } else {
-            const token = buffer.toString('hex');
-            db('resettoken').returning('*').insert({
-                useremail: req.body.email,
-                token: token,
-                expired: Date.now() + 3600000
-            }).then(()=>{
-                const email = {
-                    to: req.body.email,
-                    from: process.env.MAIL_SENDER,
-                    subject: 'Nusantaran Reset User Password',
-                    text: 'Reset password',
-                    html: `<h2>Yoohoo</h2><p>Reset your password <a href="http://${process.env.IP_DEPLOY}:${process.env.PORT}/reset/${token}">here</a></p>`
-                };
-                sgMail.send(email).then(()=>{
-                    req.flash('success', true);
-                    res.status(200).redirect('/reset');
-                }).catch(()=>{
-                    res.status(500).redirect('/500');
-                })
-            }).catch(()=>{
-                req.flash('success', false);
-                req.flash('error', 'Email already sent, valid for one hour');
-                res.status(200).redirect('/reset');
-            });
-        }
     });
 }

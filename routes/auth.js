@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const authRouter = require('../controllers/auth');
 const forbidAuth = require('../middleware/forbidAuth');
+const needAuth = require('../middleware/needAuth');
 const { check, body } = require('express-validator');
 
 router.get('/register', forbidAuth, authRouter.getRegister);
@@ -32,9 +33,5 @@ router.post('/login', [
         .normalizeEmail(),
     body('password').trim()
 ], forbidAuth, authRouter.postLogin);
-router.post('/logout', authRouter.postLogout);
-router.get('/reset', authRouter.getReset);
-router.get('/reset/:token', authRouter.getNewPassword);
-router.post('/reset', authRouter.postReset);
 
 module.exports = router;
