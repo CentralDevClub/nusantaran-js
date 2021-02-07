@@ -5,11 +5,7 @@ const { validationResult } = require('express-validator');
 
 exports.getProduct = (req,res)=>{
     let products;
-    if (req.session.isAdmin){
-        products = Product.fetchAll()
-    } else {
-        products = Product.fetchByOwner(req.session.user.email);
-    };
+    products = req.session.isAdmin ? Product.fetchAll() : Product.fetchByOwner(req.session.user.email);;
 
     products.then((prods) => {
         const placeholder = req.flash('placeholder');
