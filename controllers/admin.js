@@ -1,12 +1,11 @@
 const chalk = require('chalk');
 const Product = require('../models/products');
 const { validationResult } = require('express-validator');
+const fs = require('fs');
 
 
 exports.getProduct = (req,res)=>{
-    let products;
-    products = req.session.isAdmin ? Product.fetchAll() : Product.fetchByOwner(req.session.user.email);;
-
+    const products = req.session.isAdmin ? Product.fetchAll() : Product.fetchByOwner(req.session.user.email);
     products.then((prods) => {
         const placeholder = req.flash('placeholder');
         const placeholderData = placeholder.length > 0 ? placeholder[0] : {}
@@ -49,6 +48,11 @@ exports.postAddProduct = (req, res)=>{
             res.redirect('/500');
         });
     } else {
+        try {
+            fs.unlinkSync(req.file.path);
+        } catch (error){
+            console.log(error);
+        };
         req.flash('errorMessage', validationError.array()[0].msg);
         req.flash('errors', validationError.array());
         req.flash('placeholder', {
