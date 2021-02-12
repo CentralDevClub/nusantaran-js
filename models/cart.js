@@ -34,8 +34,24 @@ module.exports = class Cart {
     }
 
     static async fetchAll(owner){
-        const products = await db('cart').select('*').where('owner', owner);
-        return products;
+        try {
+            const products = await db('cart').select('*').where('owner', owner);
+            return products;
+        } catch (error) {
+            throw new Error(error);
+        }
+    }
+
+    static async emptyCart(owner){
+        try {
+            const products = await db('cart').where({
+                'owner': owner
+            }).del();
+            console.log(`${owner}: Cart is now empty`);
+            return products;
+        } catch (error) {
+            throw new Error(error);
+        }
     }
 
     static async deleteProduct(id, owner){

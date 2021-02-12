@@ -84,6 +84,7 @@ module.exports = class Products {
         try {
             const products = await db('products').where('id', new_product.id).update({
                 name: new_product.name,
+                image: new_product.image,
                 category: new_product.category,
                 description: new_product.description,
                 price: new_product.price

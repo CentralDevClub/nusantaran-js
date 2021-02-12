@@ -1,3 +1,4 @@
+const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 const Product = require('../models/products')
 const Cart = require('../models/cart')
 const itemPerPage = 10;
@@ -30,8 +31,8 @@ exports.getProductList = (req, res)=>{
     }).catch((error)=>{
         console.log(error);
         res.redirect('/500');
-    });
-};
+    })
+}
 
 exports.getProductDetail = (req, res) => {
     Product.findById(req.params.id).then((product) =>{
@@ -43,15 +44,15 @@ exports.getProductDetail = (req, res) => {
     }).catch((error)=>{
         console.log(error);
         res.redirect('/500');
-    });
-};
+    })
+}
 
 exports.getIndex = (_req, res)=>{
     res.render('shop/index',{
         'title':'Nusantaran JS | Welcome! Enjoy The Original Taste of Nusantara',
         'path':'/'
-    });
-};
+    })
+}
 
 
 // Cart controllers
@@ -95,8 +96,8 @@ exports.getCart = (req, res)=>{
     }).catch((error)=>{
         console.log(error);
         res.redirect('/500');
-    });
-};
+    })
+}
 
 exports.postCart = (req, res)=>{
     Cart.addProduct(req.body.productID, req.session.user.email, req.body.productPrice).then(()=>{
@@ -104,8 +105,8 @@ exports.postCart = (req, res)=>{
     }).catch(()=>{
         console.log('Catch at controllers/shop.js:84');
         res.redirect('/500');
-    });
-};
+    })
+}
 
 exports.postDeleteCart = (req, res)=>{
     Cart.deleteProduct(req.body.id, req.session.user.email).then(()=>{
@@ -113,8 +114,8 @@ exports.postDeleteCart = (req, res)=>{
     }).catch(()=>{
         console.log('Catch at controllers/shop.js:93');
         res.redirect('/500');
-    });
-};
+    })
+}
 
 exports.postUpdateQty = (req, res)=>{
     Cart.updateQty(req.body.id, req.body.qty, req.session.user.email).then((product)=>{
@@ -163,7 +164,8 @@ exports.getCheckout = (req, res)=>{
                 'path':'/checkout',
                 'hasProduct':hasProduct,
                 'products': products,
-                'totalPrice':totalPrice
+                'totalPrice':totalPrice,
+                'source': process.env.STRIPE_PUBLISHABLE_KEY
             });
         }).catch((error)=>{
             console.log(error);
@@ -173,4 +175,61 @@ exports.getCheckout = (req, res)=>{
         console.log(error);
         res.redirect('/500');
     });
-};
+}
+
+exports.postCheckout = async (req, res)=>{
+    const cartProducts = await Cart.fetchAll(req.session.user.email);
+    const shopProducts = await Product.fetchAll();
+    
+    // Products Data
+    let products = []
+    for (let prod of shopProducts){
+        const inCart = cartProducts.find(p => p.id === prod.id);
+        if (inCart){
+            products.push({
+                name:prod.name,
+                id:prod.id,
+                price:prod.price,
+                qty:inCart.qty,
+                image: prod.image
+            })
+        }
+    }
+
+    // Stripe object products
+    const final_prod = products.map((product)=>{
+        return {
+            price_data: {
+                currency: 'idr',
+                product_data: {
+                    name: product.name,
+                    images: [`http://${process.env.IP_PUBLIC}/${product.image}`]
+                    // images: ['https://www.flaticon.com/svg/static/icons/svg/2111/2111505.svg']
+                },
+                unit_amount: product.price * 100
+            },
+            quantity: product.qty
+        }
+    })
+
+    const session = await stripe.checkout.sessions.create({
+        payment_method_types: ['card'],
+        line_items: final_prod,
+        mode: 'payment',
+        success_url: `http://${process.env.IP_PUBLIC}/checkout/success`,
+        cancel_url: `http://${process.env.IP_PUBLIC}/checkout/`
+    });
+
+    res.json({id: session.id});
+}
+
+exports.getCheckoutSuccess = (req, res)=>{
+    Cart.emptyCart(req.session.user.email).then(()=>{
+        res.status(200).render('shop/checkout-success',{
+            'title':'Nusantaran JS | Checkout Success',
+            'path':'/checkout/success'
+        });
+    }).catch(()=>{
+        res.status(500).redirect('/500');
+    });
+}

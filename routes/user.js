@@ -9,5 +9,6 @@ router.get('/reset', userRouter.getReset);
 router.post('/reset', userRouter.postReset);
 router.get('/newpassword', userRouter.getNewPassword);
 router.post('/newpassword', userRouter.postNewPassword);
+router.post('/connect-stripe', needAuth, userRouter.postConnectStripe);
 
 module.exports = router;

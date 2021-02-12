@@ -60,10 +60,11 @@
                                     <% if (isAdmin){ %>
                                         <p>Owner: <a href="mailto:<%= product.owner %>"><%= product.owner %></a></p>
                                     <% } %>
-                                    <form class="form-container mb-2" method="POST" action="/admin/update-product">
+                                    <form class="form-container mb-2" method="POST" action="/admin/update-product" enctype="multipart/form-data">
                                         <input type="hidden" name="_csrf" value="<%= csrfToken %>" required>
                                         <div class="form-group">
                                             <label for="image">Change Image</label>
+                                            <input type="hidden" type="text" name="imagepath" value="<%= product.image %>">
                                             <input class="form-control-file" type="file" name="image">
                                         </div>
                                         <input type="hidden" name="id" value="<%= product.id %>" required>

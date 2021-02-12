@@ -66,7 +66,12 @@ exports.postAddProduct = (req, res)=>{
 };
 
 exports.postUpdateProduct = (req, res)=>{
-    Product.updateProduct(req.body).then(()=> {
+    let product = req.body;
+    product.image = req.file ? req.file.path : product.imagepath
+    if (req.file){
+        fs.unlinkSync(product.imagepath);
+    }
+    Product.updateProduct(product).then(()=> {
         res.redirect('/admin/product');
     }).catch((error)=>{
         console.log(error);

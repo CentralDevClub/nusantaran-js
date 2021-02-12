@@ -1,4 +1,5 @@
 const Users = require('../models/users');
+const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 const chalk = require('chalk');
 const crypto = require('crypto');
 const knex = require('knex');
@@ -138,4 +139,12 @@ exports.postNewPassword = (req, res)=>{
         console.log(error);
         res.status(500).redirect('/500');
     });
+}
+
+exports.postConnectStripe = async (req, res)=>{
+    const account = await stripe.accounts.create({
+        type: 'standard',
+    });
+    console.log(account);
+    res.send(account)
 }

@@ -1,4 +1,5 @@
 <%- include ('../includes/header.ejs') %>
+<script src="https://js.stripe.com/v3/"></script>
 
 <div class="container-fluid dimmed-bg">
     <div class="container pt-4 pb-4">
@@ -32,6 +33,12 @@
                             </tr>
                         </tbody>
                     </table>
+                    <div>
+                        <input type="hidden" name="_csrf" value="<%= csrfToken %>" required>
+                        <input type="hidden" name="amount" value="<%= totalPrice %>" required>
+                        <input type="hidden" name="source" value="<%= source %>" required>
+                        <button class="btn btn-info" type="button" id="checkout-button">Checkout</button>
+                    </div>
                 <% } else { %>
                     <p>There is no product in your cart</p>
                 <% } %> 
@@ -40,4 +47,5 @@
     </div>
 </div>
 
+<script src="/js/checkout.js"></script>
 <%- include ('../includes/footer.ejs') %>
