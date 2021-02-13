@@ -1,5 +1,4 @@
 const Users = require('../models/users');
-const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 const chalk = require('chalk');
 const crypto = require('crypto');
 const knex = require('knex');
@@ -12,7 +11,7 @@ sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 exports.getUser = (req, res)=>{
     Users.findUserByEmail(req.session.user.email).then((users)=>{
         try {
-            const user = users[0]
+            const user = users[0];
             res.render('user/profile',{
                 'title':`Nusantaran JS | My Account`,
                 'path':`/profile`,
@@ -139,12 +138,4 @@ exports.postNewPassword = (req, res)=>{
         console.log(error);
         res.status(500).redirect('/500');
     });
-}
-
-exports.postConnectStripe = async (req, res)=>{
-    const account = await stripe.accounts.create({
-        type: 'standard',
-    });
-    console.log(account);
-    res.send(account)
 }

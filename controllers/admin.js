@@ -12,6 +12,7 @@ exports.getProduct = (req,res)=>{
         const error = req.flash('errorMessage');
         const errorMessage = error.length > 0 ? error[0] : null
         const hasProduct = prods.length > 0 ? true : false;
+
         res.render('admin/product',{
             'title':'Nusantaran JS | Admin Products',
             'path':'/product',

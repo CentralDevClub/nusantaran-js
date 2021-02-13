@@ -1,6 +1,6 @@
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
-const Product = require('../models/products')
-const Cart = require('../models/cart')
+const Product = require('../models/products');
+const Cart = require('../models/cart');
 const itemPerPage = 10;
 
 
@@ -22,11 +22,12 @@ exports.getProductList = (req, res)=>{
             'title':'Nusantaran JS | Shop',
             'path':'/products',
             'hasProduct': hasProduct,
-            'products':products,
+            'products': products,
             'page': page + 1,
             'displayPage': displayPage,
             'totalPage': totalPage,
-            'limit': limit
+            'limit': limit,
+            'currentUser': req.session ? req.session.user.email : null
         });
     }).catch((error)=>{
         console.log(error);
@@ -39,7 +40,8 @@ exports.getProductDetail = (req, res) => {
         res.render('shop/products-detail',{
             'title':`Nusantaran JS | ${product.name}`,
             'path':`products/${req.params.id}`,
-            'product':product
+            'product':product,
+            'currentUser': req.session ? req.session.user.email : null
         });
     }).catch((error)=>{
         console.log(error);
@@ -135,46 +137,62 @@ exports.postUpdateQty = (req, res)=>{
 
 // Checkout controller
 exports.getCheckout = (req, res)=>{
+    const checkout = req.flash('checkout');
+    const success = checkout.length > 0 ? true : false;
     const owner = req.session.user.email;
-    Cart.fetchAll(owner).then((cartProducts)=>{
-        Product.fetchAll().then((shopProducts)=>{
-            let products = []
-            for (let prod of shopProducts){
-                const inCart = cartProducts.find(p => p.id === prod.id);
-                if (inCart){
-                    products.push({
-                        name:prod.name,
-                        id:prod.id,
-                        price:prod.price,
-                        qty:inCart.qty,
-                        image: prod.image
-                    })
+    if (!success){
+        Cart.fetchAll(owner).then((cartProducts)=>{
+            Product.fetchAll().then((shopProducts)=>{
+                let products = []
+                for (let prod of shopProducts){
+                    const inCart = cartProducts.find(p => p.id === prod.id);
+                    if (inCart){
+                        products.push({
+                            name:prod.name,
+                            id:prod.id,
+                            price:prod.price,
+                            qty:inCart.qty,
+                            image: prod.image
+                        })
+                    }
                 }
-            }
-
-            // Calculating total price
-            let totalPrice = 0
-            products.forEach((p) => {
-                totalPrice += (p.price * p.qty);
-            });
-
-            const hasProduct = products.length > 0 ? true : false;
-            res.status(200).render('shop/checkout',{
-                'title':'Nusantaran JS | Checkout',
-                'path':'/checkout',
-                'hasProduct':hasProduct,
-                'products': products,
-                'totalPrice':totalPrice,
-                'source': process.env.STRIPE_PUBLISHABLE_KEY
+    
+                // Calculating total price
+                let totalPrice = 0
+                products.forEach((p) => {
+                    totalPrice += (p.price * p.qty);
+                });
+    
+                const hasProduct = products.length > 0 ? true : false;
+                res.status(200).render('shop/checkout',{
+                    'title':'Nusantaran JS | Checkout',
+                    'path':'/checkout',
+                    'hasProduct':hasProduct,
+                    'products': products,
+                    'totalPrice':totalPrice,
+                    'source': process.env.STRIPE_PUBLISHABLE_KEY,
+                    'success': success ? true : false
+                });
+            }).catch((error)=>{
+                console.log(error);
+                res.redirect('/500');
             });
         }).catch((error)=>{
             console.log(error);
             res.redirect('/500');
         });
-    }).catch((error)=>{
-        console.log(error);
-        res.redirect('/500');
-    });
+    } else {
+        Cart.emptyCart(owner).then(()=>{
+            res.status(200).render('shop/checkout',{
+                'title':'Nusantaran JS | Checkout',
+                'path':'/checkout',
+                'success': success ? true : false
+            });
+        }).catch((error)=>{
+            console.log(error);
+            res.redirect('/500');
+        });
+    }
 }
 
 exports.postCheckout = async (req, res)=>{
@@ -197,14 +215,14 @@ exports.postCheckout = async (req, res)=>{
     }
 
     // Stripe object products
-    const final_prod = products.map((product)=>{
+    const stripeProducts = products.map((product)=>{
         return {
             price_data: {
                 currency: 'idr',
                 product_data: {
                     name: product.name,
-                    images: [`http://${process.env.IP_PUBLIC}/${product.image}`]
-                    // images: ['https://www.flaticon.com/svg/static/icons/svg/2111/2111505.svg']
+                    // images: [`http://${process.env.IP_PUBLIC}/${product.image}`]
+                    images: ['https://www.flaticon.com/svg/static/icons/svg/2111/2111505.svg']
                 },
                 unit_amount: product.price * 100
             },
@@ -214,22 +232,15 @@ exports.postCheckout = async (req, res)=>{
 
     const session = await stripe.checkout.sessions.create({
         payment_method_types: ['card'],
-        line_items: final_prod,
+        line_items: stripeProducts,
         mode: 'payment',
-        success_url: `http://${process.env.IP_PUBLIC}/checkout/success`,
-        cancel_url: `http://${process.env.IP_PUBLIC}/checkout/`
+        success_url: `http://${process.env.IP_PUBLIC}/checkout`,
+        cancel_url: `http://${process.env.IP_PUBLIC}/checkout`,
+        metadata: {description: 'Nusantaran products payment'}
     });
 
-    res.json({id: session.id});
-}
-
-exports.getCheckoutSuccess = (req, res)=>{
-    Cart.emptyCart(req.session.user.email).then(()=>{
-        res.status(200).render('shop/checkout-success',{
-            'title':'Nusantaran JS | Checkout Success',
-            'path':'/checkout/success'
-        });
-    }).catch(()=>{
-        res.status(500).redirect('/500');
-    });
+    if (session.id){
+        req.flash('checkout', true);
+        res.json({id: session.id});
+    }
 }

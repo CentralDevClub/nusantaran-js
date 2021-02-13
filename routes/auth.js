@@ -2,7 +2,6 @@ const express = require('express');
 const router = express.Router();
 const authRouter = require('../controllers/auth');
 const forbidAuth = require('../middleware/forbidAuth');
-const needAuth = require('../middleware/needAuth');
 const { check, body } = require('express-validator');
 
 router.get('/register', forbidAuth, authRouter.getRegister);
