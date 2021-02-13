@@ -38,7 +38,9 @@
                     <% } else { %>
                         <div class="navbar-text actions">
                             <ul class="nav navbar-nav">
-                                <li class="nav-item mr-2"><a href="/admin/product" class="<%= path === '/product' ? 'active' : '' %>">My Products</a></li>
+                                <% if (isAdmin) { %>
+                                    <li class="nav-item mr-2"><a href="/admin/product" class="<%= path === '/product' ? 'active' : '' %>">Manage Products</a></li>
+                                <% } %>
                                 <li class="nav-item"><a class="<%= path === '/profile' ? 'active' : '' %>" href="/profile">My Account</a></li>
                             </ul>
                         </span>

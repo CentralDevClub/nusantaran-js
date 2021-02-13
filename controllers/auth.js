@@ -100,11 +100,11 @@ exports.postLogin = (req, res)=>{
                     req.session.isAuthenticated = true;
                     db('administrator').select('*').then((admins)=>{
                         if (admins){
-                            admins.forEach((admin)=>{
+                            for (const admin of admins){
                                 if (req.body.email === admin.email){
                                     req.session.isAdmin = true;
                                 }
-                            });
+                            }
                         }
                         res.redirect('/')
                     }).catch(()=>{

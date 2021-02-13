@@ -39,12 +39,18 @@
                                 </tr>
                             </tbody>
                         </table>
-                        <div>
-                            <input type="hidden" name="_csrf" value="<%= csrfToken %>" required>
-                            <input type="hidden" name="amount" value="<%= totalPrice %>" required>
-                            <input type="hidden" name="source" value="<%= source %>" required>
-                            <button class="btn btn-info" type="button" id="checkout-button">Checkout</button>
-                        </div>
+                        <% if (isAdmin) { %>
+                            <div class="col">
+                                <p class="alert alert-danger text-center">Cannot buy your own product</p>
+                            </div>
+                        <% } else { %>
+                            <div>
+                                <input type="hidden" name="_csrf" value="<%= csrfToken %>" required>
+                                <input type="hidden" name="amount" value="<%= totalPrice %>" required>
+                                <input type="hidden" name="source" value="<%= source %>" required>
+                                <button class="btn btn-info" type="button" id="checkout-button">Checkout</button>
+                            </div>
+                        <% } %>
                     <% } else { %>
                         <p>There is no product in your cart</p>
                     <% } %>

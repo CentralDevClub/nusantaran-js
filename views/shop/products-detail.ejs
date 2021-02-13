@@ -6,28 +6,19 @@
             <div class="col-lg-10 col-xl-8 offset-lg-1 offset-xl-2">
                 <h2>Product Detail</h2>
                 <div class="intro">
-                    <h1 class="text-center"><%= product.name %></h1>
-                    <p class="text-center">
-                        <span class="by">Seller : <%= product.owner %></span>
-                        <span class="date">Rp. <%= product.price %></span>
-                    </p>
+                    <h1 class="text-center"><%= product.name %> | Rp. <%= product.price %></h1>
                     <img class="img-fluid" src="/<%= product.image %>"></div>
                 <div class="text">
                     <p><%= product.description %></p>
                     <% if (isAuthenticated) { %>
-                        <% if (product.owner !== currentUser) { %>
-                            <form method="POST" action="/cart">
-                                <input type="hidden" name="productID" value="<%= product.id %>">
-                                <input type="hidden" name="productPrice" value="<%= product.price %>">
-                                <input type="hidden" name="_csrf" value="<%= csrfToken %>">
-                                <div class="text-center">
-                                    <button class="btn btn-primary" type="submit">Tambah ke Keranjang</button>
-    
-                                </div>
-                            </form>
-                        <% } else { %>
-                            <p class="alert alert-warning">Cannot buy your own product</p>
-                        <% } %>
+                        <form method="POST" action="/cart">
+                            <input type="hidden" name="productID" value="<%= product.id %>">
+                            <input type="hidden" name="productPrice" value="<%= product.price %>">
+                            <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                            <div class="text-center">
+                                <button class="btn btn-primary" type="submit">Tambah ke Keranjang</button>
+                            </div>
+                        </form>
                     <% } else { %>
                         <p class="alert alert-warning">You must have account to adding product to cart</p>
                     <% } %>

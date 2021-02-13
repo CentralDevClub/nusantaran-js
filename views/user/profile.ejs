@@ -5,8 +5,15 @@
         <div class="row">
             <div class="col">
                 <h2>My Account</h2>
-                <strong><%= user.name %></strong>
-                <a href="/reset">Reset Pasword</a>
+                <div>
+                    <strong><%= user.name %></strong>
+                    <% if (isAdmin) { %>
+                        <span class="alert alert-success">Administrator</span>
+                    <% } %>
+                </div>
+                <div>
+                    <a href="/reset">Reset Pasword</a>
+                </div>
                 <form action="/logout" method="POST">
                     <input type="hidden" name="_csrf" value="<%= csrfToken %>">
                     <button type="submit" class="btn btn-info">Logout</button>

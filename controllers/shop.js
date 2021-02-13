@@ -26,8 +26,7 @@ exports.getProductList = (req, res)=>{
             'page': page + 1,
             'displayPage': displayPage,
             'totalPage': totalPage,
-            'limit': limit,
-            'currentUser': req.session ? req.session.user.email : null
+            'limit': limit
         });
     }).catch((error)=>{
         console.log(error);
@@ -40,8 +39,7 @@ exports.getProductDetail = (req, res) => {
         res.render('shop/products-detail',{
             'title':`Nusantaran JS | ${product.name}`,
             'path':`products/${req.params.id}`,
-            'product':product,
-            'currentUser': req.session ? req.session.user.email : null
+            'product':product
         });
     }).catch((error)=>{
         console.log(error);

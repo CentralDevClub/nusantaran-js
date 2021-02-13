@@ -5,8 +5,7 @@ const fs = require('fs');
 
 
 exports.getProduct = (req,res)=>{
-    const products = req.session.isAdmin ? Product.fetchAll() : Product.fetchByOwner(req.session.user.email);
-    products.then((prods) => {
+    Product.fetchAll().then((prods) => {
         const placeholder = req.flash('placeholder');
         const placeholderData = placeholder.length > 0 ? placeholder[0] : {}
         const error = req.flash('errorMessage');
@@ -20,8 +19,7 @@ exports.getProduct = (req,res)=>{
             'products':prods,
             'errorMessage': errorMessage,
             'errors': req.flash('errors'),
-            'placeholder': placeholderData,
-            'isAdmin': req.session.isAdmin
+            'placeholder': placeholderData
         });
     }).catch((error)=>{
         console.log(error);

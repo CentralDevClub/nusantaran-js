@@ -57,9 +57,6 @@
                                 </div>
                                 <div class="card-body">
                                     <h4 class="cart-title"><%= product.name %></h4>
-                                    <% if (isAdmin){ %>
-                                        <p>Owner: <a href="mailto:<%= product.owner %>"><%= product.owner %></a></p>
-                                    <% } %>
                                     <form class="form-container mb-2" method="POST" action="/admin/update-product" enctype="multipart/form-data">
                                         <input type="hidden" name="_csrf" value="<%= csrfToken %>" required>
                                         <div class="form-group">
