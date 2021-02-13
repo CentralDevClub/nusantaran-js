@@ -35,14 +35,20 @@
                                 <a class="btn btn-outline-info" href="products/<%= product.id %>">Lihat Detail</a>
                             </div>
                             <% if (isAuthenticated) { %>
-                                <div class="col">
-                                    <form method="POST" action="/cart">
-                                        <input type="hidden" name="productID" value="<%= product.id %>">
-                                        <input type="hidden" name="productPrice" value="<%= product.price %>">
-                                        <input type="hidden" name="_csrf" value="<%= csrfToken %>">
-                                        <button type="submit" class="btn btn-info">Add to Cart</button>
-                                    </form>
-                                </div>
+                                <% if (product.owner !== currentUser) { %>
+                                    <div class="col">
+                                        <form method="POST" action="/cart">
+                                            <input type="hidden" name="productID" value="<%= product.id %>">
+                                            <input type="hidden" name="productPrice" value="<%= product.price %>">
+                                            <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                                            <button type="submit" class="btn btn-info">Add to Cart</button>
+                                        </form>
+                                    </div>
+                                <% } else { %>
+                                    <div class="col">
+                                        <p class="alert alert-warning">Cannot buy your own product</p>
+                                    </div>
+                                <% } %>
                             <% } %>
                         </div>
                     </div>

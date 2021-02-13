@@ -15,15 +15,19 @@
                 <div class="text">
                     <p><%= product.description %></p>
                     <% if (isAuthenticated) { %>
-                        <form method="POST" action="/cart">
-                            <input type="hidden" name="productID" value="<%= product.id %>">
-                            <input type="hidden" name="productPrice" value="<%= product.price %>">
-                            <input type="hidden" name="_csrf" value="<%= csrfToken %>">
-                            <div class="text-center">
-                                <button class="btn btn-primary" type="submit">Tambah ke Keranjang</button>
-
-                            </div>
-                        </form>
+                        <% if (product.owner !== currentUser) { %>
+                            <form method="POST" action="/cart">
+                                <input type="hidden" name="productID" value="<%= product.id %>">
+                                <input type="hidden" name="productPrice" value="<%= product.price %>">
+                                <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                                <div class="text-center">
+                                    <button class="btn btn-primary" type="submit">Tambah ke Keranjang</button>
+    
+                                </div>
+                            </form>
+                        <% } else { %>
+                            <p class="alert alert-warning">Cannot buy your own product</p>
+                        <% } %>
                     <% } else { %>
                         <p class="alert alert-warning">You must have account to adding product to cart</p>
                     <% } %>

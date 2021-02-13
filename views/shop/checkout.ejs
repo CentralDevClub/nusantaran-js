@@ -1,43 +1,58 @@
 <%- include ('../includes/header.ejs') %>
+<script src="https://js.stripe.com/v3/"></script>
 
 <div class="container-fluid dimmed-bg">
     <div class="container pt-4 pb-4">
         <div class="row">
             <div class="col" style="overflow: auto;">
-                <h2>Checkout</h2>
-                <% if (hasProduct){ %>
-                    <table class="table table-hover">
-                        <thead>
-                            <tr>
-                                <th>Product ID</th>
-                                <th>Product Name</th>
-                                <th>Product Quantity</th>
-                                <th>Product Price</th>
-                                <th>Subtotal Price</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <% for (let product of products){ %>
-                                <tr>
-                                    <td><%= product.id %></td>
-                                    <td><%= product.name %></td>
-                                    <td><%= product.qty %></td>
-                                    <td>Rp. <%= product.price %></td>
-                                    <td>Rp. <%= product.qty * product.price %></td>
-                                </tr>
-                            <% } %>
-                            <tr>
-                                <th colspan="4">Total Price</th>
-                                <th>Rp. <%= totalPrice %></th>
-                            </tr>
-                        </tbody>
-                    </table>
+                <% if (success) { %>
+                    <div class="alert alert-success">
+                        <h2>Payment Success</h2>
+                        <p>Thank you for ordering our product. Product will be shiped to your address. We will inform you when shipping is ready</p>
+                    </div>
                 <% } else { %>
-                    <p>There is no product in your cart</p>
-                <% } %> 
+                    <h2>Checkout</h2>
+                    <% if (hasProduct){ %>
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Product ID</th>
+                                    <th>Product Name</th>
+                                    <th>Product Quantity</th>
+                                    <th>Product Price</th>
+                                    <th>Subtotal Price</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <% for (let product of products){ %>
+                                    <tr>
+                                        <td><%= product.id %></td>
+                                        <td><%= product.name %></td>
+                                        <td><%= product.qty %></td>
+                                        <td>Rp. <%= product.price %></td>
+                                        <td>Rp. <%= product.qty * product.price %></td>
+                                    </tr>
+                                <% } %>
+                                <tr>
+                                    <th colspan="4">Total Price</th>
+                                    <th>Rp. <%= totalPrice %></th>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <div>
+                            <input type="hidden" name="_csrf" value="<%= csrfToken %>" required>
+                            <input type="hidden" name="amount" value="<%= totalPrice %>" required>
+                            <input type="hidden" name="source" value="<%= source %>" required>
+                            <button class="btn btn-info" type="button" id="checkout-button">Checkout</button>
+                        </div>
+                    <% } else { %>
+                        <p>There is no product in your cart</p>
+                    <% } %>
+                <% } %>
             </div>
         </div>
     </div>
 </div>
 
+<script src="/js/checkout.js"></script>
 <%- include ('../includes/footer.ejs') %>

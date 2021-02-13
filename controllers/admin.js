@@ -1,18 +1,18 @@
 const chalk = require('chalk');
 const Product = require('../models/products');
 const { validationResult } = require('express-validator');
+const fs = require('fs');
 
 
 exports.getProduct = (req,res)=>{
-    let products;
-    products = req.session.isAdmin ? Product.fetchAll() : Product.fetchByOwner(req.session.user.email);;
-
+    const products = req.session.isAdmin ? Product.fetchAll() : Product.fetchByOwner(req.session.user.email);
     products.then((prods) => {
         const placeholder = req.flash('placeholder');
         const placeholderData = placeholder.length > 0 ? placeholder[0] : {}
         const error = req.flash('errorMessage');
         const errorMessage = error.length > 0 ? error[0] : null
         const hasProduct = prods.length > 0 ? true : false;
+
         res.render('admin/product',{
             'title':'Nusantaran JS | Admin Products',
             'path':'/product',
@@ -49,6 +49,11 @@ exports.postAddProduct = (req, res)=>{
             res.redirect('/500');
         });
     } else {
+        try {
+            fs.unlinkSync(req.file.path);
+        } catch (error){
+            console.log(error);
+        };
         req.flash('errorMessage', validationError.array()[0].msg);
         req.flash('errors', validationError.array());
         req.flash('placeholder', {
@@ -62,7 +67,12 @@ exports.postAddProduct = (req, res)=>{
 };
 
 exports.postUpdateProduct = (req, res)=>{
-    Product.updateProduct(req.body).then(()=> {
+    let product = req.body;
+    product.image = req.file ? req.file.path : product.imagepath
+    if (req.file){
+        fs.unlinkSync(product.imagepath);
+    }
+    Product.updateProduct(product).then(()=> {
         res.redirect('/admin/product');
     }).catch((error)=>{
         console.log(error);

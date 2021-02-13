@@ -1,11 +1,8 @@
 <%- include ('../includes/header.ejs') %>
 
 <div class="login-clean">
-    <% if (success) { %>
-        <p class="alert alert-success">Please check your email to reset password, it's only valid for 1 hour</p>
-    <% } %>
-    <% if (errorMessage){ %>
-        <p class="alert alert-warning"><%= errorMessage %></p>
+    <% if (message) { %>
+        <p class="alert alert-success"><%= message %></p>
     <% } %>
     <form action="/reset" method="POST">
         <input type="hidden" name="_csrf" value="<%= csrfToken %>">
