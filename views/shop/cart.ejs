@@ -17,19 +17,19 @@
                                         <input type="hidden" name="_csrf" value="<%= csrfToken %>">
                                         <button class="btn btn-danger" type="submit">Remove</button>
                                     </form>
-                                    <form class="cart-button" method="POST" action="cart-update">
+                                    <form class="cart-button" method="POST" action="/cart-update">
                                         <input type="hidden" name="id" value="<%= product.id %>">
                                         <input type="hidden" name="qty" value="<%= product.qty - 1 %>">
                                         <input type="hidden" name="_csrf" value="<%= csrfToken %>">
                                         <button class="btn btn-outline-secondary" type="submit">-1</button>
                                     </form>
-                                    <form class="cart-button" method="POST" action="cart-update">
+                                    <form class="cart-button" method="POST" action="/cart-update">
                                         <input type="hidden" name="id" value="<%= product.id %>">
                                         <input type="hidden" name="qty" value="<%= product.qty + 1 %>">
                                         <input type="hidden" name="_csrf" value="<%= csrfToken %>">
                                         <button class="btn btn-outline-secondary" type="submit">+1</button>
                                     </form>
-                                    <form class="cart-button" method="POST" action="cart-update">
+                                    <form class="cart-button" method="POST" action="/cart-update">
                                         <input type="hidden" name="id" value="<%= product.id %>">
                                         <input type="hidden" name="_csrf" value="<%= csrfToken %>">
                                         <input type="number" name="qty" min="1" value="<%= product.qty %>">
@@ -40,7 +40,13 @@
                         <% } %>
                     </ul>
                     <p>Total Price : Rp.<%= totalPrice %></p>
-                    <a class="btn btn-primary" href="/checkout">Checkout</a>
+                    <div>
+                        <a class="btn btn-primary" href="/checkout">Checkout</a>
+                    </div>
+                    <form action="/cart-truncate" method="post">
+                        <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                        <button class="btn btn-danger" type="submit">Empty Cart</button>
+                    </form>
                 <% } else { %>
                     <p>Cart is empty</p>
                 <% } %>

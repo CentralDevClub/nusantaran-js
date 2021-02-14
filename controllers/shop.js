@@ -18,7 +18,8 @@ exports.getProductList = (req, res)=>{
             firstPage: 1,
             lastPage: totalPage
         }
-        res.render('shop/products-list',{
+
+        res.status(200).render('shop/products-list',{
             'title':'Nusantaran JS | Shop',
             'path':'/products',
             'hasProduct': hasProduct,
@@ -30,25 +31,25 @@ exports.getProductList = (req, res)=>{
         });
     }).catch((error)=>{
         console.log(error);
-        res.redirect('/500');
+        res.status(500).redirect('/500');
     })
 }
 
 exports.getProductDetail = (req, res) => {
     Product.findById(req.params.id).then((product) =>{
-        res.render('shop/products-detail',{
+        res.status(200).render('shop/products-detail',{
             'title':`Nusantaran JS | ${product.name}`,
             'path':`products/${req.params.id}`,
             'product':product
         });
     }).catch((error)=>{
         console.log(error);
-        res.redirect('/500');
+        res.status(500).redirect('/500');
     })
 }
 
 exports.getIndex = (_req, res)=>{
-    res.render('shop/index',{
+    res.status(200).render('shop/index',{
         'title':'Nusantaran JS | Welcome! Enjoy The Original Taste of Nusantara',
         'path':'/'
     })
@@ -91,54 +92,59 @@ exports.getCart = (req, res)=>{
             });
         }).catch((error)=>{
             console.log(error);
-            res.redirect('/500');
+            res.status(500).redirect('/500');
         });
     }).catch((error)=>{
         console.log(error);
-        res.redirect('/500');
+        res.status(500).redirect('/500');
     })
 }
 
 exports.postCart = (req, res)=>{
     Cart.addProduct(req.body.productID, req.session.user.email, req.body.productPrice).then(()=>{
-        res.redirect('/cart');
+        res.status(200).redirect('/cart');
     }).catch(()=>{
         console.log('Catch at controllers/shop.js:84');
-        res.redirect('/500');
+        res.status(500).redirect('/500');
     })
 }
 
 exports.postDeleteCart = (req, res)=>{
     Cart.deleteProduct(req.body.id, req.session.user.email).then(()=>{
-        res.redirect('/cart');
+        res.status(200).redirect('/cart');
     }).catch(()=>{
         console.log('Catch at controllers/shop.js:93');
-        res.redirect('/500');
+        res.status(500).redirect('/500');
     })
+}
+
+exports.postCartTruncate = (req, res)=>{
+    Cart.emptyCart(req.session.user.email).then(()=>{
+        res.status(200).redirect('/cart');
+    }).catch(()=>{
+        res.status(500).redirect('/500');
+    });
 }
 
 exports.postUpdateQty = (req, res)=>{
     Cart.updateQty(req.body.id, req.body.qty, req.session.user.email).then((product)=>{
         if (product[0].qty <= 0){
             Cart.deleteProduct(req.body.id, req.session.user.email).then(()=>{
-                res.redirect('/cart')
+                res.status(200).redirect('/cart')
             });
         } else {
-            res.redirect('/cart');
+            res.status(200).redirect('/cart');
         }
     }).catch(()=>{
         console.log('Catch at controllers/shop.js:108');
-        res.redirect('/500');
+        res.status(500).redirect('/500');
     });
 }
 
 
 // Checkout controller
 exports.getCheckout = (req, res)=>{
-    const checkout = req.flash('checkout');
-    const success = checkout.length > 0 ? true : false;
-    const owner = req.session.user.email;
-    if (!success){
+    const getProducts = (paid)=>{
         Cart.fetchAll(owner).then((cartProducts)=>{
             Product.fetchAll().then((shopProducts)=>{
                 let products = []
@@ -169,27 +175,41 @@ exports.getCheckout = (req, res)=>{
                     'products': products,
                     'totalPrice':totalPrice,
                     'source': process.env.STRIPE_PUBLISHABLE_KEY,
-                    'success': success ? true : false
+                    'paid': paid ? true : false
                 });
             }).catch((error)=>{
                 console.log(error);
-                res.redirect('/500');
+                res.status(500).redirect('/500');
             });
         }).catch((error)=>{
             console.log(error);
-            res.redirect('/500');
+            res.status(500).redirect('/500');
+        });
+    };
+
+    const owner = req.session.user.email;
+    const checkoutId = req.flash('checkoutId');
+    const check = checkoutId.length > 0 ? true : false;
+    if (check){
+        stripe.checkout.sessions.retrieve(checkoutId[0]).then((data)=>{
+            const paid = data.payment_status === 'paid' ? true : false;
+            if (!paid){
+                getProducts(paid);
+            } else {
+                Cart.emptyCart(owner).then(()=>{
+                    res.status(200).render('shop/checkout',{
+                        'title':'Nusantaran JS | Checkout',
+                        'path':'/checkout',
+                        'paid': paid ? true : false
+                    });
+                }).catch((error)=>{
+                    console.log(error);
+                    res.status(500).redirect('/500');
+                });
+            }
         });
     } else {
-        Cart.emptyCart(owner).then(()=>{
-            res.status(200).render('shop/checkout',{
-                'title':'Nusantaran JS | Checkout',
-                'path':'/checkout',
-                'success': success ? true : false
-            });
-        }).catch((error)=>{
-            console.log(error);
-            res.redirect('/500');
-        });
+        getProducts(false);
     }
 }
 
@@ -238,7 +258,7 @@ exports.postCheckout = async (req, res)=>{
     });
 
     if (session.id){
-        req.flash('checkout', true);
+        req.flash('checkoutId', session.id);
         res.json({id: session.id});
     }
 }
