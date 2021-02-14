@@ -32,5 +32,6 @@ router.post('/login', [
         .normalizeEmail(),
     body('password').trim()
 ], forbidAuth, authRouter.postLogin);
+router.get('/verified', forbidAuth, authRouter.getVerified);
 
 module.exports = router;

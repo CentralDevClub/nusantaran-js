@@ -26,13 +26,13 @@ module.exports = class Users{
                 name: name,
                 address: address,
                 email: email,
-                password: hash
+                password: hash,
+                verified: false
             });
             console.log(chalk.green('User successfully registered'));
             return 'success';
         }
         catch (e) {
-            console.log(chalk.red('Email already used'));
             throw new Error('Email already used');
         }
     }
@@ -57,6 +57,20 @@ module.exports = class Users{
             }).returning('*').then((user)=>{
                 return user;
             })
+            return user;
+        } catch (error) {
+            console.log(error);
+            throw new Error(error);
+        }
+    }
+
+    static async verifyAccount(email){
+        try {
+            const user = await db('users').where('email', email).update({
+                'verified': true
+            }).returning('*').then((user)=>{
+                return user;
+            });
             return user;
         } catch (error) {
             console.log(error);

@@ -1,16 +1,16 @@
 <%- include ('../includes/header.ejs') %>
 
-<% if (errorMessage){ %>
-    <div class="error-message alert alert-danger">
-        <p><%= errorMessage %></p>
-    </div>
-<% } %>
-<% if (successMessage){ %>
-    <div class="alert alert-success">
-        <p><%= successMessage %></p>
-    </div>
-<% } %> 
 <div class="login-clean">
+    <% if (errorMessage){ %>
+        <div class="error-message alert alert-danger">
+            <p><%= errorMessage %></p>
+        </div>
+    <% } %>
+    <% if (successMessage){ %>
+        <div class="alert alert-success">
+            <p><%= successMessage %></p>
+        </div>
+    <% } %>
     <form action="/login" method="POST">
         <input type="hidden" name="_csrf" value="<%= csrfToken %>">
         <img src="/img/login.svg" alt="" style="display: block; margin: auto; width: 100%;">
