@@ -2,21 +2,21 @@
 <script src="/js/product.js"></script>
 
 <div class="container-fluid dimmed-bg">
-    <div class="container pt-4">
-        <div class="row">
-            <% if (errorMessage){ %>
+    <% if (errorMessage){ %>
+        <div class="container pt-4">
+            <div class="row">
                 <div class="col alert alert-danger">
                     <p><%= errorMessage %></p>
                 </div>
-            <% } %>
+            </div>
         </div>
-    </div>
+    <% } %>
     <div class="container pb-4 pt-4">
         <div class="row">
             <div class="col">
                 <div class="d-flex justify-content-start">
-                    <h2>Sell Product</h2>
-                    <button onclick="toogleForm(this)" class="btn btn-info ml-4">></button>
+                    <h5>Sell Product</h5>
+                    <button onclick="toogleForm(this)" class="btn btn-primary ml-4">></button>
                 </div>
                 <form id="product_form" class="form-container" method="POST" action="/admin/add-product" enctype="multipart/form-data" style="display: none;">
                     <input type="hidden" name="_csrf" value="<%= csrfToken %>" required>
@@ -40,7 +40,7 @@
                         <label for="price">Price</label>
                         <input class="form-control" type="number" name="price" value="<%= placeholder.price %>" required>
                     </div>
-                    <button class="btn btn-primary" type="submit">Add New Product</button>
+                    <button class="btn btn-primary" type="submit">Sell Product</button>
                 </form>
             </div>
         </div>
@@ -48,38 +48,33 @@
     <div class="container pb-4">
         <div class="row">
             <div class="col">
-                <h2>Edit Product</h2>
+                <h5>Edit Product</h5>
                 <% if (hasProduct){ %>
                     <ul class="cart d-flex flex-wrap justify-content-start">
                         <% for (let product of products){ %>
-                            <li class="card m-2" style="width: 18rem;">
-                                <div class="img-card mt-3">
-                                    <img width="250" height="250" class="card-img-top" src="/<%= product.image %>">
+                            <li class="card m-2" style="width: 12rem;">
+                                <div>
+                                    <img class="card-img-top" src="/<%= product.image %>">
                                 </div>
                                 <div class="card-body">
-                                    <h4 class="cart-title"><%= product.name %></h4>
+                                    <strong class="cart-title"><%= product.name %></strong>
                                     <form class="form-container mb-2" method="POST" action="/admin/update-product" enctype="multipart/form-data">
                                         <input type="hidden" name="_csrf" value="<%= csrfToken %>" required>
                                         <div class="form-group">
-                                            <label for="image">Change Image</label>
                                             <input type="hidden" type="text" name="imagepath" value="<%= product.image %>">
                                             <input class="form-control-file" type="file" name="image">
                                         </div>
                                         <input type="hidden" name="id" value="<%= product.id %>" required>
                                         <div class="form-group">
-                                            <label for="name">Product Name</label>
                                             <input class="form-control" type="text" name="name" value="<%= product.name %>" required>
                                         </div>
                                         <div class="form-group">
-                                            <label for="category">Product Category</label>
                                             <input class="form-control" type="text" name="category" value="<%= product.category %>" required>
                                         </div>
                                         <div class="form-group">
-                                            <label for="description">Description</label>
                                             <input class="form-control" type="text" name="description" value="<%= product.description %>" required>
                                         </div>
                                         <div class="form-group">
-                                            <label for="price">Price</label>
                                             <input class="form-control" type="number" name="price" value="<%= product.price %>" required>
                                         </div>
                                         <button class="btn btn-primary btn-block" type="submit">Commit</button>
@@ -92,6 +87,19 @@
                                 </div>
                             </li>
                         <% } %>
+                        <% if (displayPage) { %>
+                            <div class="container mt-3">
+                                <div class="row">
+                                    <div class="col text-center">
+                                        <a class="btn btn-outline-secondary" href="/admin/product?page=<%= limit.firstPage %>">First Page</a>
+                                        <% for( let i = 1; i <= totalPage; i++ ) { %>
+                                            <a class="btn btn-outline-primary <%= page === i ? 'active' : '' %>" href="/admin/product?page=<%= i %>"><%= i %></a>
+                                        <% } %>
+                                        <a class="btn btn-outline-secondary" href="/admin/product?page=<%= limit.lastPage %>">Last Page</a>
+                                    </div>
+                                </div>
+                            </div>
+                        <% } %>
                     </ul>
                 <% } else { %>
                     <p>There is no products</p>
@@ -101,4 +109,5 @@
     </div>
 </div>
 
+<script src="/js/card.js"></script>
 <%- include ('../includes/footer.ejs') %>

@@ -25,8 +25,8 @@ exports.getProductList = (req, res)=>{
             'hasProduct': hasProduct,
             'products': products,
             'page': page + 1,
-            'displayPage': displayPage,
             'totalPage': totalPage,
+            'displayPage': displayPage,
             'limit': limit
         });
     }).catch((error)=>{

@@ -2,24 +2,38 @@ const chalk = require('chalk');
 const Product = require('../models/products');
 const { validationResult } = require('express-validator');
 const fs = require('fs');
+const itemPerPage = 10;
 
 
 exports.getProduct = (req,res)=>{
-    Product.fetchAll().then((prods) => {
+    const page = req.query.page ? req.query.page -1 : 0;
+    Product.fetchChunk(page, itemPerPage).then((productAndLength) => {
+        const products = productAndLength.chunkData;
+        const length = productAndLength.tableRowsCount;
+        const totalPage = Math.ceil(length / itemPerPage);
         const placeholder = req.flash('placeholder');
         const placeholderData = placeholder.length > 0 ? placeholder[0] : {}
         const error = req.flash('errorMessage');
         const errorMessage = error.length > 0 ? error[0] : null
-        const hasProduct = prods.length > 0 ? true : false;
+        const hasProduct = products.length > 0 ? true : false;
+        const displayPage = totalPage >= itemPerPage ? true : false;
+        const limit = {
+            firstPage: 1,
+            lastPage: totalPage
+        }
 
         res.render('admin/product',{
             'title':'Nusantaran JS | Admin Products',
             'path':'/product',
             'hasProduct': hasProduct,
-            'products':prods,
+            'products': products,
             'errorMessage': errorMessage,
             'errors': req.flash('errors'),
-            'placeholder': placeholderData
+            'placeholder': placeholderData,
+            'page': page + 1,
+            'totalPage': totalPage,
+            'displayPage': true,
+            'limit': limit
         });
     }).catch((error)=>{
         console.log(error);
