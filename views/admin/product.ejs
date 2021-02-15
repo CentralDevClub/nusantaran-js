@@ -1,4 +1,5 @@
 <%- include ('../includes/header.ejs') %>
+<script src="/js/product.js"></script>
 
 <div class="container-fluid dimmed-bg">
     <div class="container pt-4">
@@ -33,7 +34,7 @@
                     </div>
                     <div class="form-group">
                         <label for="description">Description</label>
-                        <input class="form-control <%= errors.find(e => e.param === 'description') ? 'invalid' : '' %>" type="text" name="description" value="<%= placeholder.description %>" required>
+                        <textarea class="form-control <%= errors.find(e => e.param === 'description') ? 'invalid' : '' %>" type="text" name="description" value="<%= placeholder.description %>" rows="3" required></textarea>
                     </div>
                     <div class="form-group">
                         <label for="price">Price</label>
@@ -100,5 +101,4 @@
     </div>
 </div>
 
-<script src="/js/product.js"></script>
 <%- include ('../includes/footer.ejs') %>

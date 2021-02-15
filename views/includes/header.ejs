@@ -16,8 +16,8 @@
     <header class="header sticky-top">
         <nav class="navbar navbar-light navbar-expand-md navigation-clean-button">
             <div class="container">
-                <img src="/img/tropical.svg" alt="" style="width: 30px; margin-right: 10px;">
-                <a class="navbar-brand" href="/">Nusantaran</a>
+                <img src="/img/tropical.svg" alt="" style="width: 25px; margin-right: 10px;">
+                <a class="navbar-brand" style="font-size: 17px;" href="/">NUSANTARAN</a>
                 <button data-toggle="collapse" class="navbar-toggler" data-target="#navcol-1">
                     <span class="sr-only">Toggle navigation</span>
                     <span class="navbar-toggler-icon"></span>
@@ -41,7 +41,7 @@
                                 <% if (isAdmin) { %>
                                     <li class="nav-item mr-2"><a href="/admin/product" class="<%= path === '/product' ? 'active' : '' %>">Manage Products</a></li>
                                 <% } %>
-                                <li class="nav-item"><a class="<%= path === '/profile' ? 'active' : '' %>" href="/profile">My Account</a></li>
+                                <li class="nav-item"><a class="<%= path === '/profile' ? 'active' : '' %>" href="/profile"><%= username %></a></li>
                             </ul>
                         </span>
                     <% } %>

@@ -4,7 +4,7 @@
     <div class="container pt-4">
         <div class="row">
             <div class="col">
-                <h2>Available Products</h2>
+                <h5>Available Products</h5>
             </div>
         </div>
     </div>
@@ -19,33 +19,28 @@
             </div>
         </div>
     </div>
-    <div class="container pb-4 d-flex flex-wrap justify-content-start">
+    <div class="container pb-4 d-flex flex-wrap justify-content-center justify-content-md-start">
         <% if (hasProduct){ %>
             <% for (let product of products){ %>
-                <div class="card m-2" style="width: 18rem;">
-                    <div class="img-card mt-3">
-                        <img width="250" height="250" class="card-img-top" src="/<%= product.image %>">
+                <div class="card m-2 pointer" style="width: 12rem;" onclick="location.href='products/<%= product.id %>';">
+                    <div class="img-card">
+                        <img class="card-img-top img-card" src="/<%= product.image %>">
                     </div>
                     <div class="card-body text-center pt-2">
-                        <h5 class="card-title text-center"><%= product.name %></h5>
-                        <strong class="text-muted card-subtitle mb-2 text-center">Rp.<%= product.price %></strong>
-                        <span class="card-text text-center">- <%= product.category %></span>
-                        <div class="row mt-2">
-                            <div class="col">
-                                <a class="btn btn-outline-info" href="products/<%= product.id %>">Lihat Detail</a>
-                            </div>
-                            <% if (isAuthenticated) { %>
-                                <div class="col">
-                                    <form method="POST" action="/cart">
-                                        <input type="hidden" name="productID" value="<%= product.id %>">
-                                        <input type="hidden" name="productPrice" value="<%= product.price %>">
-                                        <input type="hidden" name="_csrf" value="<%= csrfToken %>">
-                                        <button type="submit" class="btn btn-info">Add to Cart</button>
-                                    </form>
-                                </div>
-                            <% } %>
-                        </div>
+                        <p class="card-title text-center mb-0"><strong><%= product.name %></strong></p>
+                        <p class="card-text text-center mb-0"><%= product.category %></p>
+                        <p><strong class="text-muted card-subtitle text-center">Rp.<%= product.price %></strong></p>
                     </div>
+                    <% if (isAuthenticated) { %>
+                        <div class="card-body mb-2">
+                            <form method="POST" action="/cart">
+                                <input type="hidden" name="productID" value="<%= product.id %>">
+                                <input type="hidden" name="productPrice" value="<%= product.price %>">
+                                <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                                <button type="submit" class="btn btn-block btn-outline-primary">Add to Cart</button>
+                            </form>
+                        </div>
+                    <% } %>
                 </div>
             <% } %>
             <% if (displayPage) { %>
@@ -67,4 +62,5 @@
     </div>
 </div>
 
+<script src="/js/card.js"></script>
 <%- include ('../includes/footer.ejs') %>

@@ -16,8 +16,8 @@ header {
 
 .img-card {
     margin: auto;
-    width: 250px;
-    height: 250px;
+    width: 100%;
+    height: 100%;
     overflow: hidden;
 }
 
@@ -26,7 +26,7 @@ header {
 }
 
 .dimmed-bg {
-    background-color: #eef4f7;
+    background-color: rgb(244, 247, 252);
 }
 
 .cart {
@@ -35,4 +35,12 @@ header {
 
 .cart-button {
     display: inline;
+}
+
+.pointer {
+    cursor: pointer;
+}
+
+.card {
+    transition: all ease 0.2s;
 }

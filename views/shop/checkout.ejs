@@ -2,7 +2,7 @@
 <script src="https://js.stripe.com/v3/"></script>
 
 <div class="container-fluid dimmed-bg">
-    <div class="container pt-4 pb-4">
+    <div class="container pt-4 pb-5">
         <div class="row">
             <div class="col" style="overflow: auto;">
                 <% if (paid) { %>
@@ -11,15 +11,15 @@
                         <p>Thank you for ordering our product. Product will be shiped to your address. We will inform you when shipping is ready</p>
                     </div>
                 <% } else { %>
-                    <h2>Checkout</h2>
+                    <h5>Checkout</h5>
                     <% if (hasProduct){ %>
-                        <table class="table table-hover">
+                        <table class="table table-hover bg-white shadow rounded mb-4">
                             <thead>
                                 <tr>
                                     <th>Product ID</th>
-                                    <th>Product Name</th>
-                                    <th>Product Quantity</th>
-                                    <th>Product Price</th>
+                                    <th>Name</th>
+                                    <th>Quantity</th>
+                                    <th>Price</th>
                                     <th>Subtotal Price</th>
                                 </tr>
                             </thead>
