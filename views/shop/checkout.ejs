@@ -11,9 +11,9 @@
                         <p>Thank you for ordering our product. Product will be shiped to your address. We will inform you when shipping is ready</p>
                     </div>
                 <% } else { %>
-                    <h5>Checkout</h5>
+                    <h5 class="mb-3">Checkout</h5>
                     <% if (hasProduct){ %>
-                        <table class="table table-hover bg-white shadow rounded mb-4">
+                        <table class="table table-hover">
                             <thead>
                                 <tr>
                                     <th>Product ID</th>
@@ -39,24 +39,24 @@
                                 </tr>
                             </tbody>
                         </table>
-                        <% if (isAdmin) { %>
-                            <div class="col">
-                                <p class="alert alert-danger text-center">Cannot buy your own product</p>
-                            </div>
-                        <% } else { %>
-                            <div>
-                                <input type="hidden" name="_csrf" value="<%= csrfToken %>" required>
-                                <input type="hidden" name="amount" value="<%= totalPrice %>" required>
-                                <input type="hidden" name="source" value="<%= source %>" required>
-                                <button class="btn btn-info" type="button" id="checkout-button">Checkout</button>
-                            </div>
-                        <% } %>
                     <% } else { %>
                         <p>There is no product in your cart</p>
                     <% } %>
                 <% } %>
             </div>
         </div>
+        <% if (isAdmin) { %>
+            <div>
+                <p class="alert alert-danger text-center">Cannot buy your own product</p>
+            </div>
+        <% } else { %>
+            <div>
+                <input type="hidden" name="_csrf" value="<%= csrfToken %>" required>
+                <input type="hidden" name="amount" value="<%= totalPrice %>" required>
+                <input type="hidden" name="source" value="<%= source %>" required>
+                <button class="btn btn-info" type="button" id="checkout-button">Checkout</button>
+            </div>
+        <% } %>
     </div>
 </div>
 
