@@ -8,3 +8,22 @@
     height: 100%;
     overflow: hidden;
 }
+
+@media only screen and (max-width: 425px) {
+    .card {
+        width: 35vw !important;
+        height: 100% !important;
+    }
+
+    .card-price {
+        font-size: 14px;
+    }
+    
+    .card-button {
+        padding-top: 0;
+    }
+
+    .card-detail {
+        padding-bottom: 0;
+    }
+}

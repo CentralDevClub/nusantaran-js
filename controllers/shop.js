@@ -12,8 +12,7 @@ exports.getProductList = (req, res)=>{
         const length = productAndLength.tableRowsCount;
         const totalPage = Math.ceil(length / itemPerPage);
         const hasProduct = products.length > 0 ? true : false;
-        
-        const displayPage = totalPage >= itemPerPage ? true : false;
+        const displayPage = totalPage * itemPerPage >= itemPerPage ? true : false;
         const limit = {
             firstPage: 1,
             lastPage: totalPage

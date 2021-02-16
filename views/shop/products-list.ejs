@@ -21,24 +21,25 @@
         <% } %>
     <% } %>
     <% if (hasProduct){ %>
-        <div class="container pb-4 d-flex flex-wrap justify-content-center justify-content-md-start">
+        <div class="container pb-4 d-flex flex-wrap justify-content-center justify-content-lg-start align-content-around">
             <% for (let product of products){ %>
                 <div class="card m-2 pointer" style="width: 12rem;" onclick="location.href='products/<%= product.id %>';">
                     <div class="img-card">
                         <img class="card-img-top img-card" src="/<%= product.image %>">
                     </div>
-                    <div class="card-body text-center pt-2">
+                    <div class="card-body text-center pt-2 card-detail">
                         <p class="card-title text-center mb-0"><strong><%= product.name %></strong></p>
                         <p class="card-text text-center mb-0"><%= product.category %></p>
-                        <p><strong class="text-muted card-subtitle text-center">Rp.<%= product.price %></strong></p>
+                        <p><strong class="card-price text-muted card-subtitle text-center">Rp.<%= product.price %></strong></p>
                     </div>
                     <% if (isAuthenticated) { %>
-                        <div class="card-body mb-2">
+                        <div class="card-body mb-2 card-button">
                             <form method="POST" action="/cart">
                                 <input type="hidden" name="productID" value="<%= product.id %>">
                                 <input type="hidden" name="productPrice" value="<%= product.price %>">
                                 <input type="hidden" name="_csrf" value="<%= csrfToken %>">
-                                <button type="submit" class="btn btn-block btn-outline-primary">Add to Cart</button>
+                                <button type="submit" class="btn btn-block btn-outline-primary d-none d-sm-block">Add to Cart</button>
+                                <button type="submit" class="btn btn-block btn-outline-primary d-block d-sm-none">Add</button>
                             </form>
                         </div>
                     <% } %>

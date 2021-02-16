@@ -16,7 +16,7 @@ exports.getProduct = (req,res)=>{
         const error = req.flash('errorMessage');
         const errorMessage = error.length > 0 ? error[0] : null
         const hasProduct = products.length > 0 ? true : false;
-        const displayPage = totalPage >= itemPerPage ? true : false;
+        const displayPage = totalPage * itemPerPage >= itemPerPage ? true : false;
         const limit = {
             firstPage: 1,
             lastPage: totalPage
@@ -56,9 +56,16 @@ exports.postAddProduct = (req, res)=>{
             console.log(chalk.blue(`Product added : ${product[0].name}`));
             res.redirect('/admin/product');
         }).catch(()=>{
-            console.log(chalk.red('Insert Product Failed!'))
-            console.log('Caught at controllers/admin.js:21')
-            res.redirect('/500');
+            console.log(chalk.red('Product name is already have'));
+            req.flash('errorMessage', [`Product "${req.body.name}" is already in database`]);
+            req.flash('errors', [{param:'name'}]);
+            req.flash('placeholder', {
+                'name': req.body.name,
+                'category': req.body.category,
+                'description': req.body.description,
+                'price': req.body.price
+            })
+            res.status(422).redirect('/admin/product');
         });
     } else {
         try {
