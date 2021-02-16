@@ -12,8 +12,8 @@ sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
 
 exports.getRegister = (req, res) => {
-    const error = req.flash('errorMessage')
-    const message = error.length > 0 ? error[0] : null
+    const error = req.flash('errorMessage');
+    const message = error.length > 0 ? error[0] : null;
     res.render('auth/register', {
         'title':'Nusantaran JS | Register',
         'path':'/register',
@@ -28,9 +28,9 @@ exports.getRegister = (req, res) => {
 }
 
 exports.getLogin = (req, res)=>{
-    const error = req.flash('errorMessage');
     const success = req.flash('successMessage');
     const successMessage = success.length > 0 ? success[0] : null;
+    const error = req.flash('errorMessage');
     const message = error.length > 0 ? error[0] : null;
     res.render('auth/login', {
         'title': 'Nusantaran JS | Login',
