@@ -1,6 +1,7 @@
 const knex = require('knex');
 const db_config = require('./db-config').config;
 const db = knex(db_config);
+const fs = require('fs')
 const chalk = require('chalk');
 const bcrypt = require('bcrypt');
 const bcryptSaltRounds = parseInt(process.env.SALT_ROUNDS);
@@ -18,12 +19,13 @@ module.exports = class Users{
         }
     }
 
-    static async addUser(name, address, email, password){             
+    static async addUser(name, image, address, email, password){             
         try {
             const salt = await bcrypt.genSalt(bcryptSaltRounds);
             const hash = await bcrypt.hash(password, salt);
             await db('users').returning('*').insert({
                 name: name,
+                image: image,
                 address: address,
                 email: email,
                 password: hash,
@@ -33,7 +35,7 @@ module.exports = class Users{
             return 'success';
         }
         catch (e) {
-            throw new Error('Email already used');
+            throw new Error(e);
         }
     }
 

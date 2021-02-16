@@ -1,7 +1,7 @@
 <%- include ('../includes/header.ejs') %>
 <link rel="stylesheet" href="/css/product.css">
 
-<div class="container-fluid dimmed-bg">
+<div class="container-fluid dimmed-bg main">
     <div class="container pt-4">
         <div class="row">
             <div class="col">
@@ -9,19 +9,19 @@
             </div>
         </div>
     </div>
-    <div class="container">
-        <div class="row">
-            <div class="col">
-                <% if (hasProduct) { %>
-                    <% if (!isAuthenticated) { %>
-                        <p class="mt-4 alert alert-warning">You must have account to adding product to cart</p>
-                    <% } %>
-                <% } %>
+    <% if (hasProduct) { %>
+        <% if (!isAuthenticated) { %>
+            <div class="container">
+                <div class="row">
+                    <div class="col text-center">
+                        <p class="mt-4 alert alert-danger">You must have account to adding product to cart</p>
+                    </div>
+                </div>
             </div>
-        </div>
-    </div>
-    <div class="container pb-4 d-flex flex-wrap justify-content-center justify-content-md-start">
-        <% if (hasProduct){ %>
+        <% } %>
+    <% } %>
+    <% if (hasProduct){ %>
+        <div class="container pb-4 d-flex flex-wrap justify-content-center justify-content-md-start">
             <% for (let product of products){ %>
                 <div class="card m-2 pointer" style="width: 12rem;" onclick="location.href='products/<%= product.id %>';">
                     <div class="img-card">
@@ -57,10 +57,19 @@
                     </div>
                 </div>
             <% } %>
-        <% } else { %>
-            <p>There is no products</p>
-        <% } %>
-    </div>
+        </div>
+    <% } else { %>
+        <div class="container pt-4">
+            <div class="row">
+                <div class="col">
+                    <div class="alert alert-danger">
+                        <h5>No products for sale</h5>
+                        <p>Sorry for the inconvinience, we are running out of stock. We will back soon</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    <% } %>
 </div>
 
 <script src="/js/card.js"></script>

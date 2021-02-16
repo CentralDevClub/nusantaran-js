@@ -57,7 +57,7 @@ exports.postRegister = (req, res)=>{
             }
         });
     }
-    Users.addUser(req.body.name, req.body.address, req.body.email, req.body.password).then(() => {
+    Users.addUser(req.body.name, req.file.path, req.body.address, req.body.email, req.body.password).then(() => {
         crypto.randomBytes(32, (error, buffer)=>{
             if (error){
                 res.status(500).redirect('/500');
@@ -95,11 +95,15 @@ exports.postRegister = (req, res)=>{
                         }).catch(()=>{
                             res.status(500).redirect('/500');
                         })
+                    }).catch((err)=>{
+                        console.log(err);
+                        res.status(500).redirect('/500');
                     });
                 });
             }
         });
-    }).catch(()=>{
+    }).catch((err)=>{
+        console.log(err);
         db('users').select('*').where('email', req.body.email).then((users)=>{
             const user = users[0];
             if (user.verified === true){
@@ -141,6 +145,9 @@ exports.postRegister = (req, res)=>{
                     }
                 });
             }
+        }).catch((err)=>{
+            console.log(err);
+            res.status(500).redirect('/500');
         });
     });
 }

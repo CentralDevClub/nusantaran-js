@@ -32,7 +32,7 @@ exports.getProduct = (req,res)=>{
             'placeholder': placeholderData,
             'page': page + 1,
             'totalPage': totalPage,
-            'displayPage': true,
+            'displayPage': displayPage,
             'limit': limit
         });
     }).catch((error)=>{

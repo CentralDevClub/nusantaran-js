@@ -4,5 +4,6 @@ CREATE TABLE users(
     address TEXT NOT NULL,
     email VARCHAR(100) UNIQUE NOT NULL,
     password VARCHAR(100) NOT NULL,
+    image TEXT NOT NULL,
     verified BOOLEAN NOT NULL DEFAULT FALSE
 );

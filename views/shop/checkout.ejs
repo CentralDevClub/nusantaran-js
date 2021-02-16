@@ -1,7 +1,7 @@
 <%- include ('../includes/header.ejs') %>
 <script src="https://js.stripe.com/v3/"></script>
 
-<div class="container-fluid dimmed-bg">
+<div class="container-fluid dimmed-bg main">
     <div class="container pt-4 pb-5">
         <div class="row">
             <div class="col" style="overflow: auto;">
@@ -39,24 +39,26 @@
                                 </tr>
                             </tbody>
                         </table>
+                        <% if (isAdmin) { %>
+                            <% if (hasProduct) { %>
+                                <div>
+                                    <p class="alert alert-danger text-center">Cannot buy your own product</p>
+                                </div>
+                            <% } %>
+                        <% } else { %>
+                            <div>
+                                <input type="hidden" name="_csrf" value="<%= csrfToken %>" required>
+                                <input type="hidden" name="amount" value="<%= totalPrice %>" required>
+                                <input type="hidden" name="source" value="<%= source %>" required>
+                                <button class="btn btn-info" type="button" id="checkout-button">Checkout</button>
+                            </div>
+                        <% } %>
                     <% } else { %>
                         <p>There is no product in your cart</p>
                     <% } %>
                 <% } %>
             </div>
         </div>
-        <% if (isAdmin) { %>
-            <div>
-                <p class="alert alert-danger text-center">Cannot buy your own product</p>
-            </div>
-        <% } else { %>
-            <div>
-                <input type="hidden" name="_csrf" value="<%= csrfToken %>" required>
-                <input type="hidden" name="amount" value="<%= totalPrice %>" required>
-                <input type="hidden" name="source" value="<%= source %>" required>
-                <button class="btn btn-info" type="button" id="checkout-button">Checkout</button>
-            </div>
-        <% } %>
     </div>
 </div>
 

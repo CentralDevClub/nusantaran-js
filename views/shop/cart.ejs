@@ -1,7 +1,7 @@
 <%- include ('../includes/header.ejs') %>
 <link rel="stylesheet" href="/css/cart.css">
 
-<div class="container-fluid dimmed-bg pt-4 pb-5">
+<div class="container-fluid dimmed-bg pt-4 pb-5 main">
     <div class="container">
         <div class="row">
             <div class="col" style="overflow: auto;">
@@ -17,9 +17,9 @@
                     <ul class="cart p-3 bg-white rounded shadow mt-2">
                         <div class="row mb-2">
                             <h6 class="col text-muted text-uppercase">Product</h6>
-                            <h6 class="col text-muted text-uppercase">Price</h6>
+                            <h6 class="col text-muted text-uppercase d-none d-md-block">Price</h6>
                             <h6 class="col text-muted text-uppercase">Quantity</h6>
-                            <h6 class="col text-muted text-uppercase">Subtotal</h6>
+                            <h6 class="col text-muted text-uppercase d-none d-md-block">Subtotal</h6>
                             <h6 class="col text-muted text-uppercase"></h6>
                         </div>
                         <% for (let product of products){ %>
@@ -29,7 +29,7 @@
                                         <img style="float: left;" class="d-none d-md-block mr-3" width="80" height="80" src="/<%= product.image %>">
                                         <p class="ml-2"><%= product.name %></p>
                                     </div>
-                                    <p class="col">Rp.<%= product.price %></p>
+                                    <p class="col d-none d-md-block">Rp.<%= product.price %></p>
                                     <div class="col">
                                         <form class="cart-button" method="POST" action="/cart-update">
                                             <input type="hidden" name="id" value="<%= product.id %>">
@@ -38,7 +38,7 @@
                                             <button class="btn btn-primary" type="submit">Set QTY</button>
                                         </form>
                                     </div>
-                                    <p class="col">Rp.<%= product.price * product.qty %></p>
+                                    <p class="col d-none d-md-block">Rp.<%= product.price * product.qty %></p>
                                     <form class="cart-button col" method="POST" action="/cart-delete">
                                         <input type="hidden" name="id" value="<%= product.id %>">
                                         <input type="hidden" name="_csrf" value="<%= csrfToken %>">

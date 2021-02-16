@@ -1,7 +1,7 @@
 <%- include ('../includes/header.ejs') %>
 <link rel="stylesheet" href="/css/product.css">
 
-<div class="dimmed-bg pt-4 pb-5">
+<div class="dimmed-bg pt-4 pb-5 main">
     <div class="container">
         <div class="row font-14">
             <p><a href="/" class="text-muted">Home</a>-</p>
@@ -9,9 +9,10 @@
             <p><strong><%= product.category %></strong></p>
         </div>
         <div class="row bg-white p-3 shadow rounded">
-            <div class="col">
+            <div class="col d-none d-md-block">
                 <img class="img-fluid" src="/<%= product.image %>"></div>
             <div class="col">
+                <img class="img-fluid d-block d-md-none" src="/<%= product.image %>">
                 <h6 class="text-primary text-uppercase"><%= product.category %></h6>
                 <h2><%= product.name %></h2>
                 <h5>Rp. <%= product.price %></h5>
@@ -31,7 +32,7 @@
                         </form>
                     </div>
                 <% } else { %>
-                    <p class="alert alert-warning">You must have account to adding product to cart</p>
+                    <p class="alert alert-danger text-center">You must have an account to buy our products</p>
                 <% } %>
                 <hr>
                 <h6 class="text-muted">PRODUCT DETAILS</h6>
