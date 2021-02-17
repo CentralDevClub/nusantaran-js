@@ -215,12 +215,26 @@ exports.postNewPassword = (req, res)=>{
     });
 }
 
-exports.getMyOrder = (_req, res)=>{
-    const hasOrder = false;
-    res.status(200).render('user/myorder', {
-        'title':'Nusantaran JS | My Order History',
-        'path':'/myorder',
-        'hasOrder': hasOrder
+exports.getMyOrder = (req, res)=>{
+    db('administrator').where('email', req.session.user.email).select('*').then((admins)=>{
+        const admin = admins.length > 0 ? admins[0].email : false;
+        const isAdmin = admin == req.session.user.email ? true : false;
+        const orders = isAdmin ? Users.getAllOrders() : Users.getOrdersByEmail(req.session.user.email);
+        orders.then((orders)=>{
+            const hasOrder = orders.length > 0 ? true : false;
+            res.status(200).render('user/myorder', {
+                'title':'Nusantaran JS | My Order History',
+                'path':'/myorder',
+                'hasOrder': hasOrder,
+                'orders': Array.from(orders)
+            });
+        }).catch((err)=>{
+            console.log(err);
+            res.status(500).redirect('/500');
+        });
+    }).catch((err)=>{
+        console.log(err);
+        res.status(500).redirect('/500');
     });
 }
 

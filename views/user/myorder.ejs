@@ -16,6 +16,47 @@
                 </div>
             </div>
         </div>
+    <% } else { %>
+        <div class="container">
+            <% for (let order of orders){ %>
+                <div class="row">
+                    <div class="col m-2 p-3 rounded bg-white shadow">
+                        <% let badge = 'badge-primary' %>
+                        <% let badge_message %> 
+                        <% if (order.order_status == 'Waiting for shipment') { %>
+                            <% badge = 'badge-warning' %>
+                            <% badge_message = 'Please wait. Our employee is preparing the shipment' %> 
+                        <% } else if (order.order_status == 'In delivery'){ %>
+                            <% badge = 'badge-primary' %>
+                            <% badge_message = 'Please wait. Our courier is on the way to deliver the product to your address' %> 
+                        <% } else if (order.order_status == 'Finished') {%>
+                            <% badge = 'badge-success' %>
+                            <% badge_message = 'Package is recieved by customer' %>
+                        <% } %>
+                        <h6>Order ID : <%= order.id %> <span class="badge <%= badge %>"><%= order.order_status %></span></h6>
+                        <p>Status : <%= badge_message %></p>
+                        <% if (isAdmin) { %>
+                            <form action="/admin/myorder" method="POST">
+                                <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                                <input type="hidden" name="id" value="<%= order.id %>">
+                                <select name="status" class="form-control mb-2" style="max-width: 300px;">
+                                    <option value="Waiting for shipment">Waiting for shipment</option>
+                                    <option value="In delivery">In delivery</option>
+                                    <option value="Finished">Finished</option>
+                                </select>
+                                <button class="btn btn-primary">Set Status</button>
+                            </form>
+                        <% } %>
+                        <p>Payment : <strong class="text-muted">Rp. <%= order.payment %> <span class="badge badge-success">Paid</span></strong></p>
+                        <ul>
+                            <% for (let product of JSON.parse(order.product)){ %>
+                                <li><%= product.name %> ( Rp.<%= product.price %> )  x <%= product.qty %></li>
+                            <% } %>
+                        </ul>
+                    </div>
+                </div>
+            <% } %>
+        </div>
     <% } %>
 </div>
 

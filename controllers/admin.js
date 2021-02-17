@@ -1,5 +1,6 @@
 const chalk = require('chalk');
 const Product = require('../models/products');
+const User = require('../models/users');
 const { validationResult } = require('express-validator');
 const fs = require('fs');
 const itemPerPage = 10;
@@ -107,3 +108,15 @@ exports.postDeleteProduct = (req,res)=>{
         res.redirect('/500');
     });
 };
+
+exports.postChangeStatus = (req, res)=>{
+    const id = req.body.id;
+    const status = req.body.status;
+    console.log(id, status);
+    User.updateStatus(id, status).then(()=>{
+        res.status(200).redirect('/myorder');
+    }).catch((err)=>{
+        console.log(err);
+        res.status(500).redirect('/500');
+    })
+}
