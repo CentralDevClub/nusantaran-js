@@ -6,14 +6,13 @@ const fs = require('fs');
 
 
 module.exports = class Products {
-    constructor(name, category, description, price, image, owner){
+    constructor(name, category, description, price, image){
         this.id = unique_id();
         this.name = name;
         this.category = category;
         this.description = description;
         this.price = price;
         this.image = image;
-        this.owner = owner;
     }
     
     async save(){
@@ -24,8 +23,7 @@ module.exports = class Products {
                 category: this.category,
                 description: this.description,
                 price: this.price,
-                image: this.image,
-                owner: this.owner
+                image: this.image
             });
         }
         catch (error) {
@@ -54,17 +52,6 @@ module.exports = class Products {
                 };
             });
             return products;
-        } catch (error) {
-            throw new Error(error);
-        }
-    }
-
-    static async fetchByOwner(owner){
-        try {
-            const products = await this.fetchAll();
-            return products.filter((p)=>{
-                return p.owner === owner;
-            });
         } catch (error) {
             throw new Error(error);
         }

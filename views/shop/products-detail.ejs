@@ -1,37 +1,42 @@
 <%- include ('../includes/header.ejs') %>
+<link rel="stylesheet" href="/css/product.css">
 
-<div class="article-clean dimmed-bg pt-4 pb-4">
+<div class="dimmed-bg pt-4 pb-5 main">
     <div class="container">
-        <div class="row">
-            <div class="col-lg-10 col-xl-8 offset-lg-1 offset-xl-2">
-                <h2>Product Detail</h2>
-                <div class="intro">
-                    <h1 class="text-center"><%= product.name %></h1>
-                    <p class="text-center">
-                        <span class="by">Seller : <%= product.owner %></span>
-                        <span class="date">Rp. <%= product.price %></span>
-                    </p>
-                    <img class="img-fluid" src="/<%= product.image %>"></div>
-                <div class="text">
-                    <p><%= product.description %></p>
-                    <% if (isAuthenticated) { %>
-                        <% if (product.owner !== currentUser) { %>
-                            <form method="POST" action="/cart">
-                                <input type="hidden" name="productID" value="<%= product.id %>">
-                                <input type="hidden" name="productPrice" value="<%= product.price %>">
-                                <input type="hidden" name="_csrf" value="<%= csrfToken %>">
-                                <div class="text-center">
-                                    <button class="btn btn-primary" type="submit">Tambah ke Keranjang</button>
-    
-                                </div>
-                            </form>
-                        <% } else { %>
-                            <p class="alert alert-warning">Cannot buy your own product</p>
-                        <% } %>
-                    <% } else { %>
-                        <p class="alert alert-warning">You must have account to adding product to cart</p>
-                    <% } %>
-                </div>
+        <div class="row font-14">
+            <p><a href="/" class="text-muted">Home</a>-</p>
+            <p><a href="/products" class="text-muted">Products</a>-</p>
+            <p><strong><%= product.category %></strong></p>
+        </div>
+        <div class="row bg-white p-3 shadow rounded">
+            <div class="col d-none d-md-block">
+                <img class="img-fluid" src="/<%= product.image %>"></div>
+            <div class="col">
+                <img class="img-fluid d-block d-md-none mb-3" src="/<%= product.image %>">
+                <h6 class="text-primary text-uppercase"><%= product.category %></h6>
+                <h2><%= product.name %></h2>
+                <h5>Rp. <%= product.price %></h5>
+                <% if (isAuthenticated) { %>
+                    <div class="d-flex justify-content-start">
+                        <div>
+                            <button class="btn btn-outline-secondary">WISHLIST</button>
+                        </div>
+                        <div class="mr-2"></div>
+                        <form method="POST" action="/cart">
+                            <input type="hidden" name="productID" value="<%= product.id %>">
+                            <input type="hidden" name="productPrice" value="<%= product.price %>">
+                            <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                            <div class="text-center">
+                                <button class="btn btn-primary" type="submit">ADD TO CART</button>
+                            </div>
+                        </form>
+                    </div>
+                <% } else { %>
+                    <p class="alert alert-danger text-center">You must have an account to buy our products</p>
+                <% } %>
+                <hr>
+                <h6 class="text-muted">PRODUCT DETAILS</h6>
+                <p><%= product.description %></p>
             </div>
         </div>
     </div>

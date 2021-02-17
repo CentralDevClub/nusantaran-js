@@ -2,6 +2,10 @@ header {
     box-shadow: 2px 2px 10px lightgrey;
 }
 
+.main {
+    min-height: calc(100vh - 287px);
+}
+
 .img-register-holder {
     overflow: hidden;
     position: relative;
@@ -14,19 +18,12 @@ header {
     height: 100%;
 }
 
-.img-card {
-    margin: auto;
-    width: 250px;
-    height: 250px;
-    overflow: hidden;
-}
-
 .invalid {
     border: 1px solid red !important;
 }
 
 .dimmed-bg {
-    background-color: #eef4f7;
+    background-color: rgb(244, 247, 252);
 }
 
 .cart {
@@ -35,4 +32,12 @@ header {
 
 .cart-button {
     display: inline;
+}
+
+.pointer {
+    cursor: pointer;
+}
+
+.card {
+    transition: all ease 0.2s;
 }

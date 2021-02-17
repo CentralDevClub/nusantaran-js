@@ -1,0 +1,17 @@
+<%- include ('../includes/header.ejs') %>
+
+<div class="login-clean">
+    <% if (!error) { %>
+        <div class="alert alert-success">
+            <h2>Account Verified</h2>
+            <p>Congratulations! Your account is successfully verified. You can go <a href="/login">login</a> and use our marketplace</p>
+        </div>
+    <% } else { %>
+        <div class="alert alert-warning">
+            <h2>Account Verification Falied</h2>
+            <p><%= error %></p>
+        </div>
+    <% } %>
+</div>
+
+<%- include ('../includes/footer.ejs') %>

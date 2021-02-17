@@ -10,6 +10,7 @@ router.get('/cart', needAuth, shopController.getCart);
 router.post('/cart', needAuth, shopController.postCart);
 router.post('/cart-delete', needAuth, shopController.postDeleteCart);
 router.post('/cart-update', needAuth, shopController.postUpdateQty);
+router.post('/cart-truncate', needAuth, shopController.postCartTruncate);
 router.get('/checkout', needAuth, shopController.getCheckout);
 router.post('/checkout', needAuth, shopController.postCheckout);
 
