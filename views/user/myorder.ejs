@@ -33,6 +33,7 @@
                             <% badge = 'badge-success' %>
                             <% badge_message = 'Package is recieved by customer' %>
                         <% } %>
+                        <h6 class="text-muted text-primary">Time Occured : <%= Date(order.date_order).toString() %></h6>
                         <h6>Order ID : <%= order.id %> <span class="badge <%= badge %>"><%= order.order_status %></span></h6>
                         <p>Status : <%= badge_message %></p>
                         <% if (isAdmin) { %>

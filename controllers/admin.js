@@ -112,7 +112,6 @@ exports.postDeleteProduct = (req,res)=>{
 exports.postChangeStatus = (req, res)=>{
     const id = req.body.id;
     const status = req.body.status;
-    console.log(id, status);
     User.updateStatus(id, status).then(()=>{
         res.status(200).redirect('/myorder');
     }).catch((err)=>{

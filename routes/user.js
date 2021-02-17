@@ -31,6 +31,8 @@ router.post('/newpassword', [
 ], userRouter.postNewPassword);
 router.get('/myorder', needAuth, userRouter.getMyOrder);
 router.get('/wishlist', needAuth, userRouter.getWishlist);
+router.post('/add-wishlist', needAuth, userRouter.postAddWishlist);
+router.post('/delete-wishlist', needAuth, userRouter.postDeleteWishlist);
 
 
 module.exports = router;

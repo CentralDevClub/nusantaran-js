@@ -87,7 +87,8 @@ module.exports = class Users{
                 'email': email,
                 'product': product,
                 'payment': payment,
-                'order_status': order_status
+                'order_status': order_status,
+                'date_order': Date.now()
             }).returning('*');
             return order;
         } catch (error) {
@@ -134,6 +135,42 @@ module.exports = class Users{
                 return order;
             });
             return order;
+        } catch (error) {
+            console.log(error);
+            throw new Error(error);
+        }
+    }
+
+    static async getWishlistByEmail(email){
+        try {
+            const wishlist = await db('wishlist').where('email', email).select('*');
+            return wishlist;
+        } catch (error) {
+            console.log(error);
+            throw new Error(error);
+        }
+    }
+
+    static async addWishlist(productid, useremail){
+        try {
+            const wishlist = await db('wishlist').insert({
+                'id': unique_id(),
+                'product_id': productid,
+                'email': useremail
+            }).returning('*');
+            return wishlist
+        } catch (error) {
+            console.log(error);
+            throw new Error(error);
+        }
+    }
+
+    static async deleteWishlist(id){
+        try {
+            const wishlist = await db('wishlist').del().where({
+                'id': id
+            }).returning('*');
+            return wishlist
         } catch (error) {
             console.log(error);
             throw new Error(error);
