@@ -245,8 +245,7 @@ exports.postCheckout = async (req, res)=>{
                     currency: 'idr',
                     product_data: {
                         name: product.name,
-                        // images: [`http://${process.env.IP_PUBLIC}/${product.image}`]
-                        images: ['https://www.flaticon.com/svg/static/icons/svg/2111/2111505.svg']
+                        images: [`http://${process.env.IP_PUBLIC}/${product.image.replace(/ /g, "%20")}`]
                     },
                     unit_amount: product.price * 100
                 },
