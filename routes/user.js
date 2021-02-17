@@ -29,6 +29,8 @@ router.post('/newpassword', [
             return true
         })
 ], userRouter.postNewPassword);
+router.get('/myorder', needAuth, userRouter.getMyOrder);
+router.get('/wishlist', needAuth, userRouter.getWishlist);
 
 
 module.exports = router;

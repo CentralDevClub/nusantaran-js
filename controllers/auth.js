@@ -7,6 +7,7 @@ const chalk = require('chalk');
 const bcrypt = require('bcrypt');
 const crypto = require('crypto');
 const { validationResult } = require('express-validator');
+const Email = require('../emails/emails');
 const sgMail = require('@sendgrid/mail')
 sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
@@ -57,6 +58,7 @@ exports.postRegister = (req, res)=>{
             }
         });
     }
+
     Users.addUser(req.body.name, req.file.path, req.body.address, req.body.email, req.body.password).then(() => {
         crypto.randomBytes(32, (error, buffer)=>{
             if (error){
@@ -68,7 +70,12 @@ exports.postRegister = (req, res)=>{
                     from: process.env.MAIL_SENDER,
                     subject: 'Nusantaran User Successfully Registered',
                     text: `Dear ${req.body.name}. Successfuly signed up on Nusantaran. You can go login`,
-                    html: `<h2>Yoohoo</h2><p>Dear ${req.body.name}, your account on Nusantaran was successfully registered. Please verify your account to login. The verification is only valid for one hour. <a href="http://${process.env.IP_PUBLIC}/verified?email=${req.body.email}&token=${token}">Verify Account</a></p>`
+                    html: Email.getEmail({
+                        'emailTitle': 'Nusantaran User Registration',
+                        'emailText': 'Welcome to Nusantaran. Your account is successfully registered to Nusantaran. Please verify your account by clicking the button down below. Please notice that this link is only valid for 1 hour start from this email is sent. Thank you',
+                        'buttonLink': `http://${process.env.IP_PUBLIC}/verified?email=${req.body.email}&token=${token}`,
+                        'buttonText': 'Verify Account'
+                    })
                 };
 
                 db('verifytoken').returning('*').insert({
@@ -129,7 +136,12 @@ exports.postRegister = (req, res)=>{
                             from: process.env.MAIL_SENDER,
                             subject: 'Nusantaran User Successfully Registered',
                             text: `Dear ${req.body.name}. Successfuly signed up on Nusantaran. You can go login`,
-                            html: `<h2>Yoohoo</h2><p>Dear ${req.body.name}, your account on Nusantaran was successfully registered. Please verify your account to login. The verification is only valid for one hour. <a href="http://${process.env.IP_PUBLIC}/verified?email=${req.body.email}&token=${token}">Verify Account</a></p>`
+                            html: Email.getEmail({
+                                'emailTitle': 'Nusantaran User Registration',
+                                'emailText': 'Welcome to Nusantaran. Your account is successfully registered to Nusantaran. Please verify your account by clicking the button down below. Please notice that this link is only valid for 1 hour start from this email is sent. Thank you',
+                                'buttonLink': `http://${process.env.IP_PUBLIC}/verified?email=${req.body.email}&token=${token}`,
+                                'buttonText': 'Verify Account'
+                            })
                         };
                         db('verifytoken').where('email', req.body.email).update({
                             token: token,

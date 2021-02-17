@@ -5,6 +5,7 @@ const knex = require('knex');
 const db_config = require('../models/db-config').config;
 const { validationResult } = require('express-validator');
 const db = knex(db_config);
+const Email = require('../emails/emails');
 const sgMail = require('@sendgrid/mail');
 sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
@@ -94,7 +95,12 @@ exports.postReset = (req, res)=>{
                     from: process.env.MAIL_SENDER,
                     subject: 'Nusantaran Reset User Password',
                     text: 'Reset password',
-                    html: `<h2>Yoohoo</h2><p>Reset your password <a href="http://${process.env.IP_PUBLIC}/newpassword?email=${req.body.email}&token=${token}">here</a></p>`
+                    html: Email.getEmail({
+                        'emailTitle': 'Nusantaran Account Reset Password',
+                        'emailText': 'Hello, you can reset your password by clicking the button down below. Please notice that this link is only valid for one hour after you recieved this email. Thank you.',
+                        'buttonLink': `http://${process.env.IP_PUBLIC}/newpassword?email=${req.body.email}&token=${token}`,
+                        'buttonText': 'Set New Password'
+                    })
                 };
                 db('resettoken').returning('*').insert({
                     useremail: req.body.email,
@@ -206,5 +212,23 @@ exports.postNewPassword = (req, res)=>{
     }).catch((error)=>{
         console.log(error);
         res.status(500).redirect('/500');
+    });
+}
+
+exports.getMyOrder = (_req, res)=>{
+    const hasOrder = false;
+    res.status(200).render('user/myorder', {
+        'title':'Nusantaran JS | My Order History',
+        'path':'/myorder',
+        'hasOrder': hasOrder
+    });
+}
+
+exports.getWishlist = (_req, res)=>{
+    const hasWishlist = false;
+    res.status(200).render('user/wishlist', {
+        'title':'Nusantaran JS | My Wishlist',
+        'path':'/wishlist',
+        'hasWishlist': hasWishlist
     });
 }
