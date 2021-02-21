@@ -27,6 +27,7 @@
     "nodemailer": "^6.4.17",
     "nodemon": "^2.0.6",
     "pg": "^8.5.1",
+    "sanitize-filename": "^1.6.3",
     "stripe": "^8.135.0",
     "uuid": "^8.3.2"
   },

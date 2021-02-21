@@ -3,10 +3,14 @@
 }
 
 .img-card {
-    margin: auto;
-    width: 100%;
-    height: 100%;
+    object-fit: cover;
+    position: absolute;
+}
+
+.img-card-container {
+    position: relative;
     overflow: hidden;
+    padding-bottom: 80%
 }
 
 @media only screen and (max-width: 425px) {

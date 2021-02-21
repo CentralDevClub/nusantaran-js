@@ -4,5 +4,6 @@ CREATE TABLE orders(
     email VARCHAR(100) NOT NULL,
     product TEXT NOT NULL,
     payment int NOT NULL,
-    order_status VARCHAR(100) NOT NULL
+    order_status VARCHAR(100) NOT NULL,
+    date_order VARCHAR(100) NOT NULL
 );

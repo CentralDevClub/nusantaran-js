@@ -1,9 +1,15 @@
 const chalk = require('chalk');
+const sanitize = require('sanitize-filename');
 const Product = require('../models/products');
 const User = require('../models/users');
 const { validationResult } = require('express-validator');
 const fs = require('fs');
 const itemPerPage = 10;
+
+
+const sanitizeImage = (oldPath)=>{
+    return 'images/' + sanitize(oldPath.split('\\')[1]);
+}
 
 
 exports.getProduct = (req,res)=>{
@@ -45,12 +51,13 @@ exports.getProduct = (req,res)=>{
 exports.postAddProduct = (req, res)=>{
     const validationError = validationResult(req);
     if (validationError.isEmpty()){
+        const safeImage = sanitizeImage(req.file.path);
         const product = new Product(
             req.body.name,
             req.body.category,
             req.body.description,
             req.body.price,
-            req.file.path,
+            safeImage,
             req.session.user.email
         );
         product.save().then((product) => {
@@ -88,9 +95,13 @@ exports.postAddProduct = (req, res)=>{
 
 exports.postUpdateProduct = (req, res)=>{
     let product = req.body;
-    product.image = req.file ? req.file.path : product.imagepath
+    product.image = req.file ? sanitizeImage(req.file.path) : sanitizeImage(product.imagepath);
     if (req.file){
-        fs.unlinkSync(product.imagepath);
+        try {
+            fs.unlinkSync(product.imagepath);
+        } catch(err){
+            console.log(err);
+        }
     }
     Product.updateProduct(product).then(()=> {
         res.redirect('/admin/product');
@@ -112,7 +123,6 @@ exports.postDeleteProduct = (req,res)=>{
 exports.postChangeStatus = (req, res)=>{
     const id = req.body.id;
     const status = req.body.status;
-    console.log(id, status);
     User.updateStatus(id, status).then(()=>{
         res.status(200).redirect('/myorder');
     }).catch((err)=>{

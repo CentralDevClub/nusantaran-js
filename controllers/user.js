@@ -1,4 +1,5 @@
 const Users = require('../models/users');
+const Product = require('../models/products');
 const chalk = require('chalk');
 const crypto = require('crypto');
 const knex = require('knex');
@@ -185,7 +186,6 @@ exports.postNewPassword = (req, res)=>{
     const email = req.body.email;
     const token = req.body.token;
     if (email === undefined || token === undefined){
-        console.log(email, token);
         return res.status(404).redirect('/404');
     }
     const validationError = validationResult(req);
@@ -238,11 +238,62 @@ exports.getMyOrder = (req, res)=>{
     });
 }
 
-exports.getWishlist = (_req, res)=>{
-    const hasWishlist = false;
-    res.status(200).render('user/wishlist', {
-        'title':'Nusantaran JS | My Wishlist',
-        'path':'/wishlist',
-        'hasWishlist': hasWishlist
+exports.getWishlist = (req, res)=>{
+    Users.getWishlistByEmail(req.session.user.email).then((wishlist)=>{
+        const hasWishlist = wishlist.length > 0 ? true : false;
+        if (!hasWishlist){
+            return res.status(200).render('user/wishlist', {
+                'title':'Nusantaran JS | My Wishlist',
+                'path':'/wishlist',
+                'hasWishlist': false,
+                'wishlist': []
+            });
+        }
+        Product.fetchAll().then((shopProducts)=>{
+            let products = [];
+            for (let prod of shopProducts){
+                const inWishlist = wishlist.find(p => p.product_id === prod.id);
+                if (inWishlist){
+                    products.push({
+                        name:prod.name,
+                        id:prod.id,
+                        price:prod.price,
+                        category: prod.category,
+                        image: prod.image,
+                        wishlistid: inWishlist.id
+                    })
+                }
+            }
+            res.status(200).render('user/wishlist', {
+                'title':'Nusantaran JS | My Wishlist',
+                'path':'/wishlist',
+                'hasWishlist': true,
+                'wishlist': products
+            });
+        }).catch((err)=>{
+            console.log(err);
+            res.status(500).redirect('/500');
+        });
+    }).catch((err)=>{
+        console.log(err);
+        res.status(500).redirect('/500');
+    });
+}
+
+exports.postAddWishlist = (req, res) =>{
+    Users.addWishlist(req.body.productid, req.session.user.email).then(()=>{
+        res.status(200).redirect('/wishlist');
+    }).catch((err)=>{
+        console.log(err);
+        res.status(500).redirect('/500');
+    });
+}
+
+exports.postDeleteWishlist = (req, res)=>{
+    Users.deleteWishlist(req.body.id).then(()=>{
+        res.status(200).redirect('/wishlist');
+    }).catch((err)=>{
+        console.log(err);
+        res.status(500).redirect('/500');
     });
 }
