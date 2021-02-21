@@ -95,7 +95,8 @@ exports.postAddProduct = (req, res)=>{
 
 exports.postUpdateProduct = (req, res)=>{
     let product = req.body;
-    product.image = req.file ? sanitizeImage(req.file.path) : sanitizeImage(product.imagepath);
+    product.imagepath = sanitizeImage(product.imagepath)
+    product.image = req.file ? sanitizeImage(req.file.path) : product.imagepath;
     if (req.file){
         try {
             fs.unlinkSync(product.imagepath);
