@@ -37,7 +37,7 @@
                         <h6>Order ID : <%= order.id %> <span class="badge <%= badge %>"><%= order.order_status %></span></h6>
                         <p>Status : <%= badge_message %></p>
                         <% if (isAdmin) { %>
-                            <form action="/admin/myorder" method="POST">
+                            <form class="mb-2" action="/admin/myorder" method="POST">
                                 <input type="hidden" name="_csrf" value="<%= csrfToken %>">
                                 <input type="hidden" name="id" value="<%= order.id %>">
                                 <select name="status" class="form-control mb-2" style="max-width: 300px;">
@@ -48,6 +48,7 @@
                                 <button class="btn btn-primary">Set Status</button>
                             </form>
                         <% } %>
+                        <a class="btn btn-outline-primary" href="/myorder/<%= order.id %>">Invoice</a>
                         <p>Payment : <strong class="text-muted">Rp. <%= order.payment %> <span class="badge badge-success">Paid</span></strong></p>
                         <ul>
                             <% for (let product of JSON.parse(order.product)){ %>

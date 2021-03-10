@@ -1,5 +1,8 @@
 const Users = require('../models/users');
 const Product = require('../models/products');
+const fs = require('fs');
+const path = require('path');
+const PDFDocument = require('pdfkit');
 const chalk = require('chalk');
 const crypto = require('crypto');
 const knex = require('knex');
@@ -295,5 +298,35 @@ exports.postDeleteWishlist = (req, res)=>{
     }).catch((err)=>{
         console.log(err);
         res.status(500).redirect('/500');
+    });
+}
+
+exports.getInvoice = (req, res, next)=>{
+    const orderId = req.params.orderId;
+    const invoiceName = 'invoice-' + new Date().toISOString() + '-' + orderId + '.pdf';
+    const invoicePath = path.join('invoices', invoiceName);
+
+    Users.getOrderById(orderId).then((orders)=>{
+        const orderFound = orders.length > 0 ? true : false;
+        const order = orderFound ? orders[0] : null;
+
+        if (!orderFound){
+            return next(new Error('Order is not found'));
+        }
+        if (order.email !== req.session.user.email){
+            if (!req.session.isAdmin){
+                return next(new Error('Unauthorized access for invoice order'));
+            }
+        }
+
+        const pdf = new PDFDocument();
+        // res.setHeader('Content-Type', 'application/pdf');
+        // res.setHeader('Content-Disposition', 'inline; filename="' + invoiceName + '"');
+        pdf.pipe(fs.createWriteStream(invoicePath));
+        pdf.pipe(res);
+        pdf.text('Order Invoice');
+        pdf.end();
+    }).catch((err)=>{
+        next(err);
     });
 }
