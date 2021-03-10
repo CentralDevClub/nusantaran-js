@@ -303,7 +303,7 @@ exports.postDeleteWishlist = (req, res)=>{
 
 exports.getInvoice = (req, res, next)=>{
     const orderId = req.params.orderId;
-    const invoiceName = 'invoice-' + new Date().toISOString() + '-' + orderId + '.pdf';
+    const invoiceName = 'invoice-' + Date.now() + '-' + orderId + '.pdf';
     const invoicePath = path.join('invoices', invoiceName);
 
     Users.getOrderById(orderId).then((orders)=>{
@@ -318,13 +318,23 @@ exports.getInvoice = (req, res, next)=>{
                 return next(new Error('Unauthorized access for invoice order'));
             }
         }
-
         const pdf = new PDFDocument();
         // res.setHeader('Content-Type', 'application/pdf');
         // res.setHeader('Content-Disposition', 'inline; filename="' + invoiceName + '"');
         pdf.pipe(fs.createWriteStream(invoicePath));
         pdf.pipe(res);
-        pdf.text('Order Invoice');
+        pdf.fontSize(26).text('Nusantaran Order Invoice');
+        pdf.fontSize(20).text(order.id);
+        pdf.text('\n');
+        pdf.fontSize(16).text(`Author : ${order.email}`);
+        pdf.fontSize(16).text(`Payment : Rp. ${order.payment}`);
+        pdf.fontSize(16).text(`Status : ${order.order_status}`);
+        pdf.fontSize(16).text(`Time Occured : ${Date(order.date_order).toString()}`);
+        pdf.text('\n');
+        pdf.fontSize(16).text('Products Ordered :');
+        for (let product of JSON.parse(order.product)){
+            pdf.fontSize(16).text(`${product.name} (Rp. ${product.price}) x ${product.qty}`);
+        }
         pdf.end();
     }).catch((err)=>{
         next(err);
