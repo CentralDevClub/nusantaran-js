@@ -2,6 +2,7 @@ const Users = require('../models/users');
 const Product = require('../models/products');
 const fs = require('fs');
 const path = require('path');
+const sanitize = require('sanitize-filename');
 const PDFDocument = require('pdfkit');
 const chalk = require('chalk');
 const crypto = require('crypto');
@@ -303,8 +304,9 @@ exports.postDeleteWishlist = (req, res)=>{
 
 exports.getInvoice = (req, res, next)=>{
     const orderId = req.params.orderId;
-    const invoiceName = 'invoice-' + Date.now() + '-' + orderId + '.pdf';
+    const invoiceName = sanitize('invoice-' + Date.now() + '-' + orderId + '.pdf');
     const invoicePath = path.join('invoices', invoiceName);
+
 
     Users.getOrderById(orderId).then((orders)=>{
         const orderFound = orders.length > 0 ? true : false;
@@ -319,8 +321,6 @@ exports.getInvoice = (req, res, next)=>{
             }
         }
         const pdf = new PDFDocument();
-        // res.setHeader('Content-Type', 'application/pdf');
-        // res.setHeader('Content-Disposition', 'inline; filename="' + invoiceName + '"');
         pdf.pipe(fs.createWriteStream(invoicePath));
         pdf.pipe(res);
         pdf.fontSize(26).text('Nusantaran Order Invoice');
