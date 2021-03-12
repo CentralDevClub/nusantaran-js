@@ -117,6 +117,16 @@ module.exports = class Users{
         }
     }
 
+    static async getOrderById(id){
+        try {
+            const order = await db('orders').where('id', id).select('*');
+            return order;
+        } catch (error) {
+            console.log(error);
+            throw new Error(error);
+        }
+    }
+
     static async getAllOrders(){
         try {
             const orders = await db('orders').select('*');

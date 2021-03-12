@@ -1,5 +1,9 @@
 const Users = require('../models/users');
 const Product = require('../models/products');
+const fs = require('fs');
+const path = require('path');
+const sanitize = require('sanitize-filename');
+const PDFDocument = require('pdfkit');
 const chalk = require('chalk');
 const crypto = require('crypto');
 const knex = require('knex');
@@ -295,5 +299,44 @@ exports.postDeleteWishlist = (req, res)=>{
     }).catch((err)=>{
         console.log(err);
         res.status(500).redirect('/500');
+    });
+}
+
+exports.getInvoice = (req, res, next)=>{
+    const orderId = req.params.orderId;
+    const invoiceName = sanitize('invoice-' + Date.now() + '-' + orderId + '.pdf');
+    const invoicePath = path.join('invoices', invoiceName);
+
+
+    Users.getOrderById(orderId).then((orders)=>{
+        const orderFound = orders.length > 0 ? true : false;
+        const order = orderFound ? orders[0] : null;
+
+        if (!orderFound){
+            return next(new Error('Order is not found'));
+        }
+        if (order.email !== req.session.user.email){
+            if (!req.session.isAdmin){
+                return next(new Error('Unauthorized access for invoice order'));
+            }
+        }
+        const pdf = new PDFDocument();
+        pdf.pipe(fs.createWriteStream(invoicePath));
+        pdf.pipe(res);
+        pdf.fontSize(26).text('Nusantaran Order Invoice');
+        pdf.fontSize(20).text(order.id);
+        pdf.text('\n');
+        pdf.fontSize(16).text(`Author : ${order.email}`);
+        pdf.fontSize(16).text(`Payment : Rp. ${order.payment}`);
+        pdf.fontSize(16).text(`Status : ${order.order_status}`);
+        pdf.fontSize(16).text(`Time Occured : ${Date(order.date_order).toString()}`);
+        pdf.text('\n');
+        pdf.fontSize(16).text('Products Ordered :');
+        for (let product of JSON.parse(order.product)){
+            pdf.fontSize(16).text(`${product.name} (Rp. ${product.price}) x ${product.qty}`);
+        }
+        pdf.end();
+    }).catch((err)=>{
+        next(err);
     });
 }
