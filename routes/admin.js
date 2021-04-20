@@ -5,6 +5,7 @@ const needAuth = require('../middleware/needAuth');
 const needAdmin = require('../middleware/needAdmin');
 const { check, body } = require('express-validator');
 
+router.get('/users', needAuth, needAdmin, adminController.getAllUsers)
 router.get('/product', needAuth, needAdmin, adminController.getProduct);
 router.post('/add-product', needAuth, needAdmin, [
     body('name').trim(),

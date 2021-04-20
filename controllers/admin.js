@@ -11,6 +11,19 @@ const sanitizeImage = (oldPath)=>{
     return 'images/' + sanitize(oldPath.split('\\')[1]);
 }
 
+exports.getAllUsers = (_req, res) => {
+    User.allUser().then((users)=>{
+        const hasUser = users.length > 0 ? true : false
+        res.render('admin/users', {
+            'title':'Nusantaran JS | Manage Users',
+            'path':'/users',
+            'hasUser': hasUser,
+            'users': users,
+        })
+    }).catch(()=>{
+        res.status(500).redirect('/500');
+    })
+}
 
 exports.getProduct = (req,res)=>{
     const page = req.query.page ? req.query.page -1 : 0;

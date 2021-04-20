@@ -1,0 +1,41 @@
+<%- include ('../includes/header.ejs') %>
+
+<div class="container-fluid dimmed-bg main">
+    <div class="container pt-4 pb-5">
+        <div class="row">
+            <div class="col">
+                <h5 class="mb-3">Manage Users</h5>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col" style="overflow: auto;">
+                <% if (hasUser) { %>
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>ACCOUNT ID</th>
+                                <th>USERNAME</th>
+                                <th>EMAIL</th>
+                                <th>SHIPMENT ADDRESS</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <% for(let user of users ) { %>
+                                <tr>
+                                    <td><%= user.index %></td>
+                                    <td><%= user.name %></td>
+                                    <td><a href="mailto:<%= user.email %>"><%= user.email %></a></td>
+                                    <td><%= user.address %></td>
+                                </tr>
+                            <% } %>
+                        </tbody>
+                    </table>
+                <% } else { %>
+                    <p>Website have no user yet</p>
+                <% } %>
+            </div>
+        </div>
+    </div>
+</div>
+
+<%- include ('../includes/footer.ejs') %>
