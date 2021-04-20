@@ -90,7 +90,7 @@ exports.postAddProduct = (req, res)=>{
         });
     } else {
         try {
-            fs.unlinkSync(req.file.path);
+            fs.unlinkSync(sanitizeImage(req.file.path));
         } catch (error){
             console.log(error);
         };
