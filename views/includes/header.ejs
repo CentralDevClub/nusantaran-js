@@ -42,6 +42,7 @@
                                 <li class="nav-item mr-2"><a class="<%= path === '/myorder' ? 'active' : '' %>" href="/myorder">My Order</a></li>
                                 <% if (isAdmin) { %>
                                     <li class="nav-item mr-2"><a href="/admin/product" class="<%= path === '/product' ? 'active' : '' %>">Manage Products</a></li>
+                                    <li class="nav-item mr-2"><a href="/admin/users" class="<%= path === '/users' ? 'active' : '' %>">Manage Users</a></li>
                                 <% } %>
                                 <li class="nav-item"><a class="<%= path === '/profile' ? 'active' : '' %>" href="/profile"><%= username %></a></li>
                             </ul>
