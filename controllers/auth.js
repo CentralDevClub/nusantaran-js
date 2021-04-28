@@ -3,7 +3,6 @@ const Users = require('../models/users')
 const knex = require('knex')
 const db_config = require('../models/db-config').config
 const db = knex(db_config)
-const chalk = require('chalk')
 const bcrypt = require('bcrypt')
 const crypto = require('crypto')
 const { validationResult } = require('express-validator')
@@ -84,11 +83,10 @@ exports.postRegister = (req, res, next) => {
                     expired: Date.now() + 3600000
                 }).then(() => {
                     sgMail.send(email).then(() => {
-                        console.log(chalk.green(`Email Sent to ${req.body.email}`))
                         req.flash('successMessage', 'Successfully signed up. Please check your email and verify your account')
                         res.redirect('/login')
                     }).catch(err => {
-                        console.log(chalk.red(err))
+                        console.log(err)
                         next(err)
                     })
                 }).catch(() => {
@@ -208,11 +206,9 @@ exports.postLogin = (req, res, next) => {
     Users.findUserByEmail(req.body.email).then((users) => {
         try {
             const user = users[0]
-            console.log(chalk.blue(`User found ${user.email}`))
             if (user.verified == true) {
                 bcrypt.compare(req.body.password, user.password).then((success) => {
                     if (success) {
-                        console.log(chalk.green(`Successfully logged in - ${req.body.email}`))
                         req.session.user = user
                         req.session.isAuthenticated = true
                         db('administrator').select('*').then((admins) => {
@@ -232,7 +228,7 @@ exports.postLogin = (req, res, next) => {
                         throw new Error(`Wrong password for "${user.email}"`)
                     }
                 }).catch((error) => {
-                    console.log(chalk.red(error))
+                    console.log(error)
                     req.flash('errorMessage', 'Wrong password for this user')
                     req.flash('placeholder', req.body.email)
                     req.flash('errors', { 'param': 'password' })
@@ -248,7 +244,7 @@ exports.postLogin = (req, res, next) => {
             throw new Error(error)
         }
     }).catch(() => {
-        console.log(chalk.red('User not found'))
+        console.log('User not found')
         req.flash('errorMessage', 'User not found. Please register')
         req.flash('placeholder', req.body.email)
         req.flash('errors', { 'param': 'email' })

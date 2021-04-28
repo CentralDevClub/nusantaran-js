@@ -4,7 +4,6 @@ const fs = require('fs')
 const path = require('path')
 const sanitize = require('sanitize-filename')
 const PDFDocument = require('pdfkit')
-const chalk = require('chalk')
 const crypto = require('crypto')
 const knex = require('knex')
 const db_config = require('../models/db-config').config
@@ -32,7 +31,6 @@ exports.getUser = (req, res, next) => {
 exports.postLogout = (req, res, next) => {
     req.session.destroy((error) => {
         if (error) {
-            console.log(chalk.red('Error Found'))
             console.log(error)
             next(error)
         }

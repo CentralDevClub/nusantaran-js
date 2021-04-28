@@ -1,15 +1,9 @@
-const chalk = require('chalk')
-const sanitize = require('sanitize-filename')
+const sanitizeImage = require('../util/sanitizer')
 const Product = require('../models/products')
 const User = require('../models/users')
 const { validationResult } = require('express-validator')
 const fs = require('fs')
 const itemPerPage = 10
-
-
-const sanitizeImage = (oldPath) => {
-    return 'images/' + sanitize(oldPath.split('\\')[1])
-}
 
 exports.getAllUsers = (_req, res, next) => {
     User.allUser().then((users) => {
@@ -61,7 +55,7 @@ exports.getProduct = (req, res, next) => {
     })
 }
 
-exports.postAddProduct = (req, res) => {
+exports.postAddProduct = (req, res, next) => {
     const validationError = validationResult(req)
     if (validationError.isEmpty()) {
         const safeImage = sanitizeImage(req.file.path)
@@ -74,10 +68,8 @@ exports.postAddProduct = (req, res) => {
             req.session.user.email
         )
         product.save().then((product) => {
-            console.log(chalk.blue(`Product added : ${product[0].name}`))
             res.redirect('/admin/product')
         }).catch(() => {
-            console.log(chalk.red('Product name is already have'))
             req.flash('errorMessage', [`Product "${req.body.name}" is already in database`])
             req.flash('errors', [{ param: 'name' }])
             req.flash('placeholder', {
@@ -108,7 +100,8 @@ exports.postAddProduct = (req, res) => {
 
 exports.postUpdateProduct = (req, res, next) => {
     let product = req.body
-    product.imagepath = sanitizeImage(product.imagepath)
+    // If user update the image, then product.image will be the path from updated image and
+    // delete the old image. Otherwise, we used the old path and keep the old image
     product.image = req.file ? sanitizeImage(req.file.path) : product.imagepath
     if (req.file) {
         try {

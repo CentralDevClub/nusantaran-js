@@ -1,5 +1,4 @@
 require('dotenv').config();
-const chalk = require('chalk');
 const express = require('express');
 const Pool = require('pg').Pool;
 const connection = new Pool(require('./models/connection'));
@@ -74,4 +73,4 @@ app.use((error, _req, res)=>{
 const port = process.env.PORT || 3000;
 const deploy = process.env.IP_DEPLOY || '127.0.0.1';
 app.listen(port, deploy);
-console.log(chalk.underline.green(`Server is deployed on http://${deploy}:${port}`));
+console.log(`Server is deployed on http://${deploy}:${port}`);
