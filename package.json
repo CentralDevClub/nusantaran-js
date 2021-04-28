@@ -4,8 +4,10 @@
   "description": "the real nusantara food and taste",
   "main": "index.js",
   "scripts": {
-    "start": "nodemon app.js",
-    "deploy": "node app.js"
+    "init": "eslint --init",
+    "lint": "eslint . --ext .js",
+    "debug": "nodemon app.js",
+    "start": "node app.js"
   },
   "author": "Philip Purwoko",
   "license": "MIT",
@@ -34,5 +36,8 @@
   },
   "engines": {
     "node": "14.13.0"
+  },
+  "devDependencies": {
+    "eslint": "^7.25.0"
   }
 }
