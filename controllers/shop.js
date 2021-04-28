@@ -248,44 +248,44 @@ exports.postCheckout = async (req, res, next) => {
         products.forEach((p) => {
             totalPrice += (p.price * p.qty)
         })
+
+        User.addOrder(req.session.user.email, JSON.stringify(products), totalPrice, 'Waiting for shipment').then(async (orders) => {
+            // Stripe object products
+            const stripeProducts = products.map((product) => {
+                return {
+                    price_data: {
+                        currency: 'idr',
+                        product_data: {
+                            name: product.name,
+                            images: [`http://${process.env.IP_PUBLIC}/${product.image.replace(/ /g, "%20")}`]
+                        },
+                        unit_amount: product.price * 100
+                    },
+                    quantity: product.qty
+                }
+            })
+
+            const session = await stripe.checkout.sessions.create({
+                payment_method_types: ['card'],
+                line_items: stripeProducts,
+                mode: 'payment',
+                success_url: `http://${process.env.IP_PUBLIC}/checkout`,
+                cancel_url: `http://${process.env.IP_PUBLIC}/checkout`,
+                metadata: { description: 'Nusantaran products payment' }
+            })
+
+            if (session.id) {
+                const order = orders.length > 0 ? orders[0] : false
+                req.flash('order', order)
+                req.flash('checkoutId', session.id)
+                res.json({ id: session.id })
+            }
+        }).catch((error) => {
+            console.log(error)
+            next(error)
+        })
     } catch (error) {
         console.log(error)
         next(error)
     }
-
-    User.addOrder(req.session.user.email, JSON.stringify(products), totalPrice, 'Waiting for shipment').then(async (orders) => {
-        // Stripe object products
-        const stripeProducts = products.map((product) => {
-            return {
-                price_data: {
-                    currency: 'idr',
-                    product_data: {
-                        name: product.name,
-                        images: [`http://${process.env.IP_PUBLIC}/${product.image.replace(/ /g, "%20")}`]
-                    },
-                    unit_amount: product.price * 100
-                },
-                quantity: product.qty
-            }
-        })
-
-        const session = await stripe.checkout.sessions.create({
-            payment_method_types: ['card'],
-            line_items: stripeProducts,
-            mode: 'payment',
-            success_url: `http://${process.env.IP_PUBLIC}/checkout`,
-            cancel_url: `http://${process.env.IP_PUBLIC}/checkout`,
-            metadata: { description: 'Nusantaran products payment' }
-        })
-
-        if (session.id) {
-            const order = orders.length > 0 ? orders[0] : false
-            req.flash('order', order)
-            req.flash('checkoutId', session.id)
-            res.json({ id: session.id })
-        }
-    }).catch((error) => {
-        console.log(error)
-        next(error)
-    })
 }
