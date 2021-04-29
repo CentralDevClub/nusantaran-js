@@ -1,4 +1,4 @@
-const sanitizeImage = require('../util/sanitizer')
+const sanitizeImage = require('../util/sanitizeImage')
 const Product = require('../models/products')
 const User = require('../models/users')
 const { validationResult } = require('express-validator')
@@ -55,7 +55,7 @@ exports.getProduct = (req, res, next) => {
     })
 }
 
-exports.postAddProduct = (req, res, next) => {
+exports.postAddProduct = (req, res) => {
     const validationError = validationResult(req)
     if (validationError.isEmpty()) {
         const safeImage = sanitizeImage(req.file.path)
@@ -67,7 +67,7 @@ exports.postAddProduct = (req, res, next) => {
             safeImage,
             req.session.user.email
         )
-        product.save().then((product) => {
+        product.save().then(() => {
             res.redirect('/admin/product')
         }).catch(() => {
             req.flash('errorMessage', [`Product "${req.body.name}" is already in database`])
@@ -100,12 +100,13 @@ exports.postAddProduct = (req, res, next) => {
 
 exports.postUpdateProduct = (req, res, next) => {
     let product = req.body
+    const oldImage = sanitizeImage(product.imagepath.split('/')[1])
     // If user update the image, then product.image will be the path from updated image and
     // delete the old image. Otherwise, we used the old path and keep the old image
-    product.image = req.file ? sanitizeImage(req.file.path) : product.imagepath
+    product.image = req.file ? sanitizeImage(req.file.path.split('\\')[1]) : oldImage
     if (req.file) {
         try {
-            fs.unlinkSync(product.imagepath)
+            fs.unlinkSync(oldImage)
         } catch (err) {
             console.log(err)
         }

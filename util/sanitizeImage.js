@@ -1,5 +1,5 @@
 const sanitize = require('sanitize-filename')
 
 module.exports = (oldPath) => {
-    return 'images/' + sanitize(oldPath.split('\\')[1])
+    return 'images/' + sanitize(oldPath)
 }
