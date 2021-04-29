@@ -133,7 +133,7 @@ exports.postReset = (req, res, next) => {
                 })
             }
         })
-    }).catch((error)=>{
+    }).catch((error) => {
         console.log(error)
         next(error)
     })
@@ -219,8 +219,7 @@ exports.postNewPassword = (req, res, next) => {
 
 exports.getMyOrder = (req, res, next) => {
     db('administrator').where('email', req.session.user.email).select('*').then((admins) => {
-        const admin = admins.length > 0 ? admins[0].email : false
-        const isAdmin = admin == req.session.user.email ? true : false
+        const isAdmin = admins.map(admin => admin.email).includes(req.session.user.email)
         const orders = isAdmin ? Users.getAllOrders() : Users.getOrdersByEmail(req.session.user.email)
         orders.then((orders) => {
             const hasOrder = orders.length > 0 ? true : false

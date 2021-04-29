@@ -35,8 +35,8 @@
                         <% } %>
                         <h6 class="text-muted text-primary">Time Occured : <%= Date(order.date_order).toString() %></h6>
                         <h6>Order ID : <%= order.id %> <span class="badge <%= badge %>"><%= order.order_status %></span></h6>
-                        <p>Status : <%= badge_message %></p>
                         <% if (isAdmin) { %>
+                            <p>Order By : <%= order.email %></p>
                             <form class="mb-2" action="/admin/myorder" method="POST">
                                 <input type="hidden" name="_csrf" value="<%= csrfToken %>">
                                 <input type="hidden" name="id" value="<%= order.id %>">
@@ -48,7 +48,8 @@
                                 <button class="btn btn-primary">Set Status</button>
                             </form>
                         <% } %>
-                        <a class="btn btn-outline-primary" href="/myorder/<%= order.id %>">Invoice</a>
+                        <p>Status : <%= badge_message %></p>
+                        <a class="btn btn-outline-primary" href="/myorder/<%= order.id %>">Get Order Invoice</a>
                         <p>Payment : <strong class="text-muted">Rp. <%= order.payment %> <span class="badge badge-success">Paid</span></strong></p>
                         <ul>
                             <% for (let product of JSON.parse(order.product)){ %>
