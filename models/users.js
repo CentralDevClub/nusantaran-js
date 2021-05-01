@@ -90,6 +90,13 @@ module.exports = class Users {
         return await db('wishlist').where('email', email).select('*')
     }
 
+    static async getMyWishlist(email) {
+        return await db.select('*')
+            .from('products')
+            .where('wishlist.email', email)
+            .innerJoin('wishlist', 'products.id', 'wishlist.product_id')
+    }
+
     static async addWishlist(productid, useremail) {
         const wishlist = await db('wishlist').insert({
             'id': unique_id(),

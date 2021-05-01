@@ -20,7 +20,7 @@
     <% } else { %>
         <div class="container pb-4 d-flex flex-wrap justify-content-center align-content-around">
             <% for (let product of wishlist){ %>
-                <div class="card m-2 pointer" style="width: 12rem;" onclick="location.href='products/<%= product.id %>';">
+                <div class="card m-2 pointer" style="width: 12rem;" onclick="location.href='products/<%= product.product_id %>';">
                     <div class="img-card-container">
                         <img class="card-img-top img-card" src="/<%= product.image %>">
                     </div>
@@ -31,7 +31,7 @@
                     </div>
                     <div class="card-body mb-0 pt-0 pb-0 card-button">
                         <form method="POST" action="/cart">
-                            <input type="hidden" name="productID" value="<%= product.id %>">
+                            <input type="hidden" name="productID" value="<%= product.product_id %>">
                             <input type="hidden" name="productPrice" value="<%= product.price %>">
                             <input type="hidden" name="_csrf" value="<%= csrfToken %>">
                             <button type="submit" class="btn btn-block btn-primary d-none d-sm-block">Add to Cart</button>
@@ -40,7 +40,7 @@
                     </div>
                     <form class="m-2 p-2" action="/delete-wishlist" method="POST">
                         <input type="hidden" name="_csrf" value="<%= csrfToken %>">
-                        <input type="hidden" name="id" value="<%= product.wishlistid %>">
+                        <input type="hidden" name="id" value="<%= product.id %>">
                         <button type="submit" class="btn btn-block btn-outline-danger">Remove</button>
                     </form>
                 </div>

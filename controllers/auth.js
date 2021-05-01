@@ -211,6 +211,7 @@ exports.postLogin = (req, res, next) => {
                     if (success) {
                         req.session.user = user
                         req.session.isAuthenticated = true
+                        req.session.isAdmin = false
                         db('administrator').select('*').then((admins) => {
                             if (admins) {
                                 for (const admin of admins) {
@@ -219,6 +220,7 @@ exports.postLogin = (req, res, next) => {
                                     }
                                 }
                             }
+                        }).then(()=>{
                             res.redirect('/')
                         }).catch((err) => {
                             console.log('Catch at : models/auth.js:110')

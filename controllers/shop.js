@@ -50,33 +50,12 @@ exports.getIndex = (_req, res) => {
 
 
 // Cart controllers
-exports.getCart = ash(async (req, res, next) => {
+exports.getCart = ash(async (req, res) => {
     const owner = req.session.user.email
-    const cartProducts = await Cart.fetchAll(owner)
-    const shopProducts = await Product.fetchAll()
-
-    // Filter product contain in cart
-    let products = []
-    for (let prod of shopProducts) {
-        const inCart = cartProducts.find(p => p.id === prod.id)
-        if (inCart) {
-            products.push({
-                name: prod.name,
-                id: prod.id,
-                price: prod.price,
-                qty: inCart.qty,
-                image: prod.image
-            })
-        }
-    }
-
-    // Calculating total price
-    let totalPrice = 0
-    products.forEach((p) => {
-        totalPrice += (p.price * p.qty)
-    })
-
+    const products = await Cart.fetchByOwner(owner)
     const hasProduct = products.length > 0 ? true : false
+    const totalPrice = products.map(p => p.price * p.qty).reduce((a, b) => a + b, 0)
+
     res.status(200).render('shop/cart', {
         'title': 'Nusantaran JS | Cart',
         'path': '/cart',
@@ -91,7 +70,7 @@ exports.postCart = ash(async (req, res) => {
     res.status(200).redirect('/cart')
 })
 
-exports.postDeleteCart = ash(async (req, res, next) => {
+exports.postDeleteCart = ash(async (req, res) => {
     await Cart.deleteProduct(req.body.id, req.session.user.email)
     res.status(200).redirect('/cart')
 })
@@ -112,8 +91,9 @@ exports.postUpdateQty = ash(async (req, res) => {
 
 
 // Checkout controller
-exports.getCheckout = ash(async (req, res, next) => {
+exports.getCheckout = ash(async (req, res) => {
     const getProducts = async (paid, owner) => {
+        // If the user is not paid the order from stripe, then delete user's order in database
         if (!paid) {
             const orders = req.flash('order')
             const order = orders.length > 0 ? orders[0] : false
@@ -122,29 +102,10 @@ exports.getCheckout = ash(async (req, res, next) => {
             }
         }
 
-        const cartProducts = await Cart.fetchAll(owner)
-        const shopProducts = await Product.fetchAll()
-
-        let products = []
-        for (let prod of shopProducts) {
-            const inCart = cartProducts.find(p => p.id === prod.id)
-            if (inCart) {
-                products.push({
-                    name: prod.name,
-                    id: prod.id,
-                    price: prod.price,
-                    qty: inCart.qty,
-                    image: prod.image
-                })
-            }
-        }
-
-        let totalPrice = 0
-        products.forEach((p) => {
-            totalPrice += (p.price * p.qty)
-        })
-
+        const products = await Cart.fetchByOwner(owner)
         const hasProduct = products.length > 0 ? true : false
+        const totalPrice = products.map(p => p.price * p.qty).reduce((a, b) => a + b, 0)
+
         res.status(200).render('shop/checkout', {
             'title': 'Nusantaran JS | Checkout',
             'path': '/checkout',
@@ -156,9 +117,9 @@ exports.getCheckout = ash(async (req, res, next) => {
         })
     }
 
-    const owner = req.session.user.email
     const checkoutId = req.flash('checkoutId')
     const check = checkoutId.length > 0 ? true : false
+    const owner = req.session.user.email
     if (check) {
         const data = await stripe.checkout.sessions.retrieve(checkoutId[0])
         const paid = data.payment_status === 'paid' ? true : false
@@ -179,31 +140,13 @@ exports.getCheckout = ash(async (req, res, next) => {
 })
 
 exports.postCheckout = ash(async (req, res) => {
-    const cartProducts = await Cart.fetchAll(req.session.user.email)
-    const shopProducts = await Product.fetchAll()
-
-    // Products Data
-    let products = []
-    for (let prod of shopProducts) {
-        const inCart = cartProducts.find(p => p.id === prod.id)
-        if (inCart) {
-            products.push({
-                name: prod.name,
-                id: prod.id,
-                price: prod.price,
-                qty: inCart.qty,
-                image: prod.image
-            })
-        }
-    }
-
-    let totalPrice = 0
-    products.forEach((p) => {
-        totalPrice += (p.price * p.qty)
-    })
-
+    const owner = req.session.user.email
+    const products = await Cart.fetchByOwner(owner)
+    const totalPrice = products.map(p => p.price * p.qty).reduce((a, b) => a + b, 0)
     const orders = await User.addOrder(req.session.user.email, JSON.stringify(products), totalPrice, 'Waiting for shipment')
-    // Create Stripe object products
+    
+    // Create Stripe product object - Change code with caution, read the stripe's docs first
+    // Don't touch if you do not fully understand
     const stripeProducts = products.map((product) => {
         return {
             price_data: {

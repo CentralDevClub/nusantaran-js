@@ -23,8 +23,15 @@ module.exports = class Cart {
         }
     }
 
-    static async fetchAll(owner) {
-        return await db('cart').select('*').where('owner', owner)
+    static async fetchAll() {
+        return await db('cart').select('*')
+    }
+
+    static async fetchByOwner(owner) {
+        return await db.select('*')
+            .from('products')
+            .where('cart.owner', owner)
+            .innerJoin('cart', 'products.id', 'cart.id')
     }
 
     static async emptyCart(owner) {
