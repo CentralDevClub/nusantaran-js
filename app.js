@@ -3,7 +3,7 @@ const express = require('express')
 const Pool = require('pg').Pool
 const connection = new Pool(require('./models/connection'))
 const session = require('express-session')
-const store = new (require('connect-pg-simple')(session))({pool:connection})
+const store = new (require('connect-pg-simple')(session))({ pool: connection })
 const bodyParser = require('body-parser')
 const multer = require('multer')
 const multerConfig = require('./util/multer-config')
@@ -21,9 +21,9 @@ const errorController = require('./controllers/error')
 
 // View Engine
 const app = express()
-app.set('view engine','ejs')
-app.set('views','views')
-app.use(bodyParser.urlencoded({extended:false}))
+app.set('view engine', 'ejs')
+app.set('views', 'views')
+app.use(bodyParser.urlencoded({ extended: false }))
 
 app.use(multer({
     storage: multerConfig.fileStorage,
@@ -38,7 +38,7 @@ app.use(session({
     secret: process.env.SESSION_SECRET,
     resave: false,
     saveUninitialized: false,
-    cookie: {maxAge: 30 * 24 * 60 * 60 * 1000},
+    cookie: { maxAge: 30 * 24 * 60 * 60 * 1000 },
     store: store
 }))
 
@@ -60,11 +60,11 @@ app.get('/500', errorController.get500)
 app.use(errorController.get404)
 
 // Server error middleware
-app.use((error, _req, res, _next)=>{
+app.use((error, _req, res, _next) => {
     console.log(error)
-    res.status(500).render('500',{
-        'title':'Nusantaran JS | Server Error',
-        'path':'/500',
+    res.status(500).render('500', {
+        'title': 'Nusantaran JS | Server Error',
+        'path': '/500',
         'isAuthenticated': false
     })
 })

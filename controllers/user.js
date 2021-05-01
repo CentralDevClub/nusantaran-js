@@ -1,5 +1,4 @@
 const Users = require('../models/users')
-const Product = require('../models/products')
 const fs = require('fs')
 const path = require('path')
 const sanitize = require('sanitize-filename')
@@ -104,22 +103,26 @@ exports.postReset = ash(async (req, res, next) => {
             }
 
             try {
+                await sgMail.send(email)
                 await db('resettoken').returning('*').insert({
                     useremail: req.body.email,
                     token: token,
                     expired: Date.now() + 3600000
                 })
-                await sgMail.send(email)
                 req.flash('message', 'Email has been sent, token is valid for one hour, please check your email')
                 res.status(200).redirect('/reset')
             } catch (error) {
-                await db('resettoken').where('useremail', req.body.email).update({
-                    token: token,
-                    expired: Date.now() + 3600000
-                })
-                await sgMail.send(email)
-                req.flash('message', 'Expiration token has been updated to 1 hour, please check your email')
-                res.status(200).redirect('/reset')
+                try {
+                    await sgMail.send(email)
+                    await db('resettoken').where('useremail', req.body.email).update({
+                        token: token,
+                        expired: Date.now() + 3600000
+                    })
+                    req.flash('message', 'Expiration token has been updated to 1 hour, please check your email')
+                    res.status(200).redirect('/reset')
+                } catch (error) {
+                    next(error)
+                }
             }
         }
     })
@@ -131,26 +134,31 @@ exports.getNewPassword = ash(async (req, res) => {
     if (email === undefined || token === undefined) {
         return res.status(404).redirect('/404')
     }
+    
+    const tokenError = null
     const error = req.flash('errorMessage')
     const errorMessage = error.length > 0 ? error[0] : null
     const users = await db('resettoken').where('useremail', email)
     const user = users[0]
 
     if (users.length === 0) {
-        error = 'Sorry, the user you are looking for is not found'
+        tokenError = 'Sorry, the user you are looking for is not found'
     } else {
         if (token == user.token) {
             if (user.expired < Date.now()) {
+                tokenError = 'Sorry, your token is expired'
             }
         } else {
+            tokenError = 'Wrong token for this user'
         }
     }
+
     res.render('user/new-password', {
         'title': 'Nusantaran JS | Set New Password',
         'path': '/newpassword',
         'token': token,
         'email': email,
-        'error': error,
+        'error': tokenError,
         'errorMessage': errorMessage,
         'errors': []
     })
