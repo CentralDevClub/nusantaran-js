@@ -11,10 +11,10 @@ module.exports = class Users {
         return await db('users').select('*')
     }
 
-    static async addUser(name, image, address, email, password) {
+    static async addUser(name, image, address, email, password, token) {
         const salt = await bcrypt.genSalt(bcryptSaltRounds)
         const hash = await bcrypt.hash(password, salt)
-        await db('users').returning('*').insert({
+        return await db('users').returning('*').insert({
             name: name,
             image: image,
             address: address,
@@ -22,7 +22,29 @@ module.exports = class Users {
             password: hash,
             verified: false
         })
-        return 'success'
+    }
+
+    static async assignToken(email, token) {
+        return await db('verifytoken').returning('*').insert({
+            email: email,
+            token: token,
+            expired: Date.now() + 3600000
+        })
+    }
+
+    static async statusVerify(email) {
+        return await db('verifytoken').where('email', email)
+    }
+
+    static async updateToken(email, token) {
+        return await db('verifytoken').where('email', email).update({
+            token: token,
+            expired: Date.now() + 3600000
+        })
+    }
+
+    static async verifyAccount(email) {
+        return await db('users').where('email', email).returning('*').update({ 'verified': true })
     }
 
     static async findUserByEmail(email) {
@@ -32,25 +54,34 @@ module.exports = class Users {
     static async updatePassword(email, password) {
         const salt = await bcrypt.genSalt(bcryptSaltRounds)
         const hash = await bcrypt.hash(password, salt)
-        const user = await db('users').where('email', email).update({
-            'password': hash
-        }).returning('*').then((user) => {
-            return user
-        })
-        return user
+        return await db('users').where('email', email).returning('*').update({ 'password': hash })
     }
 
-    static async verifyAccount(email) {
-        const user = await db('users').where('email', email).update({
-            'verified': true
-        }).returning('*').then((user) => {
-            return user
+    static async getResetTokenByEmail(email) {
+        return await db('resettoken').where('useremail', email)
+    }
+
+    static async setResetToken(email, token) {
+        return await db('resettoken').returning('*').insert({
+            useremail: email,
+            token: token,
+            expired: Date.now() + 3600000
         })
-        return user
+    }
+
+    static async updateResetToken(email, token) {
+        return await db('resettoken').where('useremail', email).update({
+            token: token,
+            expired: Date.now() + 3600000
+        })
+    }
+
+    static async deleteResetToken(email) {
+        return await db('resettoken').where('useremail', email).del()
     }
 
     static async addOrder(email, product, payment, order_status) {
-        const order = await db('orders').insert({
+        return await db('orders').insert({
             'id': unique_id(),
             'email': email,
             'product': product,
@@ -58,7 +89,6 @@ module.exports = class Users {
             'order_status': order_status,
             'date_order': Date.now()
         }).returning('*')
-        return order
     }
 
     static async deleteOrder(id) {
@@ -78,12 +108,9 @@ module.exports = class Users {
     }
 
     static async updateStatus(id, order_status) {
-        const order = await db('orders').where('id', id).update({
+        return await db('orders').where('id', id).update({
             'order_status': order_status
-        }).returning('*').then((order) => {
-            return order
-        })
-        return order
+        }).returning('*')
     }
 
     static async getWishlistByEmail(email) {
@@ -98,18 +125,24 @@ module.exports = class Users {
     }
 
     static async addWishlist(productid, useremail) {
-        const wishlist = await db('wishlist').insert({
+        return await db('wishlist').insert({
             'id': unique_id(),
             'product_id': productid,
             'email': useremail
         }).returning('*')
-        return wishlist
     }
 
     static async deleteWishlist(id) {
-        const wishlist = await db('wishlist').del().where({
+        return await db('wishlist').del().where({
             'id': id
         }).returning('*')
-        return wishlist
+    }
+
+    static async getAdmins() {
+        return await db('administrator').select('*')
+    }
+
+    static async getAdminByEmail(email) {
+        return await db('administrator').where('email', email).select('*')
     }
 }

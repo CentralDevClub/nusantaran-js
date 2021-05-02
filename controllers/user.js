@@ -69,7 +69,7 @@ exports.postReset = ash(async (req, res, next) => {
     }
 
     // Check if email is not inside our users table database
-    const users = await db('users').where('email', req.body.email)
+    const users = await Users.findUserByEmail(req.body.email)
     if (!users.length > 0) {
         return res.status(422).render('user/reset', {
             'title': 'Nusantaran JS | Reset Password',
@@ -104,20 +104,13 @@ exports.postReset = ash(async (req, res, next) => {
 
             try {
                 await sgMail.send(email)
-                await db('resettoken').returning('*').insert({
-                    useremail: req.body.email,
-                    token: token,
-                    expired: Date.now() + 3600000
-                })
+                await Users.setResetToken(req.body.email)
                 req.flash('message', 'Email has been sent, token is valid for one hour, please check your email')
                 res.status(200).redirect('/reset')
             } catch (error) {
                 try {
                     await sgMail.send(email)
-                    await db('resettoken').where('useremail', req.body.email).update({
-                        token: token,
-                        expired: Date.now() + 3600000
-                    })
+                    await Users.updateResetToken(req.body.email, token)
                     req.flash('message', 'Expiration token has been updated to 1 hour, please check your email')
                     res.status(200).redirect('/reset')
                 } catch (error) {
@@ -134,11 +127,11 @@ exports.getNewPassword = ash(async (req, res) => {
     if (email === undefined || token === undefined) {
         return res.status(404).redirect('/404')
     }
-    
-    const tokenError = null
+
+    let tokenError = null
     const error = req.flash('errorMessage')
     const errorMessage = error.length > 0 ? error[0] : null
-    const users = await db('resettoken').where('useremail', email)
+    const users = await Users.getResetTokenByEmail(email)
     const user = users[0]
 
     if (users.length === 0) {
@@ -185,12 +178,12 @@ exports.postNewPassword = ash(async (req, res) => {
     }
     const users = await Users.updatePassword(email, password)
     const user = users[0]
-    await db('resettoken').where('useremail', user.email).del()
+    await Users.deleteResetToken(user.email)
     res.status(200).redirect('/profile')
 })
 
 exports.getMyOrder = ash(async (req, res) => {
-    const admins = await db('administrator').where('email', req.session.user.email).select('*')
+    const admins = await Users.getAdminByEmail(req.session.user.email)
     const isAdmin = admins.map(admin => admin.email).includes(req.session.user.email)
     const orderFunction = isAdmin ? Users.getAllOrders() : Users.getOrdersByEmail(req.session.user.email)
     const orders = await orderFunction

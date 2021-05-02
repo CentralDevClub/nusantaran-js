@@ -1,11 +1,9 @@
 require('dotenv').config
 const Users = require('../models/users')
-const knex = require('knex')
-const db_config = require('../models/db-config').config
-const db = knex(db_config)
 const bcrypt = require('bcrypt')
-const crypto = require('crypto')
+const generateToken = require('../util/generateToken')
 const { validationResult } = require('express-validator')
+const ash = require('express-async-handler')
 const Email = require('../emails/emails')
 const sgMail = require('@sendgrid/mail')
 sgMail.setApiKey(process.env.SENDGRID_API_KEY)
@@ -42,7 +40,7 @@ exports.getLogin = (req, res) => {
     })
 }
 
-exports.postRegister = (req, res, next) => {
+exports.postRegister = ash(async (req, res) => {
     const validationError = validationResult(req)
     if (!validationError.isEmpty()) {
         return res.status(422).render('auth/register', {
@@ -58,65 +56,40 @@ exports.postRegister = (req, res, next) => {
         })
     }
 
-    Users.addUser(req.body.name, req.file.path, req.body.address, req.body.email, req.body.password).then(() => {
-        crypto.randomBytes(32, (error, buffer) => {
-            if (error) {
-                next(error)
-            } else {
-                const token = buffer.toString('hex')
-                const email = {
-                    to: req.body.email,
-                    from: process.env.MAIL_SENDER,
-                    subject: 'Nusantaran User Successfully Registered',
-                    text: `Dear ${req.body.name}. Successfuly signed up on Nusantaran. You can go login`,
-                    html: Email.getEmail({
-                        'emailTitle': 'Nusantaran User Registration',
-                        'emailText': 'Welcome to Nusantaran. Your account is successfully registered to Nusantaran. Please verify your account by clicking the button down below. Please notice that this link is only valid for 1 hour start from this email is sent. Thank you',
-                        'buttonLink': `http://${process.env.IP_PUBLIC}/verified?email=${req.body.email}&token=${token}`,
-                        'buttonText': 'Verify Account'
-                    })
-                }
-
-                db('verifytoken').returning('*').insert({
-                    email: req.body.email,
-                    token: token,
-                    expired: Date.now() + 3600000
-                }).then(() => {
-                    sgMail.send(email).then(() => {
-                        req.flash('successMessage', 'Successfully signed up. Please check your email and verify your account')
-                        res.redirect('/login')
-                    }).catch(err => {
-                        console.log(err)
-                        next(err)
-                    })
-                }).catch(() => {
-                    db('verifytoken').where('email', req.body.email).update({
-                        token: token,
-                        expired: Date.now() + 3600000
-                    }).then(() => {
-                        sgMail.send(email).then(() => {
-                            req.flash('successMessage', 'Expiration token has been updated to 1 hour, please check your email')
-                            res.status(200).redirect('/login')
-                        }).catch((err) => {
-                            next(err)
-                        })
-                    }).catch((err) => {
-                        console.log(err)
-                        next(err)
-                    })
-                })
-            }
+    const token = await generateToken()
+    const userEmail = req.body.email
+    const email = {
+        to: req.body.email,
+        from: process.env.MAIL_SENDER,
+        subject: 'Nusantaran User Successfully Registered',
+        text: `Dear ${req.body.name}. Successfuly signed up on Nusantaran. You can go login`,
+        html: Email.getEmail({
+            'emailTitle': 'Nusantaran User Registration',
+            'emailText': 'Welcome to Nusantaran. Your account is successfully registered to Nusantaran. Please verify your account by clicking the button down below. Please notice that this link is only valid for 1 hour start from this email is sent. Thank you',
+            'buttonLink': `http://${process.env.IP_PUBLIC}/verified?email=${req.body.email}&token=${token}`,
+            'buttonText': 'Verify Account'
         })
-    }).catch((err) => {
-        console.log(err)
-        db('users').select('*').where('email', req.body.email).then((users) => {
+    }
+
+    try {
+        await Users.assignToken(userEmail, token)
+        await Users.addUser(req.body.name, req.file.path, req.body.address, userEmail, req.body.password)
+        await sgMail.send()
+        req.flash('successMessage', 'Successfully signed up. Please check your email and verify your account')
+        res.status(200).redirect('/login')
+    } catch (error) {
+        const con = error.constraint
+        if (con == 'verifytoken_email_key' || con == 'users_email_key') {
+            // If failed to insert data to verifytoken or users database
+            const users = await Users.findUserByEmail(userEmail)
             const user = users[0]
-            if (user.verified === true) {
+            if (user.verified) {
+                // If the email is already registered and verified
                 return res.status(422).render('auth/register', {
                     'title': 'Nusantaran JS | Register',
                     'path': '/register',
-                    'errorMessage': 'Email already used, try another one',
-                    'errors': [{ 'param': 'email' }],
+                    'errorMessage': 'Email is already registered',
+                    'errors': [],
                     'placeholder': {
                         'name': req.body.name,
                         'email': req.body.email,
@@ -124,132 +97,83 @@ exports.postRegister = (req, res, next) => {
                     }
                 })
             } else {
-                crypto.randomBytes(32, (error, buffer) => {
-                    if (error) {
-                        next(error)
-                    } else {
-                        const token = buffer.toString('hex')
-                        const email = {
-                            to: req.body.email,
-                            from: process.env.MAIL_SENDER,
-                            subject: 'Nusantaran User Successfully Registered',
-                            text: `Dear ${req.body.name}. Successfuly signed up on Nusantaran. You can go login`,
-                            html: Email.getEmail({
-                                'emailTitle': 'Nusantaran User Registration',
-                                'emailText': 'Welcome to Nusantaran. Your account is successfully registered to Nusantaran. Please verify your account by clicking the button down below. Please notice that this link is only valid for 1 hour start from this email is sent. Thank you',
-                                'buttonLink': `http://${process.env.IP_PUBLIC}/verified?email=${req.body.email}&token=${token}`,
-                                'buttonText': 'Verify Account'
-                            })
-                        }
-                        db('verifytoken').where('email', req.body.email).update({
-                            token: token,
-                            expired: Date.now() + 3600000
-                        }).then(() => {
-                            sgMail.send(email).then(() => {
-                                req.flash('successMessage', 'Expiration token has been updated to 1 hour, please check your email')
-                                res.status(200).redirect('/login')
-                            }).catch((err) => {
-                                console.log(err)
-                                next(err)
-                            })
-                        })
-                    }
-                })
+                // If email is registered but not yet verified
+                await Users.updateToken(userEmail, token)
+                await sgMail.send(email)
+                req.flash('successMessage', 'Expiration token has been updated to 1 hour, please check your email')
+                res.status(200).redirect('/login')
             }
-        }).catch((err) => {
-            console.log(err)
-            next(err)
-        })
-    })
-}
+        } else {
+            throw error
+        }
+    }
+})
 
-exports.getVerified = (req, res, next) => {
+exports.getVerified = ash(async (req, res) => {
     const email = req.query.email
     const token = req.query.token
-    db('verifytoken').where('email', email).then((users) => {
-        if (users.length === 0) {
-            throw new Error('User not found')
+    const users = await Users.getVerifyToken(email)
+    if (users.length === 0) {
+        // If email specified is not in users database
+        res.status(404).redirect('/404')
+    } else {
+        const user = users[0]
+        let error = null
+        if (token == user.token) {
+            if (user.expired < Date.now()) {
+                error = 'Sorry, your token is expired. Please register again'
+            }
         } else {
-            const user = users[0]
-            let error = null
-            if (token == user.token) {
-                if (user.expired < Date.now()) {
-                    error = 'Sorry, your token is expired'
-                }
-            } else {
-                error = 'Wrong token for this user'
-            }
-
-            Users.verifyAccount(email).then(() => {
-                res.render('auth/verified', {
-                    'title': 'Nusantaran JS | Verify Account',
-                    'path': '/verified',
-                    'error': error
-                })
-            }).catch((err) => {
-                console.log(err)
-                next(err)
-            })
+            // If email is in database but incorrect token
+            res.status(404).redirect('/404')
         }
-    }).catch(() => {
-        res.render('user/new-password', {
-            'title': 'Nusantaran JS | Set New Password',
-            'path': '/newpassword',
-            'token': token,
-            'email': email,
-            'error': 'Sorry, the user you are looking for is not found'
+
+        await Users.verifyAccount(email)
+        res.render('auth/verified', {
+            'title': 'Nusantaran JS | Verify Account',
+            'path': '/verified',
+            'error': error
         })
-    })
-}
+    }
+})
 
-exports.postLogin = (req, res, next) => {
-    Users.findUserByEmail(req.body.email).then((users) => {
-        try {
-            const user = users[0]
-            if (user.verified == true) {
-                bcrypt.compare(req.body.password, user.password).then((success) => {
-                    if (success) {
-                        req.session.user = user
-                        req.session.isAuthenticated = true
-                        req.session.isAdmin = false
-                        db('administrator').select('*').then((admins) => {
-                            if (admins) {
-                                for (const admin of admins) {
-                                    if (req.body.email === admin.email) {
-                                        req.session.isAdmin = true
-                                    }
-                                }
-                            }
-                        }).then(()=>{
-                            res.redirect('/')
-                        }).catch((err) => {
-                            console.log('Catch at : models/auth.js:110')
-                            next(err)
-                        })
-                    } else {
-                        throw new Error(`Wrong password for "${user.email}"`)
-                    }
-                }).catch((error) => {
-                    console.log(error)
-                    req.flash('errorMessage', 'Wrong password for this user')
-                    req.flash('placeholder', req.body.email)
-                    req.flash('errors', { 'param': 'password' })
-                    res.redirect('/login')
-                })
-            } else {
-                req.flash('errorMessage', 'User is not verified. Check your email and verify your account')
-                req.flash('placeholder', req.body.email)
-                req.flash('errors', { 'param': 'email' })
-                res.redirect('/login')
-            }
-        } catch (error) {
-            throw new Error(error)
-        }
-    }).catch(() => {
-        console.log('User not found')
+exports.postLogin = ash(async (req, res) => {
+    const users = await Users.findUserByEmail(req.body.email)
+    const user = users ? users[0] : false
+
+    // If user is not found
+    if (!user) {
         req.flash('errorMessage', 'User not found. Please register')
         req.flash('placeholder', req.body.email)
         req.flash('errors', { 'param': 'email' })
         res.redirect('/login')
-    })
-}
+    }
+
+    // If user is found but account status is not verified
+    if (!user.verified) {
+        req.flash('errorMessage', 'User is not verified. Check your email and verify your account')
+        req.flash('placeholder', req.body.email)
+        req.flash('errors', { 'param': 'email' })
+        res.redirect('/login')
+    }
+
+    // If user is found and verified but enter wrong password
+    const correctPassword = await bcrypt.compare(req.body.password, user.password)
+    if (!correctPassword) {
+        req.flash('errorMessage', 'Wrong password for this user')
+        req.flash('placeholder', req.body.email)
+        req.flash('errors', { 'param': 'password' })
+        res.redirect('/login')
+    }
+
+    // Just fine
+    req.session.user = user
+    req.session.isAuthenticated = true
+    req.session.isAdmin = false
+    const admins = await Users.getAdmins()
+    const isAdmin = admins.map(a => a.email).includes(req.body.email)
+    if (isAdmin) {
+        req.session.isAdmin = true
+    }
+    res.redirect('/')
+})
