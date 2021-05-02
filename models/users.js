@@ -11,7 +11,7 @@ module.exports = class Users {
         return await db('users').select('*')
     }
 
-    static async addUser(name, image, address, email, password, token) {
+    static async addUser(name, image, address, email, password) {
         const salt = await bcrypt.genSalt(bcryptSaltRounds)
         const hash = await bcrypt.hash(password, salt)
         return await db('users').returning('*').insert({
