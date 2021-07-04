@@ -18,7 +18,7 @@
     "connect-flash": "^0.1.1",
     "connect-pg-simple": "^6.2.1",
     "csurf": "^1.11.0",
-    "dotenv": "^8.2.0",
+    "dotenv": "^8.6.0",
     "ejs": "^3.1.5",
     "express": "^4.17.1",
     "express-async-handler": "^1.1.4",
