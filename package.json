@@ -31,7 +31,7 @@
     "pdfkit": "^0.11.0",
     "pg": "^8.5.1",
     "sanitize-filename": "^1.6.3",
-    "stripe": "^8.135.0",
+    "stripe": "^8.154.0",
     "uuid": "^8.3.2"
   },
   "engines": {
