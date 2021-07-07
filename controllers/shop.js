@@ -67,17 +67,17 @@ exports.getCart = ash(async (req, res) => {
 
 exports.postCart = ash(async (req, res) => {
     await Cart.addProduct(req.body.productID, req.session.user.email, req.body.productPrice)
-    res.status(200).redirect('/cart')
+    return res.status(200).redirect('/cart')
 })
 
 exports.postDeleteCart = ash(async (req, res) => {
     await Cart.deleteProduct(req.body.id, req.session.user.email)
-    res.status(200).redirect('/cart')
+    return res.status(200).redirect('/cart')
 })
 
 exports.postCartTruncate = ash(async (req, res) => {
     await Cart.emptyCart(req.session.user.email)
-    res.status(200).redirect('/cart')
+    return res.status(200).redirect('/cart')
 })
 
 exports.postUpdateQty = ash(async (req, res) => {
@@ -86,7 +86,7 @@ exports.postUpdateQty = ash(async (req, res) => {
     if (product.qty <= 0) {
         await Cart.deleteProduct(req.body.id, req.session.user.email)
     }
-    res.status(200).redirect('/cart')
+    return res.status(200).redirect('/cart')
 })
 
 

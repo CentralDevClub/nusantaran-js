@@ -1,9 +1,7 @@
 require('dotenv').config()
 const express = require('express')
-const Pool = require('pg').Pool
-const connection = new Pool(require('./models/connection'))
 const session = require('express-session')
-const store = new (require('connect-pg-simple')(session))({ pool: connection })
+const pgstore = require('connect-pg-simple')(session)
 const bodyParser = require('body-parser')
 const multer = require('multer')
 const multerConfig = require('./util/multer-config')
@@ -39,7 +37,8 @@ app.use(session({
     resave: false,
     saveUninitialized: false,
     cookie: { maxAge: 30 * 24 * 60 * 60 * 1000 },
-    store: store
+    // store: store
+    store: new pgstore({ conString: process.env.DB_CONSTRING })
 }))
 
 // CSRF Protection

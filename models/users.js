@@ -24,6 +24,17 @@ module.exports = class Users {
         })
     }
 
+    static async updateData(name, image, address, email, password) {
+        const salt = await bcrypt.genSalt(bcryptSaltRounds)
+        const hash = await bcrypt.hash(password, salt)
+        return await db('users').where('email', email).returning('*').update({
+            'name': name,
+            'image': image,
+            'address': address,
+            'password': hash
+        })
+    }
+
     static async assignToken(email, token) {
         return await db('verifytoken').returning('*').insert({
             email: email,
@@ -37,14 +48,15 @@ module.exports = class Users {
     }
 
     static async updateToken(email, token) {
-        return await db('verifytoken').where('email', email).update({
-            token: token,
-            expired: Date.now() + 3600000
+        return await db('verifytoken').where('email', email).returning('*').update({
+            'token': token,
+            'expired': Date.now() + 3600000
         })
     }
 
     static async verifyAccount(email) {
-        return await db('users').where('email', email).returning('*').update({ 'verified': true })
+        await db('users').where('email', email).returning('*').update({ 'verified': true })
+        return await db('verifytoken').del().where('email', email).returning('*')
     }
 
     static async findUserByEmail(email) {

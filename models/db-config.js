@@ -1,4 +1,4 @@
 exports.config = {
 	client: process.env.CLIENT,
-	connection: require('./connection')
+	connection: process.env.DB_CONSTRING
 }
